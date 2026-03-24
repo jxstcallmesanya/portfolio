@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photography Portfolio</title>
+    <title>Portfolio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,43 +23,30 @@
     </div>
 
     <script>
-        // --- НАСТРОЙКИ ---
-        const userName = 'jxstcallmesanya'; // Твой логин на GitHub
-        const repoName = 'portfolio';      // Название репозитория
-        // -----------------
+        // ПРОСТО ПОСЧИТАЙ, СКОЛЬКО У ТЕБЯ ФАЙЛОВ В ПАПКАХ И ВПИШИ ЦИФРЫ:
+        const config = {
+            auto: 10,   // на скриншоте у тебя их 10 (от 1 до 10)
+            people: 5   // впиши сколько в папке people
+        };
 
-        async function loadPhotos(folder, gridId) {
-            const grid = document.getElementById(gridId);
-            const url = `https://api.github.com/repos/${userName}/${repoName}/contents/img/${folder}`;
-
-            try {
-                const response = await fetch(url);
-                const files = await response.json();
-
-                if (!Array.isArray(files)) return;
-
-                files.forEach((file, index) => {
-                    // Проверяем, что это картинка
-                    if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-                        const img = document.createElement('img');
-                        // Используем сырую ссылку на фото с GitHub
-                        img.src = `https://raw.githubusercontent.com/${userName}/${repoName}/main/${file.path}`;
-                        
-                        // Рандомная сетка для стиля
-                        if (index % 3 === 0) img.className = 'wide';
-                        else if (index % 4 === 0) img.className = 'tall';
-                        
-                        grid.appendChild(img);
-                    }
-                });
-            } catch (error) {
-                console.error('Ошибка загрузки списка файлов:', error);
+        function renderGrid(id, folder, count) {
+            const grid = document.getElementById(id);
+            for (let i = 1; i <= count; i++) {
+                const img = document.createElement('img');
+                
+                // Путь к твоим файлам
+                img.src = `img/${folder}/${i}.jpg`;
+                
+                // Плитка (широкие и высокие блоки)
+                if (i % 3 === 0) img.className = 'wide';
+                else if (i % 4 === 0) img.className = 'tall';
+                
+                grid.appendChild(img);
             }
         }
 
-        // Запускаем магию
-        loadPhotos('auto', 'auto-grid');
-        loadPhotos('people', 'people-grid');
+        renderGrid('auto-grid', 'auto', config.auto);
+        renderGrid('people-grid', 'people', config.people);
     </script>
 </body>
 </html>
