@@ -3,33 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Portfolio | Shiraliev Style</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="bg-overlay"></div>
-
-    <div id="main-menu" class="active">
+    <header>
+        <h1>Your Name</h1>
         <nav>
-            <ul>
-                <li><a href="#" class="menu-link" data-category="auto">Auto</a></li>
-                <li><a href="#" class="menu-link" data-category="people">People</a></li>
-            </ul>
+            <a href="#" onclick="showGallery('auto')">AUTO</a>
+            <a href="#" onclick="showGallery('people')">PEOPLE</a>
+            <a href="#">CONTACTS</a>
         </nav>
-    </div>
+    </header>
 
-    <div id="gallery-screen">
-        <button id="back-button">Close</button>
-        <div class="mosaic-grid" id="gallery-container"></div>
-    </div>
-
-    <div id="viewer">
-        <span class="close-viewer">&times;</span>
-        <img id="full-photo">
-        <div class="nav-button prev">&#10094;</div>
-        <div class="nav-button next">&#10095;</div>
-    </div>
+    <main id="content-area">
+        <div class="hero-image">
+            <img src="img/people/1.jpg" alt="Featured Work">
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
