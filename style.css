@@ -1,60 +1,78 @@
 body {
     margin: 0;
-    padding: 0;
-    background: #fff; /* Белый фон как на скрине */
+    background: #fff; /* Белый фон оригинала */
     color: #000;
     font-family: 'Helvetica', sans-serif;
-    text-align: center;
 }
 
 header {
-    padding: 40px 0;
+    position: sticky; /* Шапка прилипает сверху при скролле */
+    top: 0;
+    background: #fff;
+    padding: 30px 0;
+    text-align: center;
+    z-index: 100;
 }
 
-h1 {
-    font-weight: 200;
-    letter-spacing: 5px;
+.logo h1 {
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 6px;
     text-transform: uppercase;
-    margin-bottom: 20px;
 }
 
+nav { margin-top: 15px; }
 nav a {
     text-decoration: none;
     color: #000;
-    margin: 0 15px;
-    font-size: 12px;
+    font-size: 10px;
     letter-spacing: 2px;
+    margin: 0 15px;
     text-transform: uppercase;
-    transition: opacity 0.3s;
 }
 
-nav a:hover {
-    opacity: 0.5;
+/* СТИЛЬ ЛЕНТЫ ПРОЕКТОВ */
+.project-item {
+    max-width: 1100px;
+    margin: 0 auto 150px; /* Большой отступ между блоками */
+    padding: 0 20px;
+    text-align: left;
 }
 
-.hero-image {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.hero-image img {
+.project-item img {
     width: 100%;
     height: auto;
-    /* Эффект ч/б как на примере, если хочешь */
-    /* filter: grayscale(100%); */
+    display: block;
+    margin-bottom: 20px;
+    /* transition для легкого эффекта при наведении */
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
-/* Сетка для галереи (3 колонки, фото целиком) */
+.project-item img:hover {
+    transform: scale(1.01);
+}
+
+.project-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid #eee; /* Тонкая линия разделения */
+    padding-top: 15px;
+}
+
+.project-info span { font-size: 10px; color: #888; }
+.project-info h3 { 
+    font-size: 14px; 
+    font-weight: 400; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+}
+
+/* Сетка для галереи (когда нажал на AUTO/PEOPLE) */
 .mosaic-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 15px;
     padding: 20px;
 }
-
-.mosaic-grid img {
-    width: 100%;
-    height: auto;
-    object-fit: contain; /* Чтобы фото не резались */
-}
+.mosaic-grid img { width: 100%; object-fit: contain; }

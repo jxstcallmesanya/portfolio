@@ -3,25 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Shiraliev Style</title>
+    <title>Portfolio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
-        <h1>Your Name</h1>
+        <div class="logo"><h1>SANYA PHOTOGRAPHY</h1></div>
         <nav>
-            <a href="#" onclick="showGallery('auto')">AUTO</a>
-            <a href="#" onclick="showGallery('people')">PEOPLE</a>
-            <a href="#">CONTACTS</a>
+            <a href="#auto" onclick="showGallery('auto')">AUTO</a>
+            <a href="#people" onclick="showGallery('people')">PEOPLE</a>
+            <a href="#contacts">CONTACTS</a>
         </nav>
     </header>
 
     <main id="content-area">
-        <div class="hero-image">
-            <img src="img/people/1.jpg" alt="Featured Work">
-        </div>
-    </main>
+        <section class="project-item">
+            <img src="img/auto/1.jpg" alt="Project 1">
+            <div class="project-info">
+                <span>2026</span>
+                <h3>BMW M5 F90 Performance</h3>
+            </div>
+        </section>
+
+        <section class="project-item">
+            <img src="img/people/1.jpg" alt="Project 2">
+            <div class="project-info">
+                <span>2026</span>
+                <h3>Lera. Portrait Session</h3>
+            </div>
+        </section>
+
+        </main>
 
     <script src="script.js"></script>
 </body>
