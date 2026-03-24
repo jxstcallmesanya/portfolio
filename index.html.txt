@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <a href="#auto" class="section">
+            <div class="bg-grid" id="auto-grid"></div>
+            <div class="glass-overlay"></div>
+            <div class="content"><h2>Auto</h2></div>
+        </a>
+
+        <a href="#people" class="section">
+            <div class="bg-grid" id="people-grid"></div>
+            <div class="glass-overlay"></div>
+            <div class="content"><h2>People</h2></div>
+        </a>
+    </div>
+
+    <script>
+        // КОГДА ДОБАВЛЯЕШЬ ФОТО, ПРОСТО МЕНЯЙ ЭТИ ЦИФРЫ:
+        const config = {
+            auto: 12,   // сколько фото в папке img/auto
+            people: 10  // сколько фото в папке img/people
+        };
+
+        function renderGrid(id, folder, count) {
+            const grid = document.getElementById(id);
+            for (let i = 1; i <= count; i++) {
+                const img = document.createElement('img');
+                img.src = `img/${folder}/${i}.jpg`;
+                if (i % 3 === 0) img.className = 'wide';
+                else if (i % 4 === 0) img.className = 'tall';
+                grid.appendChild(img);
+            }
+        }
+        renderGrid('auto-grid', 'auto', config.auto);
+        renderGrid('people-grid', 'people', config.people);
+    </script>
+</body>
+</html>
