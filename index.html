@@ -3,50 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Photography Portfolio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <a href="#auto" class="section">
-            <div class="bg-grid" id="auto-grid"></div>
-            <div class="glass-overlay"></div>
-            <div class="content"><h2>Auto</h2></div>
-        </a>
+    <div id="welcome-screen" class="active">
+        
+        <div class="section left" data-category="auto">
+            <div class="bg-grid" id="auto-bg"></div> <div class="glass-overlay"></div>      <div class="content">
+                <h2>Auto</h2>
+            </div>
+        </div>
 
-        <a href="#people" class="section">
-            <div class="bg-grid" id="people-grid"></div>
-            <div class="glass-overlay"></div>
-            <div class="content"><h2>People</h2></div>
-        </a>
+        <div class="section right" data-category="people">
+            <div class="bg-grid" id="people-bg"></div> <div class="glass-overlay"></div>       <div class="content">
+                <h2>People</h2>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // ПРОСТО ПОСЧИТАЙ, СКОЛЬКО У ТЕБЯ ФАЙЛОВ В ПАПКАХ И ВПИШИ ЦИФРЫ:
-        const config = {
-            auto: 10,   // на скриншоте у тебя их 10 (от 1 до 10)
-            people: 5   // впиши сколько в папке people
-        };
+    <div id="gallery-screen">
+        <button id="back-button">← Назад</button>
+        <div class="mosaic-gallery" id="gallery-container"></div>
+    </div>
 
-        function renderGrid(id, folder, count) {
-            const grid = document.getElementById(id);
-            for (let i = 1; i <= count; i++) {
-                const img = document.createElement('img');
-                
-                // Путь к твоим файлам
-                img.src = `img/${folder}/${i}.jpg`;
-                
-                // Плитка (широкие и высокие блоки)
-                if (i % 3 === 0) img.className = 'wide';
-                else if (i % 4 === 0) img.className = 'tall';
-                
-                grid.appendChild(img);
-            }
-        }
+    <div id="photo-viewer">
+        <span class="close-viewer">&times;</span>
+        <img class="viewer-content" id="full-photo">
+        <div class="nav-button prev">&#10094;</div>
+        <div class="nav-button next">&#10095;</div>
+    </div>
 
-        renderGrid('auto-grid', 'auto', config.auto);
-        renderGrid('people-grid', 'people', config.people);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
