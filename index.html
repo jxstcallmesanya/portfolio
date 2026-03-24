@@ -8,18 +8,15 @@
 </head>
 <body>
 
-    <div id="welcome-screen" class="active">
-        <div class="split-section" data-category="auto">
-            <div class="bg-layer" id="auto-bg"></div>
-            <div class="overlay"></div>
-            <div class="label"><h2>Auto</h2></div>
-        </div>
-        
-        <div class="split-section" data-category="people">
-            <div class="bg-layer" id="people-bg"></div>
-            <div class="overlay"></div>
-            <div class="label"><h2>People</h2></div>
-        </div>
+    <div id="bg-overlay"></div>
+
+    <div id="main-menu" class="active">
+        <nav>
+            <ul>
+                <li><a href="#" class="menu-link" data-category="auto">Auto</a></li>
+                <li><a href="#" class="menu-link" data-category="people">People</a></li>
+            </ul>
+        </nav>
     </div>
 
     <div id="gallery-screen">
@@ -28,10 +25,10 @@
     </div>
 
     <div id="viewer">
-        <span class="close">&times;</span>
-        <img id="full-img">
-        <div class="arrow prev">&#10094;</div>
-        <div class="arrow next">&#10095;</div>
+        <span class="close-viewer">&times;</span>
+        <img id="full-photo">
+        <div class="nav-button prev">&#10094;</div>
+        <div class="nav-button next">&#10095;</div>
     </div>
 
     <script src="script.js"></script>
