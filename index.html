@@ -23,24 +23,43 @@
     </div>
 
     <script>
-        // КОГДА ДОБАВЛЯЕШЬ ФОТО, ПРОСТО МЕНЯЙ ЭТИ ЦИФРЫ:
-        const config = {
-            auto: 12,   // сколько фото в папке img/auto
-            people: 10  // сколько фото в папке img/people
-        };
+        // --- НАСТРОЙКИ ---
+        const userName = 'jxstcallmesanya'; // Твой логин на GitHub
+        const repoName = 'portfolio';      // Название репозитория
+        // -----------------
 
-        function renderGrid(id, folder, count) {
-            const grid = document.getElementById(id);
-            for (let i = 1; i <= count; i++) {
-                const img = document.createElement('img');
-                img.src = `img/${folder}/${i}.jpg`;
-                if (i % 3 === 0) img.className = 'wide';
-                else if (i % 4 === 0) img.className = 'tall';
-                grid.appendChild(img);
+        async function loadPhotos(folder, gridId) {
+            const grid = document.getElementById(gridId);
+            const url = `https://api.github.com/repos/${userName}/${repoName}/contents/img/${folder}`;
+
+            try {
+                const response = await fetch(url);
+                const files = await response.json();
+
+                if (!Array.isArray(files)) return;
+
+                files.forEach((file, index) => {
+                    // Проверяем, что это картинка
+                    if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                        const img = document.createElement('img');
+                        // Используем сырую ссылку на фото с GitHub
+                        img.src = `https://raw.githubusercontent.com/${userName}/${repoName}/main/${file.path}`;
+                        
+                        // Рандомная сетка для стиля
+                        if (index % 3 === 0) img.className = 'wide';
+                        else if (index % 4 === 0) img.className = 'tall';
+                        
+                        grid.appendChild(img);
+                    }
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки списка файлов:', error);
             }
         }
-        renderGrid('auto-grid', 'auto', config.auto);
-        renderGrid('people-grid', 'people', config.people);
+
+        // Запускаем магию
+        loadPhotos('auto', 'auto-grid');
+        loadPhotos('people', 'people-grid');
     </script>
 </body>
 </html>
