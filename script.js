@@ -1,17 +1,23 @@
-const config = { auto: 10, people: 9 };
+const config = {
+    auto: 10,  // проверь кол-во файлов в папке
+    people: 9 
+};
 
-function loadPortfolio() {
+function initGallery() {
     const gallery = document.getElementById('gallery');
+    if (!gallery) return;
+
+    // Загружаем контент
+    const categories = ['auto', 'people'];
     
-    // Сначала грузим людей, потом машины (или наоборот)
-    ['people', 'auto'].forEach(cat => {
+    categories.forEach(cat => {
         for (let i = 1; i <= config[cat]; i++) {
             const img = document.createElement('img');
             img.src = `img/${cat}/${i}.jpg`;
-            img.loading = "lazy"; // Чтобы сайт не тормозил
+            img.loading = "lazy";
             gallery.appendChild(img);
         }
     });
 }
 
-loadPortfolio();
+document.addEventListener('DOMContentLoaded', initGallery);
