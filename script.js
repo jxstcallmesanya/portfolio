@@ -1,65 +1,75 @@
 const config = {
-    auto: 10,   // Укажи сколько фото в папке auto
-    people: 5   // Укажи сколько в папке people
+    auto: 10,  // замени на реальное кол-во фото
+    people: 5 
 };
 
-let currentImages = [];
+let currentPhotos = [];
 let currentIndex = 0;
 
-function setup() {
-    // Клики по разделам
-    document.querySelectorAll('.section').forEach(s => {
-        s.addEventListener('click', () => openGallery(s.dataset.category));
+function init() {
+    // Установка случайного фона на главную при загрузке
+    setRandomBG('auto', '#auto-bg');
+    setRandomBG('people', '#people-bg');
+
+    // Клик по разделам
+    document.querySelectorAll('.split-section').forEach(sec => {
+        sec.onclick = () => openGallery(sec.dataset.category);
     });
 
+    // Назад
     document.getElementById('back-button').onclick = () => {
         document.getElementById('gallery-screen').classList.remove('active');
         document.getElementById('welcome-screen').classList.add('active');
     };
 
-    // Навигация просмотрщика
-    document.querySelector('.close-viewer').onclick = () => document.getElementById('photo-viewer').style.display = 'none';
-    document.querySelector('.next').onclick = () => showPhoto(1);
-    document.querySelector('.prev').onclick = () => showPhoto(-1);
+    // Viewer
+    document.querySelector('.close').onclick = () => document.getElementById('viewer').style.display = 'none';
+    document.querySelector('.next').onclick = () => slide(1);
+    document.querySelector('.prev').onclick = () => slide(-1);
+}
+
+function setRandomBG(cat, id) {
+    const randomNum = Math.floor(Math.random() * config[cat]) + 1;
+    document.querySelector(id).style.backgroundImage = `url('img/${cat}/${randomNum}.jpg')`;
 }
 
 function openGallery(cat) {
     const container = document.getElementById('gallery-container');
     container.innerHTML = '';
-    currentImages = [];
-    
+    currentPhotos = [];
+
     document.getElementById('welcome-screen').classList.remove('active');
     document.getElementById('gallery-screen').classList.add('active');
 
     for (let i = 1; i <= config[cat]; i++) {
-        const path = `img/${cat}/${i}.jpg`;
-        currentImages.push(path);
+        const url = `img/${cat}/${i}.jpg`;
+        currentPhotos.push(url);
 
         const div = document.createElement('div');
-        div.className = 'mosaic-item';
+        div.className = 'item';
         
-        // Рандом для мозаики (Wide или Tall)
-        if (Math.random() > 0.8) div.classList.add('wide');
-        else if (Math.random() > 0.8) div.classList.add('tall');
+        // Рандомные размеры для мозаики
+        const r = Math.random();
+        if (r > 0.85) div.classList.add('w2');
+        else if (r > 0.7) div.classList.add('h2');
 
         const img = document.createElement('img');
-        img.src = path;
-        img.onclick = () => openViewer(i - 1);
-        
+        img.src = url;
+        img.loading = "lazy";
+        img.onclick = () => {
+            currentIndex = i - 1;
+            document.getElementById('viewer').style.display = 'block';
+            slide(0);
+        };
+
         div.appendChild(img);
         container.appendChild(div);
     }
 }
 
-function openViewer(index) {
-    currentIndex = index;
-    document.getElementById('photo-viewer').style.display = 'block';
-    showPhoto(0);
+function slide(step) {
+    currentIndex = (currentIndex + step + currentPhotos.length) % currentPhotos.length;
+    document.getElementById('full-img').src = currentPhotos[currentIndex];
 }
 
-function showPhoto(dir) {
-    currentIndex = (currentIndex + dir + currentImages.length) % currentImages.length;
-    document.getElementById('full-photo').src = currentImages[currentIndex];
-}
-
-setup();
+init();

@@ -1,77 +1,93 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+body { font-family: 'Helvetica', sans-serif; background: #000; color: #fff; overflow: hidden; }
 
-/* --- Начальный экран --- */
-#welcome-screen { display: flex; height: 100vh; width: 100vw; transition: 0.5s; }
+/* --- Главный экран (Сплит) --- */
+#welcome-screen { display: flex; height: 100vh; width: 100vw; }
 #welcome-screen:not(.active) { display: none; }
 
-.section { flex: 1; position: relative; overflow: hidden; cursor: pointer; transition: 0.6s; }
-.section:hover { flex: 1.3; }
-
-.bg-grid {
-    position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
-    display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 20vh; gap: 5px;
-    filter: blur(10px) brightness(0.4); transition: 0.6s;
-}
-.section:hover .bg-grid { filter: blur(3px) brightness(0.6); transform: scale(1.03); }
-.bg-grid img { width: 100%; height: 100%; object-fit: cover; }
-
-.glass-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); z-index: 1;
-}
-.content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
-.content h2 { font-size: 4rem; text-transform: uppercase; letter-spacing: 10px; }
-
-/* --- ГАЛЕРЕЯ (ПУНКТ 5) --- */
-#gallery-screen { display: none; padding: 40px 20px; background: #000; }
-#gallery-screen.active { display: block; }
-
-.mosaic-gallery {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 колонки */
-    grid-auto-rows: 300px; /* Базовая высота */
-    gap: 15px;
-}
-
-.mosaic-item {
-    background: #0a0a0a; /* Темный фон для ячейки */
-    border-radius: 8px;
-    overflow: hidden;
+.split-section {
+    flex: 1;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 0.3s;
+    cursor: pointer;
+    transition: flex 0.7s cubic-bezier(0.2, 1, 0.3, 1);
+    border-right: 1px solid rgba(255,255,255,0.05);
 }
 
-.mosaic-item:hover { transform: scale(1.02); z-index: 5; }
+/* Эффект расширения как на сайте-примере */
+.split-section:hover { flex: 1.5; }
 
-.mosaic-item img {
-    max-width: 100%;
-    max-height: 100%;
-    /* ГЛАВНОЕ ИЗМЕНЕНИЕ: contain вместо cover */
-    object-fit: contain; 
-    transition: 0.5s;
+/* Фоновые слои */
+.bg-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2; /* В покое притемнено */
+    transition: opacity 0.5s ease, transform 1.2s ease;
+    z-index: 0;
 }
 
-/* Хаотичность мозаики */
-.mosaic-item.wide { grid-column: span 2; }
-.mosaic-item.tall { grid-row: span 2; }
+/* При наведении фото становится ярким и чуть «наплывает» */
+.split-section:hover .bg-layer {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
 
-/* --- Просмотрщик (Поп-ап) --- */
-#photo-viewer {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); z-index: 1000;
+.overlay {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 1;
 }
-.viewer-content {
-    max-width: 95%; max-height: 90%; position: absolute;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-}
-.close-viewer { position: absolute; top: 20px; right: 30px; font-size: 40px; cursor: pointer; }
-.nav-button { position: absolute; top: 50%; font-size: 30px; padding: 20px; cursor: pointer; color: #fff; }
-.prev { left: 10px; } .next { right: 10px; }
 
-#back-button {
-    position: sticky; top: 10px; margin-bottom: 20px; z-index: 100;
-    padding: 10px 20px; background: #fff; color: #000; border: none; border-radius: 20px; cursor: pointer;
+.label { z-index: 2; pointer-events: none; }
+.label h2 { 
+    font-size: clamp(2rem, 8vw, 5rem); 
+    text-transform: uppercase; 
+    font-weight: 200;
+    letter-spacing: 10px;
 }
+
+/* --- Галерея (Твой 5 пункт - фото целиком) --- */
+#gallery-screen { 
+    display: none; 
+    height: 100vh; overflow-y: auto; 
+    padding: 80px 40px; 
+}
+#gallery-screen.active { display: block; }
+
+.mosaic-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(250px, auto);
+    gap: 20px;
+}
+
+.item {
+    background: #080808;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; transition: 0.4s;
+    border-radius: 2px;
+}
+
+.item:hover { transform: translateY(-5px); }
+
+.item img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; /* ФОТО ЦЕЛИКОМ */
+}
+
+/* Хаотичность */
+.item.w2 { grid-column: span 2; }
+.item.h2 { grid-row: span 2; }
+
+/* Кнопки и Viewer (коротко) */
+#back-button { position: fixed; top: 30px; left: 30px; z-index: 100; background: none; color: #fff; border: 1px solid #fff; padding: 10px 25px; cursor: pointer; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
+#viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 1000; }
+#full-img { max-width: 90%; max-height: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.close { position: absolute; top: 20px; right: 40px; font-size: 50px; cursor: pointer; }
+.arrow { position: absolute; top: 50%; font-size: 30px; padding: 20px; cursor: pointer; }
+.prev { left: 20px; } .next { right: 20px; }
