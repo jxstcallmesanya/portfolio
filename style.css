@@ -1,78 +1,44 @@
-body {
-    margin: 0;
-    background: #fff; /* Белый фон оригинала */
-    color: #000;
-    font-family: 'Helvetica', sans-serif;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: #fff; color: #000; line-height: 1.6; }
 
 header {
-    position: sticky; /* Шапка прилипает сверху при скролле */
-    top: 0;
-    background: #fff;
-    padding: 30px 0;
-    text-align: center;
-    z-index: 100;
+    position: fixed; top: 0; width: 100%; padding: 30px;
+    display: flex; flex-direction: column; align-items: center;
+    background: rgba(255,255,255,0.9); z-index: 1000;
 }
+.logo { font-size: 20px; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 15px; }
+nav a { text-decoration: none; color: #000; margin: 0 15px; font-size: 11px; letter-spacing: 2px; }
 
-.logo h1 {
-    font-size: 18px;
-    font-weight: 300;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-}
+section { padding: 100px 0; min-height: 80vh; display: flex; align-items: center; }
 
-nav { margin-top: 15px; }
-nav a {
-    text-decoration: none;
-    color: #000;
-    font-size: 10px;
-    letter-spacing: 2px;
-    margin: 0 15px;
-    text-transform: uppercase;
-}
+/* ТЕМНЫЙ БЛОК (ОБО МНЕ) */
+.dark-block { background: #000; color: #fff; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.about-photo img { width: 100%; border-radius: 4px; }
+.label { font-size: 10px; letter-spacing: 3px; color: #888; display: block; margin-bottom: 20px; }
+h2 { font-size: 32px; font-weight: 300; margin-bottom: 30px; letter-spacing: 2px; }
+ul { list-style: none; }
+ul li { margin-bottom: 15px; font-size: 14px; opacity: 0.8; }
 
-/* СТИЛЬ ЛЕНТЫ ПРОЕКТОВ */
-.project-item {
-    max-width: 1100px;
-    margin: 0 auto 150px; /* Большой отступ между блоками */
-    padding: 0 20px;
-    text-align: left;
-}
-
-.project-item img {
-    width: 100%;
-    height: auto;
-    display: block;
-    margin-bottom: 20px;
-    /* transition для легкого эффекта при наведении */
-    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-}
-
-.project-item img:hover {
-    transform: scale(1.01);
-}
-
-.project-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-top: 1px solid #eee; /* Тонкая линия разделения */
-    padding-top: 15px;
-}
-
-.project-info span { font-size: 10px; color: #888; }
-.project-info h3 { 
-    font-size: 14px; 
-    font-weight: 400; 
-    text-transform: uppercase; 
-    letter-spacing: 2px;
-}
-
-/* Сетка для галереи (когда нажал на AUTO/PEOPLE) */
+/* ПОРТФОЛИО */
 .mosaic-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    padding: 20px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; padding: 10px; width: 100%;
 }
-.mosaic-grid img { width: 100%; object-fit: contain; }
+.mosaic-grid img { width: 100%; height: auto; display: block; object-fit: contain; }
+
+/* КОНТАКТЫ */
+.contact-container { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; padding: 0 40px; }
+.contact-form { display: flex; flex-direction: column; gap: 20px; }
+.contact-form input, .contact-form textarea {
+    padding: 15px; border: none; border-bottom: 1px solid #ddd; font-family: inherit; outline: none;
+}
+.contact-form button {
+    background: #1a1a1a; color: #fff; padding: 15px; border: none; cursor: pointer;
+    letter-spacing: 2px; transition: 0.3s;
+}
+.contact-form button:hover { background: #444; }
+
+footer { padding: 60px; text-align: center; font-size: 11px; letter-spacing: 1px; color: #888; }

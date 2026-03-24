@@ -1,17 +1,17 @@
-const config = {
-    auto: 10,
-    people: 9
-};
+const config = { auto: 10, people: 9 };
 
-function showGallery(category) {
-    const content = document.getElementById('content-area');
-    content.innerHTML = '<div class="mosaic-grid"></div>';
-    const grid = content.querySelector('.mosaic-grid');
-
-    for (let i = 1; i <= config[category]; i++) {
-        const img = document.createElement('img');
-        img.src = `img/${category}/${i}.jpg`;
-        grid.appendChild(img);
-    }
-    window.scrollTo(0, 0); // Прыгаем вверх при открытии категории
+function loadPortfolio() {
+    const gallery = document.getElementById('gallery');
+    
+    // Сначала грузим людей, потом машины (или наоборот)
+    ['people', 'auto'].forEach(cat => {
+        for (let i = 1; i <= config[cat]; i++) {
+            const img = document.createElement('img');
+            img.src = `img/${cat}/${i}.jpg`;
+            img.loading = "lazy"; // Чтобы сайт не тормозил
+            gallery.appendChild(img);
+        }
+    });
 }
+
+loadPortfolio();
