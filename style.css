@@ -3,7 +3,7 @@
 body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; overflow: hidden; -webkit-font-smoothing: antialiased; }
 a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 
-/* ХЕДЕР (ФИКСИРОВАННЫЙ) */
+/* ХЕДЕР */
 .main-header { 
     position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; 
     background: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%); 
@@ -17,7 +17,7 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 .split-container, .full-screen-content { position: absolute; inset: 0; display: none; opacity: 0; transition: opacity 0.6s ease; }
 .active { display: flex !important; opacity: 1; }
 
-/* ГЛАВНЫЙ ЭКРАН (С ОТСТУПОМ ОТ МЕНЮ) */
+/* ГЛАВНЫЙ ЭКРАН (ОТСТУП ОТ МЕНЮ) */
 .split-container { padding-top: 130px; background: #000; flex-direction: row; }
 .full-screen-content { flex-direction: column; overflow-y: auto; padding: 180px 0 100px; background: #000; }
 
@@ -30,19 +30,20 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 .content { z-index: 10; pointer-events: none; }
 .content h2 { font-size: clamp(35px, 7vw, 90px); letter-spacing: 15px; font-weight: 200; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
 
-/* СЕТКА И ОБО МНЕ */
+/* КОНТЕЙНЕР И СЕТКА */
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 .label { font-size: 10px; letter-spacing: 6px; color: #444; display: block; margin-bottom: 30px; }
 .masonry-grid { column-count: 3; column-gap: 12px; }
 .masonry-item img { width: 100%; display: block; }
 
+/* ОБО МНЕ */
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
 .about-photo img { width: 100%; filter: grayscale(10%); }
 .about-text h2 { font-size: 42px; font-weight: 200; line-height: 1.2; margin-bottom: 25px; }
 .about-text p { font-size: 15px; opacity: 0.6; line-height: 1.8; }
 .divider { width: 40px; height: 1px; background: #333; margin: 30px 0; }
 
-/* СВЯЗЬ (СТРОГИЙ ТЕКСТ) */
+/* СВЯЗЬ */
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
 .contact-header h2 { font-size: 42px; font-weight: 200; margin-bottom: 20px; line-height: 1.2; }
 .contact-header p { font-size: 15px; opacity: 0.5; max-width: 350px; line-height: 1.6; }
@@ -53,10 +54,6 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 .contact-val { font-size: 16px; font-weight: 200; letter-spacing: 1px; }
 
 a.contact-item:hover { opacity: 1; padding-left: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
-
-/* ТЕЛЕФОН */
-.phone-large { opacity: 1; border: none; margin-top: 20px; }
-.phone-large .contact-val { font-size: clamp(24px, 4vw, 32px); letter-spacing: 2px; }
 
 /* ЛАЙТБОКС */
 .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
