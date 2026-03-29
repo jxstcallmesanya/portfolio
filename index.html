@@ -26,26 +26,36 @@
         <div onclick="showAuto()" class="split-section">
             <div class="bg-bw" style="background-image: url('img/auto_b.jpg');"></div>
             <div class="bg-color" style="background-image: url('img/auto_a.jpg');"></div>
-            <div class="content">
-                <h2 class="reveal-text">АВТО</h2>
-                <span class="view-label">Смотреть серию</span>
-            </div>
+            <div class="content"><h2>АВТО</h2></div>
         </div>
         <div onclick="showPeople()" class="split-section">
             <div class="bg-bw" style="background-image: url('img/people_b.jpg');"></div>
             <div class="bg-color" style="background-image: url('img/people_a.jpg');"></div>
-            <div class="content">
-                <h2 class="reveal-text">ЛЮДИ</h2>
-                <span class="view-label">Смотреть серию</span>
-            </div>
+            <div class="content"><h2>ЛЮДИ</h2></div>
         </div>
     </div>
 
-    <div id="auto-feed-section" class="full-screen-content"><div class="container"><span class="label">АВТОМОБИЛИ</span><div class="masonry-grid" id="auto-masonry"></div></div></div>
-    <div id="people-feed-section" class="full-screen-content"><div class="container"><span class="label">ЛЮДИ</span><div class="masonry-grid" id="people-masonry"></div></div></div>
-    <div id="gallery-section" class="full-screen-content"><div class="container"><span class="label">ГАЛЕРЕЯ</span><div class="projects-grid" id="projects-list"></div></div></div>
-    <div id="project-inner" class="full-screen-content"><div class="container"><a href="#" class="back-btn" onclick="showSection('gallery')">← НАЗАД</a><h2 id="project-title"></h2><div class="photos-masonry" id="project-photos"></div></div></div>
-    
+    <div id="auto-feed-section" class="full-screen-content">
+        <div class="container">
+            <span class="label">АРХИВ: АВТО</span>
+            <div class="masonry-grid" id="auto-masonry"></div>
+        </div>
+    </div>
+
+    <div id="people-feed-section" class="full-screen-content">
+        <div class="container">
+            <span class="label">АРХИВ: ЛЮДИ</span>
+            <div class="masonry-grid" id="people-masonry"></div>
+        </div>
+    </div>
+
+    <div id="gallery-section" class="full-screen-content">
+        <div class="container">
+            <span class="label">ГАЛЕРЕЯ ПРОЕКТОВ</span>
+            <div class="projects-grid" id="projects-list"></div>
+        </div>
+    </div>
+
     <div id="about-section" class="full-screen-content">
         <div class="about-grid">
             <div class="about-photo"><img src="img/me.jpg" alt="Саня"></div>
@@ -62,11 +72,15 @@
         <div class="contact-box">
             <span class="label">КОНТАКТЫ</span>
             <h2>Давайте создадим <br> что-то легендарное.</h2>
-            <div class="social-links"><a href="https://t.me/designer212" target="_blank">TELEGRAM</a></div>
+            <div class="social-links">
+                <a href="https://t.me/designer212" target="_blank">TELEGRAM</a>
+            </div>
         </div>
     </div>
 
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src=""></div>
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="">
+    </div>
 
     <script src="script.js"></script>
 </body>
