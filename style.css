@@ -10,85 +10,67 @@ body {
     background-color: #000;
     height: 100vh;
     width: 100vw;
-    overflow: hidden; /* Запрещаем скролл на этом экране */
+    overflow: hidden; 
 }
 
 /* --- Главный контейнер --- */
 .split-container {
-    display: flex; /* Делим экран пополам */
+    display: flex; 
     height: 100vh;
     width: 100vw;
 }
 
-/* --- Стили для каждой половины --- */
+/* --- Разделы (строго 50/50) --- */
 .split-section {
-    flex: 1; /* В покое каждая половина занимает 50% */
+    flex: 1; /* Всегда 50% */
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    text-decoration: none; /* Убираем подчеркивание ссылки */
-    
-    /* ПЛАВНОСТЬ расширения (flex) */
-    transition: flex 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-}
-
-/* --- ЛОГИКА НАВЕДЕНИЯ (HOVER) --- */
-
-/* Раздел, на который навели, расширяется */
-.split-section:hover {
-    flex: 1.8; /* Примерно 65% на 35% */
+    text-decoration: none;
 }
 
 /* --- Работа с фонами --- */
 
-/* Базовые стили для обоих слоев фона */
 .bg-bw, .bg-color {
     position: absolute;
-    top: -5%; /* Немного больше, чтобы blur не создавал белых краев */
-    left: -5%;
-    width: 110%; /* Немного больше */
-    height: 110%; /* Немного больше */
+    top: -2%; 
+    left: -2%;
+    width: 104%; 
+    height: 104%; 
     background-size: cover;
     background-position: center;
-    
-    /* ПЛАВНОСТЬ смены прозрачности и размытия */
     transition: opacity 0.6s ease, filter 0.6s ease;
 }
 
-/* Черно-белый слой: всегда виден в покое */
+/* Черно-белый слой: размыт по умолчанию */
 .bg-bw {
     z-index: 1;
     opacity: 1;
-    /* --- ДОБАВЛЯЕМ РАЗМЫТИЕ ПРИ ПОКОЕ --- */
-    filter: blur(8px) grayscale(100%); /* Ч/Б + Blur 8px */
+    filter: blur(10px) grayscale(100%); 
 }
 
-/* Цветной слой: изначально скрыт */
+/* Цветной слой: скрыт и размыт */
 .bg-color {
     z-index: 2;
     opacity: 0;
-    /* --- ДОБАВЛЯЕМ РАЗМЫТИЕ ДЛЯ ЦВЕТНОГО, ЧТОБЫ УВЕЛИЧЕНИЕ БЫЛО ПЛАВНЫМ --- */
-    filter: blur(8px) grayscale(0%); /* Blur 8px, но цветной */
+    filter: blur(10px) grayscale(0%);
 }
 
-/* ПРИ НАВЕДЕНИИ (Hover) */
-
-/* 1. Цветной слой плавно проявляется поверх ч/б */
+/* ПРИ НАВЕДЕНИИ: убираем блюр и проявляем цвет */
 .split-section:hover .bg-color {
     opacity: 1;
-    /* --- УБИРАЕМ РАЗМЫТИЕ, ДЕЛАЕМ ФОТО РЕЗКИМ --- */
-    filter: blur(0px) grayscale(0%); /* Становится резким и цветным */
+    filter: blur(0px) grayscale(0%); /* Становится резким */
 }
 
-/* Добавим легкое затемнение черно-белому фону (для читаемости текста) */
+/* Затемнение для читаемости текста */
 .bg-bw::after {
     content: '';
     position: absolute;
     width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* затемнение 30% */
+    background-color: rgba(0, 0, 0, 0.4); 
 }
 
-/* --- Текст (Auto / People) --- */
+/* --- Текст --- */
 .content {
     position: absolute;
     top: 50%;
@@ -96,19 +78,26 @@ body {
     transform: translate(-50%, -50%);
     z-index: 10;
     text-align: center;
+    width: 100%;
 }
 
 .content h2 {
     color: #fff;
-    font-size: clamp(3rem, 10vw, 5rem); /* Адаптивный размер текста */
+    font-size: clamp(3rem, 8vw, 5rem);
     text-transform: uppercase;
-    font-weight: 200; /* Тонкий шрифт */
-    letter-spacing: 15px; /* Сильная растяжка букв */
-    transition: letter-spacing 0.5s ease;
-    text-shadow: 0 4px 10px rgba(0,0,0,0.5); /* Тень для текста */
+    font-weight: 200;
+    letter-spacing: 15px;
+    transition: letter-spacing 0.5s ease, opacity 0.3s ease;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
 }
 
-/* Эффект при наведении на текст: буквы чуть разъезжаются */
+/* При наведении текст становится чуть четче или буквы разъезжаются */
 .split-section:hover h2 {
-    letter-spacing: clamp(20px, 15vw, 25px);
+    letter-spacing: 20px;
+    opacity: 1;
+}
+
+/* Неактивная половина при наведении на соседа (опционально) */
+.split-container:has(.split-section:hover) .split-section:not(:hover) {
+    opacity: 0.8;
 }
