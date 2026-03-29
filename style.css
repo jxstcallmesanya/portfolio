@@ -35,9 +35,16 @@ a { text-decoration: none !important; color: #fff !important; }
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 .label { font-size: 10px; letter-spacing: 6px; color: #444; display: block; margin-bottom: 30px; }
 .masonry-grid { column-count: 3; column-gap: 15px; }
-.masonry-item { break-inside: avoid; margin-bottom: 15px; cursor: pointer; background: #111; min-height: 200px; transition: 0.4s; }
+.masonry-item { break-inside: avoid; margin-bottom: 15px; cursor: pointer; transition: 0.4s ease; will-change: transform; position: relative;}
 .masonry-item:hover { transform: scale(1.02); }
-.masonry-item img { width: 100%; display: block; opacity: 0; transition: opacity 0.5s; }
+
+/* Убираем черные заглушки: показываем только когда фото загрузится */
+.masonry-item img {
+    width: 100%; display: block; 
+    opacity: 0; transition: opacity 0.5s; 
+    /* Включаем поддержку прогрессивного JPEG */
+    object-fit: contain; 
+}
 .masonry-item img.loaded { opacity: 1; }
 
 /* СВЯЗЬ И ОБО МНЕ */
@@ -54,6 +61,7 @@ a { text-decoration: none !important; color: #fff !important; }
 
 @media (max-width: 768px) {
     .split-container { flex-direction: column; padding-top: 150px; }
-    .masonry-grid { column-count: 2; }
+    .masonry-grid { column-count: 2; column-gap: 8px;}
+    .container { padding: 0 20px; }
     .about-grid, .contact-grid { grid-template-columns: 1fr; text-align: center; }
 }

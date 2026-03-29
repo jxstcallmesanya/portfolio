@@ -1,62 +1,44 @@
-const config = { autoCount: 20, peopleCount: 15, maxWidth: 1200 };
-
-// Функция автоматической оптимизации "на лету"
-async function optimizeImage(imgElement, src) {
-    return new Promise((resolve) => {
-        const tempImg = new Image();
-        tempImg.src = src;
-        tempImg.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = tempImg.width;
-            let height = tempImg.height;
-
-            // Расчет пропорций под лимит maxWidth
-            if (width > config.maxWidth) {
-                height = (config.maxWidth / width) * height;
-                width = config.maxWidth;
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            const ctx = canvas.getContext('2d');
-            // Используем качественное сглаживание
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            ctx.drawImage(tempImg, 0, 0, width, height);
-
-            // Пережимаем в WebP (качество 0.8) для скорости
-            imgElement.src = canvas.toDataURL('image/webp', 0.8);
-            imgElement.classList.add('loaded');
-            resolve();
-        };
-    });
-}
+const config = { autoCount: 20, peopleCount: 15 };
 
 function showSection(sectionId) {
     const sections = document.querySelectorAll('.split-container, .full-screen-content');
-    sections.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+    sections.forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
 
     const target = document.getElementById(sectionId + '-section') || document.getElementById(sectionId);
     if(target) {
         target.style.display = 'flex';
-        target.scrollTop = 0;
+        target.scrollTop = 0; 
         requestAnimationFrame(() => target.classList.add('active'));
     }
 }
 
-function generateGallery(containerId, count, folder) {
+// Усиленная ленивая загрузка (Lazy Loading)
+function generateGallery(containerId, count, path) {
     const grid = document.getElementById(containerId);
     grid.innerHTML = '';
+    
+    // Создаем фрагмент документа, чтобы не перерисовывать страницу 20 раз
     const fragment = document.createDocumentFragment();
 
     for(let i = 1; i <= count; i++) {
         const item = document.createElement('div');
         item.className = 'masonry-item';
-        const img = document.createElement('img');
         
-        // Запускаем оптимизацию
-        optimizeImage(img, `img/${folder}/${i}.jpg`);
+        const img = document.createElement('img');
+        img.src = `img/${path}/${i}.jpg`;
+        // loading="lazy" заставляет браузер грузить фото только при подходе к ним
+        // decoding="async" не блокирует поток отрисовки
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+        img.setAttribute('alt', `Photo ${i}`);
+        
+        // Показываем картинку только когда она физически загрузилась
+        img.onload = () => { img.classList.add('loaded'); };
+        // Скрываем блок целиком, если фото вообще не найдено
+        img.onerror = () => { item.style.display = 'none'; };
         
         item.appendChild(img);
         item.onclick = () => openLightbox(img.src);
@@ -65,9 +47,17 @@ function generateGallery(containerId, count, folder) {
     grid.appendChild(fragment);
 }
 
-function showAuto() { showSection('auto-feed'); generateGallery('auto-masonry', config.autoCount, 'auto'); }
-function showPeople() { showSection('people-feed'); generateGallery('people-masonry', config.peopleCount, 'people'); }
+function showAuto() {
+    showSection('auto-feed');
+    generateGallery('auto-masonry', config.autoCount, 'auto');
+}
 
+function showPeople() {
+    showSection('people-feed');
+    generateGallery('people-masonry', config.peopleCount, 'people');
+}
+
+// Лайтбокс: предзагрузка картинки
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
     const img = document.getElementById('lightbox-img');
@@ -77,7 +67,7 @@ function openLightbox(src) {
 
 function closeLightbox() {
     document.getElementById('lightbox').style.display = 'none';
-    document.getElementById('lightbox-img').src = '';
+    document.getElementById('lightbox-img').src = ''; // Очищаем память
 }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
