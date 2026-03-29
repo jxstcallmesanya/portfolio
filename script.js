@@ -10,7 +10,7 @@ function showSection(sectionId) {
     const target = document.getElementById(sectionId + '-section') || document.getElementById(sectionId);
     if(target) {
         target.style.display = 'flex';
-        target.scrollTop = 0; // Всегда начинаем просмотр сверху
+        target.scrollTop = 0; 
         requestAnimationFrame(() => target.classList.add('active'));
     }
 }
