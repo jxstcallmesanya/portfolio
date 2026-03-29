@@ -3,7 +3,7 @@ const config = {
     peopleCount: 16
 };
 
-// Сюда добавляем папки проектов
+// Твои спец-проекты (папки в img/gallery/)
 const galleries = [
     { id: 'drift', title: 'DRIFT DAY 2026', cover: '1.jpg' }
 ];
@@ -14,20 +14,25 @@ function showSection(id) {
         s.classList.remove('active');
         s.style.display = 'none';
     });
+    
     const target = document.getElementById(id + '-section') || document.getElementById(id);
     if(target) {
         target.style.display = 'flex';
         requestAnimationFrame(() => target.classList.add('active'));
     }
+
+    // Авто-рендеринг галереи при входе в раздел
+    if (id === 'gallery') {
+        renderGalleryList();
+    }
 }
 
-// Загрузка фото в архивы (Авто / Люди)
+// Загрузка фото в разделы Авто/Люди
 function loadArchive(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Генерируем массив и перемешиваем
     let items = [];
     for(let i = 1; i <= count; i++) {
         items.push(`img/${folder}/${i}.jpg`);
@@ -41,7 +46,7 @@ function loadArchive(containerId, folder, count) {
         img.src = src;
         img.loading = "lazy";
         img.onload = () => img.classList.add('loaded');
-        img.onerror = () => item.remove(); // Удаляем блок, если фото не найдено
+        img.onerror = () => item.remove();
         
         item.appendChild(img);
         item.onclick = () => openLightbox(src);
@@ -49,14 +54,13 @@ function loadArchive(containerId, folder, count) {
     });
 }
 
-// Загрузка конкретной галереи
+// Открытие папки проекта
 async function openSubGallery(folderId, title) {
     showSection('sub-gallery');
     document.getElementById('sub-gallery-title').innerText = title;
     const grid = document.getElementById('sub-gallery-masonry');
     grid.innerHTML = '';
     
-    // Пробуем загрузить первые 50 фото в папке проекта
     for(let i = 1; i <= 50; i++) {
         const src = `img/gallery/${folderId}/${i}.jpg`;
         const item = document.createElement('div');
@@ -86,11 +90,10 @@ function renderGalleryList() {
     });
 }
 
-// Функции кнопок
 function showAuto() { showSection('auto-feed'); loadArchive('auto-masonry', 'auto', config.autoCount); }
 function showPeople() { showSection('people-feed'); loadArchive('people-masonry', 'people', config.peopleCount); }
 
-// Навигация (делегирование)
+// Навигация из меню
 document.addEventListener('click', (e) => {
     const link = e.target.closest('nav a');
     if(!link) return;
@@ -99,7 +102,6 @@ document.addEventListener('click', (e) => {
     if(text.includes('ГАЛЕРЕЯ')) {
         e.preventDefault();
         showSection('gallery');
-        renderGalleryList();
     } else if(text.includes('ОБО МНЕ')) {
         e.preventDefault();
         showSection('about');

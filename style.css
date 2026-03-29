@@ -1,17 +1,19 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow: hidden; }
 
+/* HEADER */
 .main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
 .brand a { font-size: 14px; letter-spacing: 10px; text-transform: uppercase; font-weight: 200; color: #fff; text-decoration: none; }
 nav ul { display: flex; justify-content: center; list-style: none; gap: 20px; margin-top: 20px; }
 nav a { font-size: 10px; letter-spacing: 3px; opacity: 0.5; transition: 0.4s; color: #fff; text-decoration: none; }
 nav a:hover { opacity: 1; }
 
+/* CONTAINERS */
 .split-container, .full-screen-content { position: absolute; inset: 0; display: none; opacity: 0; transition: 0.5s ease; z-index: 10; }
 .active { display: flex !important; opacity: 1; }
 .full-screen-content { flex-direction: column; overflow-y: auto; padding: 160px 20px 60px; -webkit-overflow-scrolling: touch; }
 
-/* ГЛАВНАЯ СТРАНИЦА */
+/* MAIN SPLIT */
 .split-section { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .bg-bw, .bg-color { position: absolute; inset: 0; background-size: cover; background-position: center; transition: 1s cubic-bezier(0.4, 0, 0.2, 1); }
 .bg-bw { z-index: 1; filter: grayscale(1) brightness(0.2); }
@@ -21,8 +23,9 @@ nav a:hover { opacity: 1; }
 .split-text-wrapper { position: relative; z-index: 100; pointer-events: none; }
 .split-text-wrapper h2 { font-size: clamp(30px, 8vw, 80px); letter-spacing: 12px; font-weight: 200; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
 
-/* СЕТКА ФОТО */
+/* MASONRY & GRIDS */
 .container { width: 100%; max-width: 1100px; margin: 0 auto; }
+.label { font-size: 9px; letter-spacing: 5px; color: #444; margin-bottom: 20px; display: block; }
 .masonry-grid { column-count: 3; column-gap: 15px; }
 .masonry-item { break-inside: avoid; margin-bottom: 15px; cursor: pointer; background: #111; border-radius: 2px; }
 .masonry-item img { width: 100%; display: block; opacity: 0; transition: 0.6s ease; }
@@ -34,11 +37,29 @@ nav a:hover { opacity: 1; }
 .gallery-card:hover img { opacity: 0.8; filter: grayscale(0); }
 .gallery-info { position: absolute; bottom: 15px; left: 15px; font-size: 11px; letter-spacing: 2px; z-index: 10; }
 
-/* ОБО МНЕ */
+/* ABOUT */
 .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center; }
 .about-photo img { width: 100%; filter: grayscale(0.2); }
 .divider { width: 30px; height: 1px; background: #333; margin: 20px 0; }
 
+/* CONTACTS (FIXED COLORS) */
+.contact-links { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.contact-item { 
+    width: 100%; 
+    max-width: 400px; 
+    padding: 25px 0; 
+    border-bottom: 1px solid #222; 
+    text-align: center; 
+    font-size: 14px; 
+    letter-spacing: 4px; 
+    opacity: 0.6; 
+    transition: 0.4s; 
+    color: #fff !important; 
+    text-decoration: none !important; 
+}
+.contact-item:hover { opacity: 1; border-bottom: 1px solid #fff; }
+
+/* LIGHTBOX */
 .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
 .lightbox img { max-width: 95%; max-height: 95%; object-fit: contain; }
 
