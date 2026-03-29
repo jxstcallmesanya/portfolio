@@ -9,8 +9,8 @@ function showSection(sectionId) {
 
     const target = document.getElementById(sectionId + '-section') || document.getElementById(sectionId);
     if(target) {
-        target.style.display = 'block';
-        target.scrollTop = 0; // Сброс прокрутки
+        target.style.display = 'flex';
+        target.scrollTop = 0; 
         setTimeout(() => target.classList.add('active'), 10);
     }
 }
@@ -45,10 +45,12 @@ function openLightbox(src) {
     const lb = document.getElementById('lightbox');
     document.getElementById('lightbox-img').src = src;
     lb.style.display = 'flex';
+    lb.classList.add('active');
 }
 
 function closeLightbox() {
-    document.getElementById('lightbox').style.display = 'none';
+    const lb = document.getElementById('lightbox');
+    lb.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
