@@ -1,16 +1,11 @@
+/* ОБЩИЕ СТИЛИ */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; overflow: hidden; -webkit-font-smoothing: antialiased; }
 a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 
-/* ХЕДЕР — теперь с градиентом-защитой */
+/* ХЕДЕР (ФИКСИРОВАННЫЙ) */
 .main-header { 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    z-index: 1000; 
-    padding: 30px 0; 
-    text-align: center; 
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; 
     background: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%); 
 }
 .brand a { font-size: clamp(12px, 4vw, 15px); letter-spacing: 12px; text-transform: uppercase; font-weight: 200; }
@@ -18,74 +13,59 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 .main-header nav a { font-size: 10px; letter-spacing: 4px; opacity: 0.4; transition: 0.4s; }
 .main-header nav a:hover { opacity: 1; }
 
-/* КОНТЕЙНЕРЫ */
+/* КОНТЕЙНЕРЫ СЕКЦИЙ */
 .split-container, .full-screen-content { position: absolute; inset: 0; display: none; opacity: 0; transition: opacity 0.6s ease; }
 .active { display: flex !important; opacity: 1; }
 
-/* ГЛАВНЫЙ ЭКРАН — Безопасная зона для хедера */
-.split-container { 
-    padding-top: 130px; 
-    background: #000;
-}
-
+/* ГЛАВНЫЙ ЭКРАН (С ОТСТУПОМ ОТ МЕНЮ) */
+.split-container { padding-top: 130px; background: #000; flex-direction: row; }
 .full-screen-content { flex-direction: column; overflow-y: auto; padding: 180px 0 100px; background: #000; }
 
-/* РАЗДЕЛЫ АВТО / ЛЮДИ */
+/* АВТО / ЛЮДИ */
 .split-section { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
-
-.bg-bw { z-index: 1; filter: grayscale(100%) brightness(0.2); transition: 1.2s ease; }
+.bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s; }
+.bg-bw { z-index: 1; filter: grayscale(100%) brightness(0.2); }
 .bg-color { z-index: 2; opacity: 0; filter: blur(15px); }
 .split-section:hover .bg-color { opacity: 1; filter: blur(0px); }
+.content { z-index: 10; pointer-events: none; }
+.content h2 { font-size: clamp(35px, 7vw, 90px); letter-spacing: 15px; font-weight: 200; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
 
-.content { z-index: 10; pointer-events: none; text-align: center; }
-.content h2 { 
-    font-size: clamp(35px, 7vw, 90px); 
-    letter-spacing: clamp(10px, 2vw, 25px); 
-    font-weight: 200; 
-    text-shadow: 0 4px 10px rgba(0,0,0,0.8); 
-    transition: 0.8s;
-}
-.split-section:hover .content h2 { letter-spacing: clamp(15px, 3vw, 40px); transform: scale(1.05); }
-
-/* ОБЩИЕ СТИЛИ КОНТЕНТА */
+/* СЕТКА И ОБО МНЕ */
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 .label { font-size: 10px; letter-spacing: 6px; color: #444; display: block; margin-bottom: 30px; }
 .masonry-grid { column-count: 3; column-gap: 12px; }
-.masonry-item { break-inside: avoid; margin-bottom: 12px; cursor: pointer; transition: 0.4s; }
-.masonry-item img { width: 100%; display: block; transition: 0.4s; }
-.masonry-item:hover img { transform: scale(1.02); }
+.masonry-item img { width: 100%; display: block; }
 
-/* ОБО МНЕ */
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
 .about-photo img { width: 100%; filter: grayscale(10%); }
-.about-text h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 200; line-height: 1.2; margin-bottom: 25px; }
-.about-text p { font-size: 15px; opacity: 0.6; line-height: 1.8; margin-bottom: 20px; }
+.about-text h2 { font-size: 42px; font-weight: 200; line-height: 1.2; margin-bottom: 25px; }
+.about-text p { font-size: 15px; opacity: 0.6; line-height: 1.8; }
 .divider { width: 40px; height: 1px; background: #333; margin: 30px 0; }
-.specs { font-size: 11px; letter-spacing: 2px; color: #555; }
 
-/* СВЯЗЬ (GRID) */
+/* СВЯЗЬ (СТРОГИЙ ТЕКСТ) */
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
 .contact-header h2 { font-size: 42px; font-weight: 200; margin-bottom: 20px; line-height: 1.2; }
 .contact-header p { font-size: 15px; opacity: 0.5; max-width: 350px; line-height: 1.6; }
-.contact-links { display: flex; flex-direction: column; gap: 10px; }
-.contact-item { display: flex; align-items: center; gap: 20px; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.4s; opacity: 0.6; }
-.contact-item span { font-size: 16px; font-weight: 300; letter-spacing: 1px; }
+
+.contact-links { display: flex; flex-direction: column; gap: 5px; }
+.contact-item { display: flex; align-items: center; gap: 10px; padding: 22px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.4s; opacity: 0.5; }
+.contact-type { font-size: 10px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+.contact-val { font-size: 16px; font-weight: 200; letter-spacing: 1px; }
+
 a.contact-item:hover { opacity: 1; padding-left: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
 
-.phone-large { opacity: 1; border: none; margin-top: 15px; }
-.phone-large span { font-size: 24px; font-weight: 200; letter-spacing: 2px; }
+/* ТЕЛЕФОН */
+.phone-large { opacity: 1; border: none; margin-top: 20px; }
+.phone-large .contact-val { font-size: clamp(24px, 4vw, 32px); letter-spacing: 2px; }
 
 /* ЛАЙТБОКС */
-.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-.lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+.lightbox img { max-width: 90%; max-height: 90%; }
 
-/* МОБИЛЬНАЯ ВЕРСИЯ */
+/* МОБИЛКА */
 @media (max-width: 768px) {
     .split-container { flex-direction: column; padding-top: 150px; }
-    .content h2 { font-size: 12vw; letter-spacing: 12px; font-weight: 300; }
-    .container { padding: 0 20px; }
-    .masonry-grid { column-count: 2; }
+    .content h2 { font-size: 12vw; letter-spacing: 8px; }
     .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
     .contact-links { align-items: center; }
     .divider { margin: 25px auto; }
