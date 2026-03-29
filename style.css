@@ -1,4 +1,4 @@
-/* --- Базовые сбросы --- */
+/* --- Сброс стилей --- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -10,67 +10,99 @@ body {
     background-color: #000;
     height: 100vh;
     width: 100vw;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
-/* --- Главный контейнер --- */
+/* --- Хедер --- */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 40px 0;
+    background: transparent;
+}
+
+.main-header nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 40px;
+}
+
+.main-header nav a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 11px;
+    letter-spacing: 3px;
+    font-weight: 300;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.main-header nav a:hover {
+    opacity: 0.5;
+}
+
+/* --- Сплит-контейнер --- */
 .split-container {
-    display: flex; 
+    display: flex;
     height: 100vh;
     width: 100vw;
 }
 
-/* --- Разделы (строго 50/50) --- */
 .split-section {
-    flex: 1; /* Всегда 50% */
+    flex: 1; /* Ровно 50/50 */
     position: relative;
     overflow: hidden;
     cursor: pointer;
     text-decoration: none;
 }
 
-/* --- Работа с фонами --- */
-
+/* --- Слои фона --- */
 .bg-bw, .bg-color {
     position: absolute;
-    top: -2%; 
+    top: -2%;
     left: -2%;
-    width: 104%; 
-    height: 104%; 
+    width: 104%;
+    height: 104%;
     background-size: cover;
     background-position: center;
-    transition: opacity 0.6s ease, filter 0.6s ease;
+    transition: opacity 0.7s ease, filter 0.7s ease;
 }
 
-/* Черно-белый слой: размыт по умолчанию */
+/* Ч/Б + Блюр в покое */
 .bg-bw {
     z-index: 1;
     opacity: 1;
-    filter: blur(10px) grayscale(100%); 
+    filter: blur(12px) grayscale(100%);
 }
 
-/* Цветной слой: скрыт и размыт */
+/* Цветной + Блюр (скрыт) */
 .bg-color {
     z-index: 2;
     opacity: 0;
-    filter: blur(10px) grayscale(0%);
+    filter: blur(12px) grayscale(0%);
 }
 
-/* ПРИ НАВЕДЕНИИ: убираем блюр и проявляем цвет */
+/* Эффект при наведении: убираем блюр и включаем цвет */
 .split-section:hover .bg-color {
     opacity: 1;
-    filter: blur(0px) grayscale(0%); /* Становится резким */
+    filter: blur(0px) grayscale(0%);
 }
 
-/* Затемнение для читаемости текста */
+/* Затемнение фона для читаемости */
 .bg-bw::after {
     content: '';
     position: absolute;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); 
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
-/* --- Текст --- */
+/* --- Заголовки разделов --- */
 .content {
     position: absolute;
     top: 50%;
@@ -83,21 +115,31 @@ body {
 
 .content h2 {
     color: #fff;
-    font-size: clamp(3rem, 8vw, 5rem);
+    font-size: clamp(3rem, 10vw, 6rem);
     text-transform: uppercase;
     font-weight: 200;
     letter-spacing: 15px;
-    transition: letter-spacing 0.5s ease, opacity 0.3s ease;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    transition: letter-spacing 0.5s ease;
+    text-shadow: 0 5px 20px rgba(0,0,0,0.6);
 }
 
-/* При наведении текст становится чуть четче или буквы разъезжаются */
 .split-section:hover h2 {
-    letter-spacing: 20px;
-    opacity: 1;
+    letter-spacing: 25px;
 }
 
-/* Неактивная половина при наведении на соседа (опционально) */
-.split-container:has(.split-section:hover) .split-section:not(:hover) {
-    opacity: 0.8;
+/* Адаптив под мобилки */
+@media (max-width: 768px) {
+    .split-container {
+        flex-direction: column;
+    }
+    .main-header {
+        padding: 20px 0;
+    }
+    .main-header nav ul {
+        gap: 15px;
+    }
+    .content h2 {
+        font-size: 3rem;
+        letter-spacing: 10px;
+    }
 }
