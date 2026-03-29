@@ -1,45 +1,104 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { font-family: 'Helvetica', Arial, sans-serif; background: #fff; color: #000; line-height: 1.6; }
-
-header {
-    position: fixed; top: 0; width: 100%; padding: 40px 20px;
-    display: flex; flex-direction: column; align-items: center;
-    background: rgba(255,255,255,0.95); z-index: 1000;
-}
-.logo { font-size: 22px; letter-spacing: 8px; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; }
-nav a { text-decoration: none; color: #000; margin: 0 15px; font-size: 10px; letter-spacing: 2px; font-weight: 400; }
-
-section { padding: 120px 0; min-height: 100vh; display: flex; align-items: center; }
-
-/* ТЕМНЫЙ БЛОК */
-.dark-block { background: #000; color: #fff; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; width: 100%; }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.about-photo img { width: 100%; filter: grayscale(20%); border-radius: 2px; }
-.label { font-size: 9px; letter-spacing: 4px; color: #888; display: block; margin-bottom: 30px; text-transform: uppercase; }
-h2 { font-size: 36px; font-weight: 200; margin-bottom: 40px; letter-spacing: 1px; }
-ul li { margin-bottom: 20px; font-size: 15px; font-weight: 300; opacity: 0.9; list-style: none; }
-
-/* ГАЛЕРЕЯ */
-.mosaic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
-.mosaic-grid img { width: 100%; height: auto; display: block; object-fit: contain; transition: opacity 0.4s; }
-.mosaic-grid img:hover { opacity: 0.7; }
-
-/* КОНТАКТЫ */
-.contact-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; padding: 0 40px; width: 100%; }
-.contact-form { display: flex; flex-direction: column; gap: 25px; }
-.contact-form input, .contact-form textarea {
-    padding: 15px 0; border: none; border-bottom: 1px solid #e0e0e0; font-family: inherit; outline: none; font-size: 14px;
-}
-.contact-form button {
-    background: #000; color: #fff; padding: 18px; border: none; cursor: pointer; letter-spacing: 3px; font-size: 12px; margin-top: 10px;
+/* --- Базовые сбросы --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-footer { padding: 80px; text-align: center; font-size: 10px; letter-spacing: 2px; color: #bbb; text-transform: uppercase; }
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #000;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* Запрещаем скролл на этом экране */
+}
 
-/* Мобильная версия */
-@media (max-width: 768px) {
-    .about-grid, .contact-container, .mosaic-grid { grid-template-columns: 1fr; }
-    .about-grid { gap: 40px; }
+/* --- Главный контейнер --- */
+.split-container {
+    display: flex; /* Делим экран пополам */
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- Стили для каждой половины --- */
+.split-section {
+    flex: 1; /* В покое каждая половина занимает 50% */
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none; /* Убираем подчеркивание ссылки */
+    /* ПЛАВНОСТЬ расширения (flex) */
+    transition: flex 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+/* --- ЛОГИКА НАВЕДЕНИЯ (HOVER) --- */
+
+/* Раздел, на который навели, расширяется (забирает 65% места) */
+.split-section:hover {
+    flex: 1.8; /* Соотношение 1.8 к 1 (примерно 65% на 35%) */
+}
+
+/* --- Работа с фонами --- */
+
+/* Базовые стили для обоих слоев фона */
+.bg-bw, .bg-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    /* ПЛАВНОСТЬ смены прозрачности */
+    transition: opacity 0.6s ease;
+}
+
+/* Черно-белый слой: всегда виден в покое */
+.bg-bw {
+    z-index: 1;
+    opacity: 1;
+}
+
+/* Цветной слой: изначально скрыт */
+.bg-color {
+    z-index: 2;
+    opacity: 0;
+}
+
+/* ПРИ НАВЕДЕНИИ: цветной слой плавно проявляется поверх ч/б */
+.split-section:hover .bg-color {
+    opacity: 1;
+}
+
+/* Добавим легкое затемнение черно-белому фону, когда цветной не активен, 
+   чтобы текст лучше читался */
+.bg-bw::after {
+    content: '';
+    position: absolute;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* затемнение 40% */
+}
+
+/* --- Текст (Auto / People) --- */
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+}
+
+.content h2 {
+    color: #fff;
+    font-size: 5rem; /* Ооочень большие буквы */
+    text-transform: uppercase;
+    font-weight: 200; /* Тонкий шрифт для стиля */
+    letter-spacing: 20px; /* Сильная растяжка букв */
+    transition: letter-spacing 0.5s ease;
+}
+
+/* Эффект при наведении на текст: буквы чуть разъезжаются */
+.split-section:hover h2 {
+    letter-spacing: 30px;
 }

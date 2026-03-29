@@ -1,51 +1,32 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JXSTCALLMESANYA | Portfolio</title>
+    <title>Sanya Photography | Select</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <div class="logo">JXSTCALLMESANYA</div>
-        <nav>
-            <a href="#about">ОБО МНЕ</a>
-            <a href="#portfolio">ПОРТФОЛИО</a>
-            <a href="#contacts">КОНТАКТЫ</a>
-        </nav>
-    </header>
-
-    <section id="hero">
-        <div class="hero-image">
-            <img src="img/auto/1.jpg" alt="Featured Work">
-        </div>
-    </section>
-
-    <section id="about" class="dark-block">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-text">
-                    <span class="label">ОБО МНЕ</span>
-                    <h2>Интересные факты</h2>
-                    <ul>
-                        <li>Автомобильный фотограф и видеомонтажер.</li>
-                        <li>Работаю с Sony A7 III и Tamron 28-75mm G2.</li>
-                        <li>Снимаю эстетику машин и атмосферные портреты.</li>
-                    </ul>
-                </div>
-                <div class="about-photo">
-                    <img src="img/me.jpg" alt="Sanya">
-                </div>
+    <div class="split-container">
+        
+        <a href="auto.html" class="split-section auto">
+            <div class="bg-bw" style="background-image: url('img/auto_b.jpg');"></div>
+            <div class="bg-color" style="background-image: url('img/auto_a.jpg');"></div>
+            <div class="content">
+                <h2>Auto</h2>
             </div>
-        </div>
-    </section>
+        </a>
 
-    <section id="portfolio">
-        <div class="container">
-            <span class="label">ПОРТФОЛИО</span>
-            <div class="mosaic-grid" id="gallery">
-                </div>
-        </div>
-    </section>
+        <a href="people.html" class="split-section people">
+            <div class="bg-bw" style="background-image: url('img/people_b.jpg');"></div>
+            <div class="bg-color" style="background-image: url('img/people_a.jpg');"></div>
+            <div class="content">
+                <h2>People</h2>
+            </div>
+        </a>
+
+    </div>
+
+</body>
+</html>
