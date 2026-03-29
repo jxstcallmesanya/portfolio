@@ -3,14 +3,14 @@ const config = {
     peopleCount: 16
 };
 
-// Список папок галереи
+// Сюда добавляем папки проектов
 const galleries = [
     { id: 'drift', title: 'DRIFT DAY 2026', cover: '1.jpg' }
 ];
 
 function showSection(id) {
-    const sections = document.querySelectorAll('.split-container, .full-screen-content');
-    sections.forEach(s => {
+    window.scrollTo(0, 0);
+    document.querySelectorAll('.split-container, .full-screen-content').forEach(s => {
         s.classList.remove('active');
         s.style.display = 'none';
     });
@@ -21,67 +21,55 @@ function showSection(id) {
     }
 }
 
-// Умная загрузка фото
-function loadImages(containerId, folder, count, shuffle = false) {
+// Загрузка фото в архивы (Авто / Люди)
+function loadArchive(containerId, folder, count) {
     const grid = document.getElementById(containerId);
+    if (!grid) return;
     grid.innerHTML = '';
-    let paths = [];
-    for(let i = 1; i <= count; i++) paths.push(`img/${folder}/${i}.jpg`);
     
-    if(shuffle) paths.sort(() => Math.random() - 0.5);
+    // Генерируем массив и перемешиваем
+    let items = [];
+    for(let i = 1; i <= count; i++) {
+        items.push(`img/${folder}/${i}.jpg`);
+    }
+    items.sort(() => Math.random() - 0.5);
 
-    paths.forEach((src) => {
+    items.forEach((src) => {
         const item = document.createElement('div');
         item.className = 'masonry-item';
-        
         const img = new Image();
-        img.dataset.src = src; // Используем data-src для Lazy Load
-        img.className = 'lazy-img';
+        img.src = src;
+        img.loading = "lazy";
+        img.onload = () => img.classList.add('loaded');
+        img.onerror = () => item.remove(); // Удаляем блок, если фото не найдено
         
         item.appendChild(img);
         item.onclick = () => openLightbox(src);
         grid.appendChild(item);
-        
-        // Наблюдатель: грузим только когда фото в зоне видимости
-        observer.observe(img);
     });
 }
 
-// Intersection Observer для ленивой загрузки
-const observer = new IntersectionObserver((entries, self) => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.onload = () => img.classList.add('loaded');
-            self.unobserve(img);
-        }
-    });
-}, { rootMargin: '200px' });
-
+// Загрузка конкретной галереи
 async function openSubGallery(folderId, title) {
     showSection('sub-gallery');
     document.getElementById('sub-gallery-title').innerText = title;
     const grid = document.getElementById('sub-gallery-masonry');
     grid.innerHTML = '';
     
-    // Прямой перебор для папок (макс 100)
-    for(let i = 1; i <= 100; i++) {
+    // Пробуем загрузить первые 50 фото в папке проекта
+    for(let i = 1; i <= 50; i++) {
         const src = `img/gallery/${folderId}/${i}.jpg`;
-        const exists = await new Promise(r => {
-            const img = new Image(); img.src = src;
-            img.onload = () => r(true); img.onerror = () => r(false);
-        });
-        if(exists) {
-            const item = document.createElement('div');
-            item.className = 'masonry-item';
-            const img = document.createElement('img');
-            img.src = src;
-            img.onload = () => img.classList.add('loaded');
+        const item = document.createElement('div');
+        item.className = 'masonry-item';
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            img.classList.add('loaded');
             item.appendChild(img);
             item.onclick = () => openLightbox(src);
             grid.appendChild(item);
-        } else break;
+        };
+        img.onerror = () => item.remove();
     }
 }
 
@@ -90,30 +78,32 @@ function renderGalleryList() {
     if(!list) return;
     list.innerHTML = '';
     galleries.forEach(g => {
-        const card = document.createElement('div');
-        card.className = 'gallery-card';
-        card.innerHTML = `<img src="img/gallery/${g.id}/${g.cover}"><h3>${g.title}</h3>`;
-        card.onclick = () => openSubGallery(g.id, g.title);
-        list.appendChild(card);
+        const div = document.createElement('div');
+        div.className = 'gallery-card';
+        div.innerHTML = `<img src="img/gallery/${g.id}/${g.cover}"><div class="gallery-info"><h3>${g.title}</h3></div>`;
+        div.onclick = () => openSubGallery(g.id, g.title);
+        list.appendChild(div);
     });
 }
 
-function showAuto() { showSection('auto-feed'); loadImages('auto-masonry', 'auto', config.autoCount, true); }
-function showPeople() { showSection('people-feed'); loadImages('people-masonry', 'people', config.peopleCount, true); }
+// Функции кнопок
+function showAuto() { showSection('auto-feed'); loadArchive('auto-masonry', 'auto', config.autoCount); }
+function showPeople() { showSection('people-feed'); loadArchive('people-masonry', 'people', config.peopleCount); }
 
-// Обработка навигации
+// Навигация (делегирование)
 document.addEventListener('click', (e) => {
     const link = e.target.closest('nav a');
     if(!link) return;
+    const text = link.textContent.toUpperCase();
     
-    if(link.textContent.includes('ГАЛЕРЕЯ')) {
+    if(text.includes('ГАЛЕРЕЯ')) {
         e.preventDefault();
         showSection('gallery');
         renderGalleryList();
-    } else if(link.textContent.includes('ОБО МНЕ')) {
+    } else if(text.includes('ОБО МНЕ')) {
         e.preventDefault();
         showSection('about');
-    } else if(link.textContent.includes('СВЯЗЬ')) {
+    } else if(text.includes('СВЯЗЬ')) {
         e.preventDefault();
         showSection('contact');
     }
@@ -121,13 +111,9 @@ document.addEventListener('click', (e) => {
 
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
-    const img = document.getElementById('lightbox-img');
-    img.src = src;
+    document.getElementById('lightbox-img').src = src;
     lb.style.display = 'flex';
 }
-
-function closeLightbox() {
-    document.getElementById('lightbox').style.display = 'none';
-}
+function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
