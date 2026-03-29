@@ -10,45 +10,48 @@ function showSection(sectionId) {
     const target = document.getElementById(sectionId + '-section') || document.getElementById(sectionId);
     if(target) {
         target.style.display = 'flex';
-        target.scrollTop = 0; // СБРОС СКРОЛЛА: Критично для этой задачи
-        setTimeout(() => target.classList.add('active'), 20);
+        target.scrollTop = 0; // Всегда начинаем просмотр сверху
+        requestAnimationFrame(() => target.classList.add('active'));
     }
 }
 
-function showAuto() {
-    showSection('auto-feed');
-    const grid = document.getElementById('auto-masonry');
+function generateGallery(containerId, count, folder) {
+    const grid = document.getElementById(containerId);
     grid.innerHTML = '';
-    for(let i = 1; i <= config.autoCount; i++) {
+    const fragment = document.createDocumentFragment();
+
+    for(let i = 1; i <= count; i++) {
         const item = document.createElement('div');
         item.className = 'masonry-item';
-        item.innerHTML = `<img src="img/auto/${i}.jpg" loading="lazy" onerror="this.parentElement.style.display='none'">`;
-        item.onclick = () => openLightbox(`img/auto/${i}.jpg`);
-        grid.appendChild(item);
+        
+        const img = document.createElement('img');
+        img.src = `img/${folder}/${i}.jpg`;
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+        
+        img.onload = () => img.classList.add('loaded');
+        img.onerror = () => item.style.display = 'none';
+        
+        item.appendChild(img);
+        item.onclick = () => openLightbox(img.src);
+        fragment.appendChild(item);
     }
+    grid.appendChild(fragment);
 }
 
-function showPeople() {
-    showSection('people-feed');
-    const grid = document.getElementById('people-masonry');
-    grid.innerHTML = '';
-    for(let i = 1; i <= config.peopleCount; i++) {
-        const item = document.createElement('div');
-        item.className = 'masonry-item';
-        item.innerHTML = `<img src="img/people/${i}.jpg" loading="lazy" onerror="this.parentElement.style.display='none'">`;
-        item.onclick = () => openLightbox(`img/people/${i}.jpg`);
-        grid.appendChild(item);
-    }
-}
+function showAuto() { showSection('auto-feed'); generateGallery('auto-masonry', config.autoCount, 'auto'); }
+function showPeople() { showSection('people-feed'); generateGallery('people-masonry', config.peopleCount, 'people'); }
 
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-img').src = src;
+    const img = document.getElementById('lightbox-img');
+    img.src = src;
     lb.style.display = 'flex';
 }
 
 function closeLightbox() {
     document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lightbox-img').src = '';
 }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
