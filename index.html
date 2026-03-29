@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JXSTCALLMESANYA | Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="main-header">
-        <div class="brand">
-            <a href="#" onclick="showSection('main')">JXSTCALLMESANYA</a>
-        </div>
+        <div class="brand"><a href="#" onclick="showSection('main')">JXSTCALLMESANYA</a></div>
         <nav>
             <ul>
                 <li><a href="#" onclick="showSection('about')">ОБО МНЕ</a></li>
@@ -23,15 +23,35 @@
     </header>
 
     <div id="main-section" class="split-container active">
-        <div onclick="showAuto()" class="split-section section-auto">
+        <div onclick="showAuto()" class="split-section">
             <div class="bg-bw" style="background-image: url('img/auto_b.jpg');"></div>
             <div class="bg-color" style="background-image: url('img/auto_a.jpg');"></div>
             <div class="content"><h2>АВТО</h2></div>
         </div>
-        <div onclick="showPeople()" class="split-section section-people">
+        <div onclick="showPeople()" class="split-section">
             <div class="bg-bw" style="background-image: url('img/people_b.jpg');"></div>
             <div class="bg-color" style="background-image: url('img/people_a.jpg');"></div>
             <div class="content"><h2>ЛЮДИ</h2></div>
+        </div>
+    </div>
+
+    <div id="auto-feed-section" class="full-screen-content">
+        <div class="container">
+            <div class="feed-header">
+                <span class="label">АРХИВ</span>
+                <h2>АВТОМОБИЛИ</h2>
+            </div>
+            <div class="masonry-grid" id="auto-masonry"></div>
+        </div>
+    </div>
+
+    <div id="people-feed-section" class="full-screen-content">
+        <div class="container">
+            <div class="feed-header">
+                <span class="label">АРХИВ</span>
+                <h2>ЛЮДИ</h2>
+            </div>
+            <div class="masonry-grid" id="people-masonry"></div>
         </div>
     </div>
 
@@ -44,29 +64,22 @@
 
     <div id="sub-gallery-section" class="full-screen-content">
         <div class="container">
-            <a href="#" onclick="showSection('gallery')" class="back-btn">← НАЗАД К ПРОЕКТАМ</a>
+            <a href="#" onclick="showSection('gallery')" class="back-btn">← НАЗАД</a>
             <h2 id="sub-gallery-title" class="gallery-title"></h2>
             <div class="masonry-grid" id="sub-gallery-masonry"></div>
         </div>
     </div>
 
-    <div id="auto-feed-section" class="full-screen-content">
-        <div class="container"><span class="label">АРХИВ: АВТО</span><div class="masonry-grid" id="auto-masonry"></div></div>
-    </div>
-    <div id="people-feed-section" class="full-screen-content">
-        <div class="container"><span class="label">АРХИВ: ЛЮДИ</span><div class="masonry-grid" id="people-masonry"></div></div>
-    </div>
-
     <div id="about-section" class="full-screen-content about-view">
         <div class="container">
             <div class="about-grid">
-                <div class="about-photo"><img src="img/me.jpg" alt="Саня"></div>
+                <div class="about-photo"><img src="img/me.jpg" alt="Me"></div>
                 <div class="about-text">
                     <span class="label">ОБО МНЕ</span>
-                    <h2>Запечатлеть душу <br> металла и людей.</h2>
-                    <p>Меня зовут Саня. Я вижу эстетику там, где другие видят просто металл.</p>
+                    <h2>Эстетика в деталях.</h2>
+                    <p>Sony a7 III / Tamron 28-75 G2</p>
                     <div class="divider"></div>
-                    <p class="specs">Sony A7 III / Tamron 28-75 G2</p>
+                    <p>Специализируюсь на автомобильной и репортажной съемке. Моя цель — передать характер через объектив.</p>
                 </div>
             </div>
         </div>
@@ -74,21 +87,15 @@
 
     <div id="contact-section" class="full-screen-content">
         <div class="container">
-            <div class="contact-grid">
-                <div class="contact-header">
-                    <span class="label">СВЯЗЬ</span>
-                    <h2>Давайте создадим <br> что-то легендарное.</h2>
-                </div>
-                <div class="contact-links">
-                    <a href="https://t.me/designer212" target="_blank" class="contact-item">@designer212</a>
-                    <a href="https://vk.com/veilside777" target="_blank" class="contact-item">vk.com/veilside777</a>
-                    <a href="mailto:veilside7774@gmail.com" class="contact-item">veilside7774@gmail.com</a>
-                </div>
+            <div class="contact-links">
+                <a href="https://t.me/designer212" target="_blank" class="contact-item">TELEGRAM</a>
+                <a href="https://vk.com/veilside777" target="_blank" class="contact-item">VK</a>
+                <a href="mailto:veilside7774@gmail.com" class="contact-item">EMAIL</a>
             </div>
         </div>
     </div>
 
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src=""></div>
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="Full view"></div>
 
     <script src="script.js"></script>
 </body>
