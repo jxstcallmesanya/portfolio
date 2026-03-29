@@ -12,9 +12,9 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
     padding: 40px 0; text-align: center;
     background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
 }
-.brand a { font-size: clamp(12px, 4vw, 15px); letter-spacing: 10px; text-transform: uppercase; font-weight: 300; }
+.brand a { font-size: clamp(12px, 4vw, 15px); letter-spacing: 12px; text-transform: uppercase; font-weight: 200; }
 .main-header nav ul { display: flex; justify-content: center; list-style: none; gap: clamp(15px, 5vw, 40px); margin-top: 25px; }
-.main-header nav a { font-size: 10px; letter-spacing: 3px; opacity: 0.5; transition: 0.3s; }
+.main-header nav a { font-size: 10px; letter-spacing: 4px; opacity: 0.5; transition: 0.3s; }
 .main-header nav a:hover { opacity: 1; }
 
 /* ПЕРЕКЛЮЧЕНИЯ */
@@ -24,13 +24,15 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 .active { display: flex !important; opacity: 1; }
 .full-screen-content { flex-direction: column; overflow-y: auto; padding: 160px 0 80px; }
 
-/* ГЛАВНЫЙ ЭКРАН (ТЕКСТ И ФОН) */
+/* ГЛАВНЫЙ ЭКРАН (ТОНКИЙ ТЕКСТ И ТЕМНЫЙ ФОН) */
 .split-section { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
 
 .bg-bw { 
     z-index: 1; 
-    filter: grayscale(100%) brightness(0.25); /* Усилили затемнение для контраста */
+    /* УСИЛИЛИ ЗАТЕМНЕНИЕ */
+    filter: grayscale(100%) brightness(0.2); 
+    transition: 1.2s ease;
 }
 .bg-color { z-index: 2; opacity: 0; filter: blur(15px); }
 .split-section:hover .bg-color { opacity: 1; filter: blur(0px); }
@@ -39,9 +41,11 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 .content h2 { 
     font-size: clamp(40px, 7vw, 90px); 
     letter-spacing: clamp(10px, 2vw, 25px); 
-    font-weight: 500; /* Жирный шрифт */
+    /* ВЕРНУЛИ ТОНКИЙ ШРИФТ */
+    font-weight: 200; 
     opacity: 1;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.9); /* Тень для читаемости */
+    /* ТЕНЬ СТАЛА МЯГЧЕ, НО ОНА ЕСТЬ */
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8); 
     transition: 0.8s;
 }
 .split-section:hover .content h2 { letter-spacing: clamp(15px, 3vw, 40px); transform: scale(1.05); }
@@ -69,7 +73,7 @@ a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 /* МОБИЛЬНАЯ ВЕРСИЯ */
 @media (max-width: 768px) {
     .split-container { flex-direction: column; }
-    .content h2 { font-size: 12vw; letter-spacing: 12px; font-weight: 600; }
+    .content h2 { font-size: 12vw; letter-spacing: 12px; font-weight: 300; }
     
     .masonry-grid { column-count: 2; column-gap: 8px; }
     .container { padding: 0 15px; }
