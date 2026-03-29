@@ -1,9 +1,8 @@
 const config = {
     autoCount: 49,
-    peopleCount: 16
+    peopleCount: 21
 };
 
-// Твои спец-проекты (папки в img/gallery/)
 const galleries = [
     { id: 'drift', title: 'DRIFT DAY 2026', cover: '1.jpg' }
 ];
@@ -21,47 +20,43 @@ function showSection(id) {
         requestAnimationFrame(() => target.classList.add('active'));
     }
 
-    // Авто-рендеринг галереи при входе в раздел
     if (id === 'gallery') {
         renderGalleryList();
     }
 }
 
-// Загрузка фото в разделы Авто/Люди
+// ЗАГРУЗКА В ОБРАТНОМ ПОРЯДКЕ (49 -> 1, 21 -> 1)
 function loadArchive(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
     
-    let items = [];
-    for(let i = 1; i <= count; i++) {
-        items.push(`img/${folder}/${i}.jpg`);
-    }
-    items.sort(() => Math.random() - 0.5);
-
-    items.forEach((src) => {
+    for(let i = count; i >= 1; i--) {
+        const src = `img/${folder}/${i}.jpg`;
         const item = document.createElement('div');
         item.className = 'masonry-item';
+        
         const img = new Image();
         img.src = src;
         img.loading = "lazy";
-        img.onload = () => img.classList.add('loaded');
-        img.onerror = () => item.remove();
         
-        item.appendChild(img);
-        item.onclick = () => openLightbox(src);
-        grid.appendChild(item);
-    });
+        img.onload = () => {
+            img.classList.add('loaded');
+            item.appendChild(img);
+            item.onclick = () => openLightbox(src);
+            grid.appendChild(item);
+        };
+        img.onerror = () => item.remove();
+    }
 }
 
-// Открытие папки проекта
 async function openSubGallery(folderId, title) {
     showSection('sub-gallery');
     document.getElementById('sub-gallery-title').innerText = title;
     const grid = document.getElementById('sub-gallery-masonry');
     grid.innerHTML = '';
     
-    for(let i = 1; i <= 50; i++) {
+    for(let i = 1; i <= 60; i++) {
         const src = `img/gallery/${folderId}/${i}.jpg`;
         const item = document.createElement('div');
         item.className = 'masonry-item';
@@ -93,7 +88,6 @@ function renderGalleryList() {
 function showAuto() { showSection('auto-feed'); loadArchive('auto-masonry', 'auto', config.autoCount); }
 function showPeople() { showSection('people-feed'); loadArchive('people-masonry', 'people', config.peopleCount); }
 
-// Навигация из меню
 document.addEventListener('click', (e) => {
     const link = e.target.closest('nav a');
     if(!link) return;
