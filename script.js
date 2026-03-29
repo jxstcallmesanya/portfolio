@@ -1,20 +1,14 @@
 function showSection(sectionId) {
-    // Скрываем все секции
     document.querySelectorAll('.split-container, .full-screen-content').forEach(section => {
         section.classList.remove('active');
+        setTimeout(() => { if(!section.classList.contains('active')) section.style.display = 'none'; }, 600);
     });
 
-    // Показываем нужную
-    if (sectionId === 'main') {
-        document.getElementById('main-section').classList.add('active');
-    } else if (sectionId === 'about') {
-        document.getElementById('about-section').classList.add('active');
-    } else if (sectionId === 'contact') {
-        document.getElementById('contact-section').classList.add('active');
-    }
+    const target = document.getElementById(sectionId + '-section');
+    target.style.display = 'flex';
+    setTimeout(() => { target.classList.add('active'); }, 10);
 }
 
-// При загрузке показываем главную
 document.addEventListener('DOMContentLoaded', () => {
     showSection('main');
 });
