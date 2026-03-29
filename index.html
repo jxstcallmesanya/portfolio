@@ -16,34 +16,50 @@
         <nav>
             <ul>
                 <li><a href="#" onclick="showSection('about')">ОБО МНЕ</a></li>
+                <li><a href="#" onclick="showSection('gallery')">GALLERY</a></li>
                 <li><a href="#" onclick="showSection('contact')">СВЯЗЬ</a></li>
             </ul>
         </nav>
     </header>
 
     <div id="main-section" class="split-container active">
-        <a href="auto.html" class="split-section">
+        <a href="#" onclick="showSection('gallery')" class="split-section">
             <div class="bg-bw" style="background-image: url('img/auto_b.jpg');"></div>
             <div class="bg-color" style="background-image: url('img/auto_a.jpg');"></div>
             <div class="content"><h2>Auto</h2></div>
         </a>
-        <a href="people.html" class="split-section">
+        <a href="#" onclick="showSection('gallery')" class="split-section">
             <div class="bg-bw" style="background-image: url('img/people_b.jpg');"></div>
             <div class="bg-color" style="background-image: url('img/people_a.jpg');"></div>
             <div class="content"><h2>People</h2></div>
         </a>
     </div>
 
+    <div id="gallery-section" class="full-screen-content gallery-view">
+        <div class="container">
+            <span class="label">LATEST PROJECTS</span>
+            <div class="projects-grid" id="projects-list">
+                </div>
+        </div>
+    </div>
+
+    <div id="project-inner" class="full-screen-content project-inner">
+        <div class="container">
+            <a href="#" class="back-btn" onclick="showSection('gallery')">← BACK TO PROJECTS</a>
+            <h2 id="project-title">Project Name</h2>
+            <div class="photos-masonry" id="project-photos">
+                </div>
+        </div>
+    </div>
+
     <div id="about-section" class="full-screen-content">
         <div class="about-grid">
-            <div class="about-photo">
-                <img src="img/me.jpg" alt="Sanya">
-            </div>
+            <div class="about-photo"><img src="img/me.jpg" alt="Sanya"></div>
             <div class="about-text">
                 <span class="label">ABOUT ME</span>
                 <h2>Capturing the soul <br> of metal and men.</h2>
-                <p>Меня зовут Саня. Я вижу эстетику там, где другие видят просто металл. Моя задача — передать характер через кадр, будь то линии BMW M5 или взгляд человека.</p>
-                <p>Sony A7 III / Tamron 28-75 G2</p>
+                <p>Меня зовут Саня. Я вижу эстетику там, где другие видят просто металл.</p>
+                <p class="specs">Sony A7 III / Tamron 28-75 G2</p>
             </div>
         </div>
     </div>
@@ -53,8 +69,7 @@
             <span class="label">CONTACT</span>
             <h2>Let's create <br> something legendary.</h2>
             <div class="social-links">
-                <a href="https://t.me/jxstcallmesanya">TELEGRAM</a>
-                <a href="#">INSTAGRAM</a>
+                <a href="https://t.me/jxstcallmesanya" target="_blank">TELEGRAM</a>
             </div>
         </div>
     </div>

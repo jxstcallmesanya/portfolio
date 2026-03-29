@@ -1,79 +1,50 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* Дополнения к прошлому стилю */
+.container { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 40px; }
 
-body { 
-    font-family: 'Inter', sans-serif; 
-    background-color: #000; 
-    color: #fff; 
-    overflow: hidden; 
-    -webkit-font-smoothing: antialiased;
+/* Сетка проектов */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
 }
 
-/* Убираем синие ссылки по всему сайту */
-a { text-decoration: none; color: inherit; }
-
-/* ШАПКА */
-.main-header {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-    padding: 50px 0; text-align: center; background: transparent;
+.project-card {
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 3/4;
 }
 
-.brand a {
-    display: inline-block; font-size: 14px; letter-spacing: 12px; 
-    text-transform: uppercase; color: #fff; font-weight: 200;
-    transition: letter-spacing 0.5s ease, opacity 0.3s;
-}
-.brand a:hover { letter-spacing: 15px; opacity: 0.7; }
-
-.main-header nav ul {
-    display: flex; justify-content: center; list-style: none; gap: 40px; margin-top: 25px;
-}
-.main-header nav a {
-    font-size: 9px; letter-spacing: 4px; opacity: 0.4; transition: 0.4s; font-weight: 300;
-}
-.main-header nav a:hover { opacity: 1; }
-
-/* ПЕРЕКЛЮЧЕНИЕ СЕКЦИЙ */
-.split-container, .full-screen-content {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
-    display: none; opacity: 0; transition: opacity 0.6s ease-in-out;
-}
-.split-container.active, .full-screen-content.active {
-    display: flex; opacity: 1;
+.project-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
-/* СПЛИТ ЭКРАН */
-.split-section { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.project-card:hover img { transform: scale(1.05); }
 
-.bg-bw, .bg-color {
-    position: absolute; top: -2%; left: -2%; width: 104%; height: 104%;
-    background-size: cover; background-position: center; transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-}
-.bg-bw { z-index: 1; filter: blur(15px) grayscale(100%); }
-.bg-color { z-index: 2; opacity: 0; filter: blur(15px); }
-
-.split-section:hover .bg-color { opacity: 1; filter: blur(0px); }
-.split-section:hover .bg-bw { filter: blur(0px) grayscale(100%); } /* Немного резкости и для чб при наведении */
-
-.content { z-index: 10; pointer-events: none; }
-.content h2 { 
-    font-size: 7vw; text-transform: uppercase; letter-spacing: 30px; 
-    font-weight: 100; opacity: 0.8; transition: 0.5s;
-}
-.split-section:hover h2 { letter-spacing: 40px; opacity: 1; }
-
-/* ОБО МНЕ & КОНТАКТЫ */
-.full-screen-content { 
-    background: #000; align-items: center; justify-content: center; padding: 0 10%;
+.project-info {
+    position: absolute; bottom: 30px; left: 30px;
+    color: #fff; z-index: 5;
 }
 
-.about-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 100px; align-items: center; max-width: 1200px; }
-.about-photo img { width: 100%; filter: grayscale(100%) contrast(1.1); transition: 0.5s; }
-.about-photo img:hover { filter: grayscale(0%); }
+.project-info h3 { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
 
-.label { font-size: 10px; letter-spacing: 6px; color: #444; display: block; margin-bottom: 30px; }
-h2 { font-size: 42px; font-weight: 200; line-height: 1.2; margin-bottom: 30px; letter-spacing: -1px; }
-p { font-size: 16px; font-weight: 300; opacity: 0.6; margin-bottom: 20px; max-width: 450px; line-height: 1.8; }
+/* Внутренняя галерея */
+.project-inner { overflow-y: auto !important; padding-top: 150px; background: #000; }
+.back-btn { font-size: 10px; letter-spacing: 2px; color: #555; margin-bottom: 20px; display: block; }
+.back-btn:hover { color: #fff; }
+#project-title { margin-bottom: 50px; font-size: 32px; }
 
-.social-links { display: flex; gap: 30px; margin-top: 40px; }
-.social-links a { font-size: 11px; letter-spacing: 4px; opacity: 0.5; transition: 0.3s; }
-.social-links a:hover { opacity: 1; }
+.photos-masonry {
+    column-count: 2;
+    column-gap: 20px;
+}
+.photos-masonry img {
+    width: 100%; margin-bottom: 20px; display: block;
+}
+
+@media (max-width: 768px) {
+    .projects-grid { grid-template-columns: 1fr; }
+    .photos-masonry { column-count: 1; }
+}
