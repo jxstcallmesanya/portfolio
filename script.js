@@ -11,7 +11,7 @@ function showSection(sectionId) {
     if(target) {
         target.style.display = 'flex';
         target.scrollTop = 0; 
-        setTimeout(() => target.classList.add('active'), 10);
+        setTimeout(() => target.classList.add('active'), 20);
     }
 }
 
@@ -45,12 +45,10 @@ function openLightbox(src) {
     const lb = document.getElementById('lightbox');
     document.getElementById('lightbox-img').src = src;
     lb.style.display = 'flex';
-    lb.classList.add('active');
 }
 
 function closeLightbox() {
-    const lb = document.getElementById('lightbox');
-    lb.style.display = 'none';
+    document.getElementById('lightbox').style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));

@@ -4,7 +4,7 @@ body {
     background-color: #000; color: #fff; 
     overflow: hidden; -webkit-font-smoothing: antialiased;
 }
-a { text-decoration: none !important; color: #fff !important; }
+a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
 
 /* ХЕДЕР */
 .main-header {
@@ -12,67 +12,69 @@ a { text-decoration: none !important; color: #fff !important; }
     padding: 40px 0; text-align: center;
     background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
 }
-.brand a { font-size: clamp(12px, 4vw, 15px); letter-spacing: 8px; text-transform: uppercase; font-weight: 200; }
-.main-header nav ul { display: flex; justify-content: center; list-style: none; gap: clamp(15px, 5vw, 40px); margin-top: 20px; }
-.main-header nav a { font-size: 9px; letter-spacing: 2px; opacity: 0.5; }
+.brand a { font-size: clamp(12px, 4vw, 15px); letter-spacing: 10px; text-transform: uppercase; font-weight: 300; }
+.main-header nav ul { display: flex; justify-content: center; list-style: none; gap: clamp(15px, 5vw, 40px); margin-top: 25px; }
+.main-header nav a { font-size: 10px; letter-spacing: 3px; opacity: 0.5; transition: 0.3s; }
+.main-header nav a:hover { opacity: 1; }
 
-/* КОНТЕЙНЕРЫ */
+/* ПЕРЕКЛЮЧЕНИЯ */
 .split-container, .full-screen-content {
     position: absolute; inset: 0; display: none; opacity: 0; transition: opacity 0.5s ease;
 }
-.split-container.active, .full-screen-content.active { display: flex !important; opacity: 1; }
-.full-screen-content { flex-direction: column; overflow-y: auto; padding: 140px 0 60px; }
+.active { display: flex !important; opacity: 1; }
+.full-screen-content { flex-direction: column; overflow-y: auto; padding: 160px 0 80px; }
 
-/* ГЛАВНЫЙ ЭКРАН (DESKTOP) */
+/* ГЛАВНЫЙ ЭКРАН (ТЕКСТ И ФОН) */
 .split-section { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s; }
-.bg-bw { z-index: 1; filter: grayscale(100%) brightness(0.3); }
-.bg-color { z-index: 2; opacity: 0; filter: blur(10px); }
-.split-section:hover .bg-color { opacity: 1; filter: blur(0px); }
-.content { z-index: 10; pointer-events: none; }
-.content h2 { font-size: 6vw; letter-spacing: 15px; font-weight: 100; opacity: 0.8; }
+.bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
 
-/* ЛЕНТА И ПОЛЯ */
-.container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 30px; }
-.masonry-grid { column-count: 3; column-gap: 10px; }
-.masonry-item { break-inside: avoid; margin-bottom: 10px; }
-.masonry-item img { width: 100%; display: block; border-radius: 1px; }
+.bg-bw { 
+    z-index: 1; 
+    filter: grayscale(100%) brightness(0.25); /* Усилили затемнение для контраста */
+}
+.bg-color { z-index: 2; opacity: 0; filter: blur(15px); }
+.split-section:hover .bg-color { opacity: 1; filter: blur(0px); }
+
+.content { z-index: 10; pointer-events: none; text-align: center; }
+.content h2 { 
+    font-size: clamp(40px, 7vw, 90px); 
+    letter-spacing: clamp(10px, 2vw, 25px); 
+    font-weight: 500; /* Жирный шрифт */
+    opacity: 1;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.9); /* Тень для читаемости */
+    transition: 0.8s;
+}
+.split-section:hover .content h2 { letter-spacing: clamp(15px, 3vw, 40px); transform: scale(1.05); }
+
+/* ЛЕНТА И КОНТЕЙНЕРЫ */
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.label { font-size: 10px; letter-spacing: 6px; color: #555; display: block; margin-bottom: 30px; }
+
+.masonry-grid { column-count: 3; column-gap: 12px; }
+.masonry-item { break-inside: avoid; margin-bottom: 12px; cursor: pointer; }
+.masonry-item img { width: 100%; display: block; transition: 0.4s; }
+.masonry-item:hover img { transform: scale(1.02); }
 
 /* ОБО МНЕ */
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.about-photo img { width: 100%; filter: grayscale(20%); }
-.about-text h2 { font-size: clamp(24px, 5vw, 42px); font-weight: 200; line-height: 1.2; margin-bottom: 20px; }
-.about-text p { font-size: 14px; opacity: 0.6; line-height: 1.6; }
-.divider { width: 40px; height: 1px; background: #333; margin: 25px 0; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.about-photo img { width: 100%; filter: grayscale(10%); }
+.about-text h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 200; line-height: 1.2; margin-bottom: 25px; }
+.about-text p { font-size: 15px; opacity: 0.6; line-height: 1.8; margin-bottom: 20px; }
+.divider { width: 40px; height: 1px; background: #333; margin: 30px 0; }
 
 /* ЛАЙТБОКС */
 .lightbox { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; align-items: center; justify-content: center; }
-.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.lightbox img { max-width: 95%; max-height: 95%; object-fit: contain; }
 
-/* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
+/* МОБИЛЬНАЯ ВЕРСИЯ */
 @media (max-width: 768px) {
-    /* Главный экран: вертикально */
     .split-container { flex-direction: column; }
-    .content h2 { font-size: 12vw; letter-spacing: 10px; }
+    .content h2 { font-size: 12vw; letter-spacing: 12px; font-weight: 600; }
     
-    /* Убираем блюр для производительности мобилок */
-    .bg-color { filter: none; }
-    .bg-bw { filter: grayscale(100%) brightness(0.4); }
-
-    /* Лента: 2 колонки */
     .masonry-grid { column-count: 2; column-gap: 8px; }
     .container { padding: 0 15px; }
 
-    /* Обо мне: текст под фото */
-    .about-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-    .about-text { padding: 0 10px; }
-    .divider { margin: 20px auto; }
-    
-    .full-screen-content { padding-top: 120px; }
-}
-
-@media (max-width: 480px) {
-    /* На маленьких телефонах — лента в 1 колонку */
-    .masonry-grid { column-count: 1; }
-    .brand a { letter-spacing: 6px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+    .divider { margin: 25px auto; }
+    .full-screen-content { padding-top: 130px; }
 }
