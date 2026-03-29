@@ -27,15 +27,16 @@ body {
     overflow: hidden;
     cursor: pointer;
     text-decoration: none; /* Убираем подчеркивание ссылки */
+    
     /* ПЛАВНОСТЬ расширения (flex) */
     transition: flex 0.8s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
 /* --- ЛОГИКА НАВЕДЕНИЯ (HOVER) --- */
 
-/* Раздел, на который навели, расширяется (забирает 65% места) */
+/* Раздел, на который навели, расширяется */
 .split-section:hover {
-    flex: 1.8; /* Соотношение 1.8 к 1 (примерно 65% на 35%) */
+    flex: 1.8; /* Примерно 65% на 35% */
 }
 
 /* --- Работа с фонами --- */
@@ -43,40 +44,48 @@ body {
 /* Базовые стили для обоих слоев фона */
 .bg-bw, .bg-color {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: -5%; /* Немного больше, чтобы blur не создавал белых краев */
+    left: -5%;
+    width: 110%; /* Немного больше */
+    height: 110%; /* Немного больше */
     background-size: cover;
     background-position: center;
-    /* ПЛАВНОСТЬ смены прозрачности */
-    transition: opacity 0.6s ease;
+    
+    /* ПЛАВНОСТЬ смены прозрачности и размытия */
+    transition: opacity 0.6s ease, filter 0.6s ease;
 }
 
 /* Черно-белый слой: всегда виден в покое */
 .bg-bw {
     z-index: 1;
     opacity: 1;
+    /* --- ДОБАВЛЯЕМ РАЗМЫТИЕ ПРИ ПОКОЕ --- */
+    filter: blur(8px) grayscale(100%); /* Ч/Б + Blur 8px */
 }
 
 /* Цветной слой: изначально скрыт */
 .bg-color {
     z-index: 2;
     opacity: 0;
+    /* --- ДОБАВЛЯЕМ РАЗМЫТИЕ ДЛЯ ЦВЕТНОГО, ЧТОБЫ УВЕЛИЧЕНИЕ БЫЛО ПЛАВНЫМ --- */
+    filter: blur(8px) grayscale(0%); /* Blur 8px, но цветной */
 }
 
-/* ПРИ НАВЕДЕНИИ: цветной слой плавно проявляется поверх ч/б */
+/* ПРИ НАВЕДЕНИИ (Hover) */
+
+/* 1. Цветной слой плавно проявляется поверх ч/б */
 .split-section:hover .bg-color {
     opacity: 1;
+    /* --- УБИРАЕМ РАЗМЫТИЕ, ДЕЛАЕМ ФОТО РЕЗКИМ --- */
+    filter: blur(0px) grayscale(0%); /* Становится резким и цветным */
 }
 
-/* Добавим легкое затемнение черно-белому фону, когда цветной не активен, 
-   чтобы текст лучше читался */
+/* Добавим легкое затемнение черно-белому фону (для читаемости текста) */
 .bg-bw::after {
     content: '';
     position: absolute;
     width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* затемнение 40% */
+    background-color: rgba(0, 0, 0, 0.3); /* затемнение 30% */
 }
 
 /* --- Текст (Auto / People) --- */
@@ -91,14 +100,15 @@ body {
 
 .content h2 {
     color: #fff;
-    font-size: 5rem; /* Ооочень большие буквы */
+    font-size: clamp(3rem, 10vw, 5rem); /* Адаптивный размер текста */
     text-transform: uppercase;
-    font-weight: 200; /* Тонкий шрифт для стиля */
-    letter-spacing: 20px; /* Сильная растяжка букв */
+    font-weight: 200; /* Тонкий шрифт */
+    letter-spacing: 15px; /* Сильная растяжка букв */
     transition: letter-spacing 0.5s ease;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5); /* Тень для текста */
 }
 
 /* Эффект при наведении на текст: буквы чуть разъезжаются */
 .split-section:hover h2 {
-    letter-spacing: 30px;
+    letter-spacing: clamp(20px, 15vw, 25px);
 }
