@@ -1,69 +1,59 @@
-/* ОБЩИЕ СТИЛИ */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; overflow: hidden; -webkit-font-smoothing: antialiased; }
-a { text-decoration: none !important; color: #fff !important; cursor: pointer; }
+a { text-decoration: none !important; color: #fff !important; }
 
 /* ХЕДЕР */
-.main-header { 
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; 
-    background: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%); 
-}
-.brand a { font-size: clamp(12px, 4vw, 15px); letter-spacing: 12px; text-transform: uppercase; font-weight: 200; }
-.main-header nav ul { display: flex; justify-content: center; list-style: none; gap: clamp(15px, 5vw, 40px); margin-top: 25px; }
+.main-header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; background: linear-gradient(to bottom, #000 40%, transparent 100%); }
+.brand a { font-size: 14px; letter-spacing: 12px; font-weight: 200; text-transform: uppercase; }
+.main-header nav ul { display: flex; justify-content: center; list-style: none; gap: 30px; margin-top: 25px; }
 .main-header nav a { font-size: 10px; letter-spacing: 4px; opacity: 0.4; transition: 0.4s; }
 .main-header nav a:hover { opacity: 1; }
 
-/* КОНТЕЙНЕРЫ СЕКЦИЙ */
-.split-container, .full-screen-content { position: absolute; inset: 0; display: none; opacity: 0; transition: opacity 0.6s ease; }
+/* КОНТЕЙНЕРЫ */
+.split-container, .full-screen-content { position: absolute; inset: 0; display: none; opacity: 0; transition: opacity 0.5s ease; }
 .active { display: flex !important; opacity: 1; }
 
-/* ГЛАВНЫЙ ЭКРАН (ОТСТУП ОТ МЕНЮ) */
-.split-container { padding-top: 130px; background: #000; flex-direction: row; }
-.full-screen-content { flex-direction: column; overflow-y: auto; padding: 180px 0 100px; background: #000; }
+.split-container { padding-top: 130px; }
+.full-screen-content { 
+    flex-direction: column; 
+    overflow-y: auto; 
+    padding: 180px 0 100px; 
+    background: #000;
+    /* Оптимизация: не рендерить контент вне экрана */
+    content-visibility: auto; 
+}
 
-/* АВТО / ЛЮДИ */
+/* ГЛАВНАЯ */
 .split-section { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s; }
+.bg-bw, .bg-color { position: absolute; inset: -5%; background-size: cover; background-position: center; transition: 0.8s; will-change: opacity, filter; }
 .bg-bw { z-index: 1; filter: grayscale(100%) brightness(0.2); }
 .bg-color { z-index: 2; opacity: 0; filter: blur(15px); }
 .split-section:hover .bg-color { opacity: 1; filter: blur(0px); }
-.content { z-index: 10; pointer-events: none; }
-.content h2 { font-size: clamp(35px, 7vw, 90px); letter-spacing: 15px; font-weight: 200; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+.content h2 { font-size: clamp(30px, 6vw, 80px); letter-spacing: 15px; font-weight: 200; position: relative; z-index: 10; pointer-events: none; }
 
-/* КОНТЕЙНЕР И СЕТКА */
+/* ГАЛЕРЕЯ */
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 .label { font-size: 10px; letter-spacing: 6px; color: #444; display: block; margin-bottom: 30px; }
-.masonry-grid { column-count: 3; column-gap: 12px; }
-.masonry-item img { width: 100%; display: block; }
+.masonry-grid { column-count: 3; column-gap: 15px; }
+.masonry-item { break-inside: avoid; margin-bottom: 15px; cursor: pointer; background: #111; min-height: 200px; transition: 0.4s; }
+.masonry-item:hover { transform: scale(1.02); }
+.masonry-item img { width: 100%; display: block; opacity: 0; transition: opacity 0.5s; }
+.masonry-item img.loaded { opacity: 1; }
 
-/* ОБО МНЕ */
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+/* СВЯЗЬ И ОБО МНЕ */
+.about-grid, .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
 .about-photo img { width: 100%; filter: grayscale(10%); }
-.about-text h2 { font-size: 42px; font-weight: 200; line-height: 1.2; margin-bottom: 25px; }
-.about-text p { font-size: 15px; opacity: 0.6; line-height: 1.8; }
-.divider { width: 40px; height: 1px; background: #333; margin: 30px 0; }
-
-/* СВЯЗЬ */
-.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
-.contact-header h2 { font-size: 42px; font-weight: 200; margin-bottom: 20px; line-height: 1.2; }
-.contact-header p { font-size: 15px; opacity: 0.5; max-width: 350px; line-height: 1.6; }
-
 .contact-links { display: flex; flex-direction: column; gap: 5px; }
-.contact-item { display: flex; align-items: center; gap: 10px; padding: 22px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.4s; opacity: 0.5; }
-.contact-type { font-size: 10px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
-.contact-val { font-size: 16px; font-weight: 200; letter-spacing: 1px; }
-
-a.contact-item:hover { opacity: 1; padding-left: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+.contact-item { display: flex; align-items: center; gap: 10px; padding: 20px 0; border-bottom: 1px solid #111; opacity: 0.5; transition: 0.3s; }
+.contact-item:hover { opacity: 1; padding-left: 10px; }
+.contact-type { font-size: 10px; color: #555; letter-spacing: 2px; }
 
 /* ЛАЙТБОКС */
 .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-.lightbox img { max-width: 90%; max-height: 90%; }
+.lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
-/* МОБИЛКА */
 @media (max-width: 768px) {
     .split-container { flex-direction: column; padding-top: 150px; }
-    .content h2 { font-size: 12vw; letter-spacing: 8px; }
-    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-    .contact-links { align-items: center; }
-    .divider { margin: 25px auto; }
+    .masonry-grid { column-count: 2; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; text-align: center; }
 }
