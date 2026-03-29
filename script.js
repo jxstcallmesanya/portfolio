@@ -10,64 +10,45 @@ function showSection(sectionId) {
     const target = document.getElementById(sectionId + '-section') || document.getElementById(sectionId);
     if(target) {
         target.style.display = 'flex';
-        target.scrollTop = 0; 
-        requestAnimationFrame(() => target.classList.add('active'));
+        target.scrollTop = 0; // СБРОС СКРОЛЛА: Критично для этой задачи
+        setTimeout(() => target.classList.add('active'), 20);
     }
-}
-
-// Усиленная ленивая загрузка (Lazy Loading)
-function generateGallery(containerId, count, path) {
-    const grid = document.getElementById(containerId);
-    grid.innerHTML = '';
-    
-    // Создаем фрагмент документа, чтобы не перерисовывать страницу 20 раз
-    const fragment = document.createDocumentFragment();
-
-    for(let i = 1; i <= count; i++) {
-        const item = document.createElement('div');
-        item.className = 'masonry-item';
-        
-        const img = document.createElement('img');
-        img.src = `img/${path}/${i}.jpg`;
-        // loading="lazy" заставляет браузер грузить фото только при подходе к ним
-        // decoding="async" не блокирует поток отрисовки
-        img.setAttribute('loading', 'lazy');
-        img.setAttribute('decoding', 'async');
-        img.setAttribute('alt', `Photo ${i}`);
-        
-        // Показываем картинку только когда она физически загрузилась
-        img.onload = () => { img.classList.add('loaded'); };
-        // Скрываем блок целиком, если фото вообще не найдено
-        img.onerror = () => { item.style.display = 'none'; };
-        
-        item.appendChild(img);
-        item.onclick = () => openLightbox(img.src);
-        fragment.appendChild(item);
-    }
-    grid.appendChild(fragment);
 }
 
 function showAuto() {
     showSection('auto-feed');
-    generateGallery('auto-masonry', config.autoCount, 'auto');
+    const grid = document.getElementById('auto-masonry');
+    grid.innerHTML = '';
+    for(let i = 1; i <= config.autoCount; i++) {
+        const item = document.createElement('div');
+        item.className = 'masonry-item';
+        item.innerHTML = `<img src="img/auto/${i}.jpg" loading="lazy" onerror="this.parentElement.style.display='none'">`;
+        item.onclick = () => openLightbox(`img/auto/${i}.jpg`);
+        grid.appendChild(item);
+    }
 }
 
 function showPeople() {
     showSection('people-feed');
-    generateGallery('people-masonry', config.peopleCount, 'people');
+    const grid = document.getElementById('people-masonry');
+    grid.innerHTML = '';
+    for(let i = 1; i <= config.peopleCount; i++) {
+        const item = document.createElement('div');
+        item.className = 'masonry-item';
+        item.innerHTML = `<img src="img/people/${i}.jpg" loading="lazy" onerror="this.parentElement.style.display='none'">`;
+        item.onclick = () => openLightbox(`img/people/${i}.jpg`);
+        grid.appendChild(item);
+    }
 }
 
-// Лайтбокс: предзагрузка картинки
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
-    const img = document.getElementById('lightbox-img');
-    img.src = src;
+    document.getElementById('lightbox-img').src = src;
     lb.style.display = 'flex';
 }
 
 function closeLightbox() {
     document.getElementById('lightbox').style.display = 'none';
-    document.getElementById('lightbox-img').src = ''; // Очищаем память
 }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
