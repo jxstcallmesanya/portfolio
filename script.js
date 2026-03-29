@@ -1,7 +1,14 @@
-// База данных проектов (пока пустая, чтобы ничего не ломалось)
+// Твоя база данных съемок
 const projects = [
-    // Пример:
-    // { id: 'test', title: 'Test Project', cover: 'img/auto_a.jpg', folder: 'img/', count: 0 }
+    /* Пример добавления:
+    { 
+        id: 'car-shoot', 
+        title: 'BMW M5 F90 Фотосет', 
+        cover: 'img/gallery/bmw/cover.jpg', 
+        folder: 'img/gallery/bmw/', 
+        count: 5 
+    },
+    */
 ];
 
 function showSection(sectionId) {
@@ -16,6 +23,7 @@ function showSection(sectionId) {
 
     const target = document.getElementById(sectionId + '-section') || document.getElementById(sectionId);
     if(target) {
+        // Если это просмотр фото внутри съемки, используем block для скролла, иначе flex
         target.style.display = (sectionId === 'project-inner') ? 'block' : 'flex';
         setTimeout(() => { target.classList.add('active'); }, 50);
     }
@@ -27,10 +35,16 @@ function renderProjects() {
     const list = document.getElementById('projects-list');
     if(!list) return;
     list.innerHTML = '';
+    
+    if(projects.length === 0) {
+        list.innerHTML = '<p style="opacity:0.3; letter-spacing:2px;">Здесь скоро появятся новые работы...</p>';
+        return;
+    }
+
     projects.forEach(p => {
         const card = document.createElement('div');
         card.className = 'project-card';
-        card.innerHTML = `<img src="${p.cover}"><div style="margin-top:15px; font-size:10px; letter-spacing:2px;">${p.title}</div>`;
+        card.innerHTML = `<img src="${p.cover}"><div style="margin-top:15px; font-size:10px; letter-spacing:2px; opacity:0.6;">${p.title}</div>`;
         card.onclick = () => openProject(p);
         list.appendChild(card);
     });
