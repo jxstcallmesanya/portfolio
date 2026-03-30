@@ -5,7 +5,8 @@ const config = {
 
 const myProjects = [
     { folder: 'drift_day', title: 'DRIFT DAY 2026' },
-    { folder: 'night_city', title: 'NIGHT SESSION' }
+    { folder: 'night_city', title: 'NIGHT SESSION' },
+    { folder: 'wedding_test', title: 'WEDDING TEST' }
 ];
 
 function showSection(id) {
@@ -32,6 +33,7 @@ function showPeople() { showSection('people'); loadGrid('people-grid', 'people',
 
 function renderProjects() {
     const list = document.getElementById('projects-list');
+    if(!list) return;
     list.innerHTML = '';
     myProjects.forEach(p => {
         const div = document.createElement('div');
