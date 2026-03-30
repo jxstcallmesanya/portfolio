@@ -4,17 +4,16 @@ const config = {
 };
 
 function showSection(id) {
-    // Скрываем все секции
+    // Сбрасываем скролл перед переключением
+    window.scrollTo(0, 0);
+    
     document.querySelectorAll('.content-section').forEach(s => {
         s.classList.remove('active');
+        s.scrollTop = 0; // Сброс скролла внутри самой секции
     });
-    
-    // Показываем нужную
+
     const target = document.getElementById(id + '-section') || document.getElementById(id);
-    if (target) {
-        target.classList.add('active');
-        window.scrollTo(0, 0);
-    }
+    if (target) target.classList.add('active');
 }
 
 function loadGrid(containerId, folder, count) {
@@ -31,15 +30,8 @@ function loadGrid(containerId, folder, count) {
     }
 }
 
-function showAuto() { 
-    showSection('auto'); 
-    loadGrid('auto-grid', 'auto', config.autoCount); 
-}
-
-function showPeople() { 
-    showSection('people'); 
-    loadGrid('people-grid', 'people', config.peopleCount); 
-}
+function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
+function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
@@ -47,12 +39,8 @@ function openLightbox(src) {
     lb.style.display = 'flex';
 }
 
-// Закрытие лайтбокса
 document.getElementById('lightbox').onclick = () => {
     document.getElementById('lightbox').style.display = 'none';
 };
 
-// Запуск главной при старте
-document.addEventListener('DOMContentLoaded', () => {
-    showSection('main');
-});
+document.addEventListener('DOMContentLoaded', () => showSection('main'));

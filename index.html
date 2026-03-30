@@ -2,12 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JXSTCALLMESANYA | Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -24,75 +22,66 @@
 
     <section id="main-section" class="content-section active">
         <div class="split-container">
-            <div onclick="showAuto()" class="split-side">
-                <div class="bg-bw" style="background-image: url('img/auto_b.webp');"></div>
-                <div class="bg-color" style="background-image: url('img/auto_a.webp');"></div>
-                <div class="split-title"><h2>АВТО</h2></div>
+            <div class="split-side" onclick="showAuto()">
+                <div class="bg-bw" style="background-image: url('img/main/auto_bw.webp');"></div>
+                <div class="bg-color" style="background-image: url('img/main/auto_color.webp');"></div>
+                <div class="split-title"><h2>AUTO</h2></div>
             </div>
-            <div onclick="showPeople()" class="split-side">
-                <div class="bg-bw" style="background-image: url('img/people_b.webp');"></div>
-                <div class="bg-color" style="background-image: url('img/people_a.webp');"></div>
-                <div class="split-title"><h2>ЛЮДИ</h2></div>
+            <div class="split-side" onclick="showPeople()">
+                <div class="bg-bw" style="background-image: url('img/main/people_bw.webp');"></div>
+                <div class="bg-color" style="background-image: url('img/main/people_color.webp');"></div>
+                <div class="split-title"><h2>PEOPLE</h2></div>
             </div>
         </div>
     </section>
 
-    <section id="auto-section" class="content-section full-page">
+    <section id="auto-section" class="content-section">
         <div class="container">
-            <span class="label">АРХИВ</span><h2>АВТОМОБИЛИ</h2>
-            <div class="masonry-wrapper" id="auto-grid"></div>
+            <span class="creative-tag">Archive / Auto</span>
+            <div id="auto-grid" class="masonry-wrapper"></div>
         </div>
     </section>
 
-    <section id="people-section" class="content-section full-page">
+    <section id="people-section" class="content-section">
         <div class="container">
-            <span class="label">АРХИВ</span><h2>ЛЮДИ</h2>
-            <div class="masonry-wrapper" id="people-grid"></div>
+            <span class="creative-tag">Archive / People</span>
+            <div id="people-grid" class="masonry-wrapper"></div>
         </div>
     </section>
 
-    <section id="projects-section" class="content-section full-page">
-        <div class="container">
-            <span class="label">СЪЕМКИ</span>
-            <div class="projects-list" id="projects-list"></div>
-        </div>
-    </section>
-
-    <section id="single-project-section" class="content-section full-page">
-        <div class="container">
-            <a href="#" onclick="showSection('projects')" class="back-link">← НАЗАД К ПРОЕКТАМ</a>
-            <h2 id="project-title" class="project-main-title"></h2>
-            <div class="masonry-wrapper" id="project-photos"></div>
-        </div>
-    </section>
-
-    <section id="about-section" class="content-section full-page">
-        <div class="container about-magazine">
+    <section id="about-section" class="content-section">
+        <div class="about-magazine">
             <div class="about-image-side">
-                <img src="img/me.webp" alt="Me">
+                <img src="img/me.jpg" alt="Me">
+                <div class="est-box">EST. 2026</div>
             </div>
             <div class="about-content-side">
-                <h2 class="huge-title">ЭСТЕТИКА <br> В ДЕТАЛЯХ</h2>
-                <div class="line-thick"></div>
-                <p class="specs-bold">Sony a7 III / Tamron 28-75 G2</p>
-                <p class="bio-elegant">
-                    Автомобильный и репортажный фотограф. <br>
-                    Создаю визуальную историю вашего стиля через призму <br>
-                    высокого контраста и кинематографичности.
-                </p>
+                <div class="creative-tag">Creative Photographer</div>
+                <h1 class="huge-title">Эстетика<br>в деталях</h1>
+                <div class="specs-line">Sony a7 III / Tamron 28-75 G2</div>
+                <p class="bio-text">Автомобильный и репортажный фотограф. Создаю визуальную историю вашего стиля через призму высокого контраста и кинематографичности.</p>
             </div>
         </div>
     </section>
 
-    <section id="contact-section" class="content-section full-page center-vh">
-        <div class="links-stack">
-            <a href="https://t.me/designer212" target="_blank">TELEGRAM</a>
-            <a href="https://vk.com/veilside777" target="_blank">VKONTAKTE</a>
-            <a href="mailto:veilside7774@gmail.com">EMAIL</a>
+    <section id="projects-section" class="content-section">
+        <div class="container">
+            <h1 class="huge-title">Проекты</h1>
+            <div id="projects-list" class="masonry-wrapper"></div>
         </div>
     </section>
 
-    <div id="lightbox" onclick="this.style.display='none'"><img id="lb-img"></div>
+    <section id="contact-section" class="content-section">
+        <div class="center-vh">
+            <div class="links-stack">
+                <a href="https://t.me/yourname" target="_blank">Telegram</a>
+                <a href="https://vk.com/yourname" target="_blank">Vkontakte</a>
+                <a href="mailto:work@mail.ru">Email</a>
+            </div>
+        </div>
+    </section>
+
+    <div id="lightbox"><img id="lb-img" src=""></div>
 
     <script src="script.js"></script>
 </body>
