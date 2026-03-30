@@ -10,26 +10,17 @@ const myProjects = [
 
 function showSection(id) {
     window.scrollTo(0, 0);
-    // Убираем активный класс у всех
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-    
-    // Находим нужную секцию
     const target = document.getElementById(id + '-section') || document.getElementById(id);
-    if(target) {
-        target.classList.add('active');
-    }
-
-    // Если зашли в проекты — рендерим их
+    if(target) target.classList.add('active');
     if(id === 'projects') renderProjects();
 }
 
-// Загрузка фото в архивы
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     if(!grid) return;
     grid.innerHTML = '';
     
-    const fragment = document.createDocumentFragment();
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
@@ -37,9 +28,8 @@ function loadGrid(containerId, folder, count) {
         img.style.opacity = "0";
         img.onload = () => img.style.opacity = "1";
         img.onclick = () => openLightbox(img.src);
-        fragment.appendChild(img);
+        grid.appendChild(img);
     }
-    grid.appendChild(fragment);
 }
 
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
@@ -64,7 +54,6 @@ function openProject(folder, title) {
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
     
-    // Проверяем до 60 фото в папке проекта
     for(let i = 1; i <= 60; i++) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;
@@ -83,9 +72,8 @@ function openLightbox(src) {
     lb.style.display = 'flex';
 }
 
-// Закрытие лайтбокса
-document.getElementById('lightbox').addEventListener('click', function(e) {
-    if(e.target !== document.getElementById('lb-img')) this.style.display = 'none';
-});
+document.getElementById('lightbox').onclick = (e) => {
+    if(e.target !== document.getElementById('lb-img')) document.getElementById('lightbox').style.display = 'none';
+};
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
