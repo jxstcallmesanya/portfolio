@@ -3,7 +3,6 @@ const config = {
     peopleCount: 21 
 };
 
-// СПИСОК ТВОИХ ПРОЕКТОВ (Добавляй сюда новые папки)
 const myProjects = [
     { folder: 'drift_day', title: 'DRIFT DAY 2026' },
     { folder: 'night_city', title: 'NIGHT SESSION' }
@@ -14,15 +13,12 @@ function showSection(id) {
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(id + '-section') || document.getElementById(id);
     if(target) target.classList.add('active');
-    
     if(id === 'projects') renderProjects();
 }
 
-// Загрузка АРХИВОВ (От большего к меньшему)
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     grid.innerHTML = '';
-    
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
@@ -34,30 +30,23 @@ function loadGrid(containerId, folder, count) {
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
-// Рендер плитки проектов
 function renderProjects() {
     const list = document.getElementById('projects-list');
-    if(!list) return;
     list.innerHTML = '';
     myProjects.forEach(p => {
         const div = document.createElement('div');
         div.className = 'project-item';
-        div.innerHTML = `
-            <img src="img/projects/${p.folder}/1.webp" onerror="this.src='img/projects/${p.folder}/1.jpg'">
-            <h3>${p.title}</h3>
-        `;
+        div.innerHTML = `<img src="img/projects/${p.folder}/1.webp"><h3>${p.title}</h3>`;
         div.onclick = () => openProject(p.folder, p.title);
         list.appendChild(div);
     });
 }
 
-// Открытие конкретной съемки (От 50 вниз)
 function openProject(folder, title) {
     showSection('single-project');
     document.getElementById('project-title').innerText = title;
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
-    
     for(let i = 50; i >= 1; i--) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;
@@ -65,7 +54,6 @@ function openProject(folder, title) {
             img.onclick = () => openLightbox(img.src);
             grid.appendChild(img);
         };
-        img.onerror = () => {}; 
     }
 }
 
