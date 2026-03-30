@@ -10,37 +10,32 @@ const myProjects = [
 
 function showSection(id) {
     window.scrollTo(0, 0);
-    // Закрываем все секции
-    document.querySelectorAll('.content-section').forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none'; // Полностью скрываем для производительности
-    });
+    // Убираем активный класс у всех
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     
+    // Находим нужную секцию
     const target = document.getElementById(id + '-section') || document.getElementById(id);
     if(target) {
-        target.style.display = 'block';
-        setTimeout(() => target.classList.add('active'), 10);
+        target.classList.add('active');
     }
-    
+
+    // Если зашли в проекты — рендерим их
     if(id === 'projects') renderProjects();
 }
 
-// Умная загрузка сетки (Архивы)
+// Загрузка фото в архивы
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
+    if(!grid) return;
     grid.innerHTML = '';
+    
     const fragment = document.createDocumentFragment();
-
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
-        img.style.opacity = "0";
         img.src = `img/${folder}/${i}.webp`;
         img.loading = "lazy";
-        
-        img.onload = () => {
-            img.style.opacity = "1";
-        };
-        
+        img.style.opacity = "0";
+        img.onload = () => img.style.opacity = "1";
         img.onclick = () => openLightbox(img.src);
         fragment.appendChild(img);
     }
@@ -50,7 +45,6 @@ function loadGrid(containerId, folder, count) {
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
-// Список проектов
 function renderProjects() {
     const list = document.getElementById('projects-list');
     if(!list) return;
@@ -64,23 +58,21 @@ function renderProjects() {
     });
 }
 
-// Загрузка внутри проекта (с проверкой наличия)
 function openProject(folder, title) {
     showSection('single-project');
     document.getElementById('project-title').innerText = title;
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
     
-    // Лимит 60 фото для производительности мобилок
-    for(let i = 60; i >= 1; i--) {
+    // Проверяем до 60 фото в папке проекта
+    for(let i = 1; i <= 60; i++) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;
-        
         img.onload = () => {
-            const galleryImg = document.createElement('img');
-            galleryImg.src = img.src;
-            galleryImg.onclick = () => openLightbox(galleryImg.src);
-            grid.appendChild(galleryImg);
+            const gImg = document.createElement('img');
+            gImg.src = img.src;
+            gImg.onclick = () => openLightbox(gImg.src);
+            grid.appendChild(gImg);
         };
     }
 }
@@ -91,11 +83,9 @@ function openLightbox(src) {
     lb.style.display = 'flex';
 }
 
-// Закрытие лайтбокса при клике на фон
+// Закрытие лайтбокса
 document.getElementById('lightbox').addEventListener('click', function(e) {
-    if(e.target !== document.getElementById('lb-img')) {
-        this.style.display = 'none';
-    }
+    if(e.target !== document.getElementById('lb-img')) this.style.display = 'none';
 });
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
