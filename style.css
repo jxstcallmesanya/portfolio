@@ -19,32 +19,21 @@ nav a:hover { opacity: 1; }
     top: 0; left: 0; width: 100%; height: 100%;
     background-size: cover; 
     background-position: center; 
-    transition: transform 1.2s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.8s ease; 
+    transition: opacity 0.8s ease; /* УБРАЛ TRANSFORM */
 }
 
-/* bg-bw (auto_b) всегда виден, чуть приглушен */
-.bg-bw { 
-    z-index: 1; 
-    opacity: 0.6; 
-} 
+.bg-bw { z-index: 1; opacity: 0.5; } 
+.bg-color { z-index: 2; opacity: 0; }
 
-/* bg-color (auto_a) спрятан и проявляется при ховере */
-.bg-color { 
-    z-index: 2; 
-    opacity: 0; 
-}
-
-.split-side:hover .bg-color { 
-    opacity: 1; 
-}
-
-.split-side:hover .bg-bw, 
-.split-side:hover .bg-color { 
-    transform: scale(1.08); 
-}
+.split-side:hover .bg-color { opacity: 1; }
 
 .split-title { position: relative; z-index: 10; pointer-events: none; }
-.split-title h2 { font-size: 60px; letter-spacing: 15px; font-weight: 100; text-transform: uppercase; }
+.split-title h2 { 
+    font-size: 60px; 
+    letter-spacing: 15px; 
+    font-weight: 100; /* МАКСИМАЛЬНО ТОНКИЙ */
+    text-transform: uppercase; 
+}
 
 /* ОБО МНЕ */
 .about-magazine { display: flex; gap: 40px; align-items: center; justify-content: center; min-height: 80vh; padding: 120px 15% 60px; }
