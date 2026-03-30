@@ -2,8 +2,8 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; width: 100%; }
 
-/* ХЕДЕР — Всегда по центру */
-.main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); }
+/* ХЕДЕР — Строго по центру */
+.main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
 .brand a { font-size: 14px; letter-spacing: 8px; text-decoration: none; color: #fff; font-weight: 200; display: inline-block; margin-bottom: 15px; }
 nav ul { display: flex; justify-content: center; gap: 25px; list-style: none; }
 nav a { font-size: 10px; letter-spacing: 2px; text-decoration: none; color: #fff; opacity: 0.5; transition: 0.3s; }
@@ -13,76 +13,53 @@ nav a:hover { opacity: 1; }
 .content-section { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; overflow-y: auto; background: #000; width: 100%; }
 .active { opacity: 1; pointer-events: auto; z-index: 10; position: fixed; }
 
-/* ГЛАВНАЯ (СПЛИТ) */
-.split-container { display: flex; height: 100vh; width: 100%; }
-.split-side { flex: 1; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.bg-bw, .bg-color { position: absolute; inset: 0; background-size: cover; background-position: center; transition: 0.8s ease; }
-.bg-bw { filter: grayscale(1) brightness(0.2); z-index: 1; }
-.bg-color { opacity: 0; z-index: 2; }
-.split-side:hover .bg-color { opacity: 1; }
-.split-title h2 { font-size: clamp(30px, 6vw, 70px); letter-spacing: 15px; font-weight: 100; position: relative; z-index: 10; }
-
-/* ИДЕАЛЬНАЯ ПЛОТНАЯ МОЗАИКА (FLEX) */
+/* ИДЕАЛЬНАЯ МОЗАИКА (MASONRY COLUMNS) */
 .container { max-width: 1300px; margin: 0 auto; padding: 160px 20px 80px; }
 .masonry-wrapper { 
-    display: flex; /* Переходим на флекс */
-    flex-wrap: wrap; /* Разрешаем перенос на новую строку */
-    justify-content: space-between; /* Распределяем по ширине */
+    column-count: 3; /* 3 колонки на десктопе */
+    column-gap: 20px; /* Отступ между колонками */
     width: 100%;
-    margin: 0;
-    padding: 0;
 }
-
-/* Элемент мозаики — Фикс дыр */
 .masonry-wrapper img { 
-    width: calc(33.333% - 14px); /* Ровно 3 колонки с учетом зазора */
+    width: 100%; 
     display: block; 
-    margin-bottom: 20px; /* Одинаковый отступ по вертикали */
+    margin-bottom: 20px; /* Отступ между фото по вертикали */
+    break-inside: avoid; /* Чтобы фото не разрывалось между колонками */
     cursor: pointer; 
     transition: 0.4s; 
-    background: #0a0a0a; /* Тонкая заглушка, пока фото грузится */
+    height: auto !important; /* ЗАПРЕТ на сплющивание */
+    background: #0a0a0a;
 }
+.masonry-wrapper img:hover { filter: brightness(1.2); }
 
-.masonry-wrapper img:hover { 
-    filter: brightness(1.1); 
-}
+/* ОБО МНЕ — Новый дизайн из макета */
+.about-magazine { display: flex; gap: 60px; align-items: center; min-height: 80vh; }
+.about-image-side { width: 45%; position: relative; }
+.about-image-side img { width: 100%; display: block; filter: contrast(1.1); }
+.est-box { position: absolute; bottom: -10px; right: 20px; background: #fff; color: #000; padding: 5px 15px; font-size: 10px; font-weight: 900; letter-spacing: 2px; }
+.about-content-side { width: 55%; padding-left: 20px; }
+.creative-tag { color: #fff; border: 1px solid red; display: inline-block; padding: 3px 10px; font-size: 10px; letter-spacing: 1px; margin-bottom: 20px; }
+.huge-title { font-size: clamp(40px, 6vw, 80px); line-height: 0.9; font-weight: 800; text-transform: uppercase; margin-bottom: 25px; }
+.specs-line { font-size: 12px; letter-spacing: 2px; color: #999; margin-bottom: 30px; border-top: 1px solid #222; padding-top: 15px; }
+.bio-text { font-size: 16px; line-height: 1.6; color: #777; max-width: 450px; }
 
-/* ОБО МНЕ — Возвращаем стиль */
-.about-magazine { display: flex; gap: 80px; align-items: center; min-height: 80vh; }
-.about-image-side { width: 45%; }
-.about-image-side img { width: 100%; filter: contrast(1.1); border-left: 1px solid #111; }
-.about-content-side { width: 55%; }
-.huge-title { font-size: clamp(40px, 5vw, 85px); line-height: 0.85; font-weight: 900; letter-spacing: -2px; margin-bottom: 30px; text-transform: uppercase; }
-.line-thick { width: 80px; height: 5px; background: #fff; margin-bottom: 40px; }
-.specs-bold { font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px; }
-.bio-elegant { font-size: 18px; font-weight: 300; line-height: 1.6; color: #999; max-width: 500px; }
-
-/* СВЯЗЬ — Строго по центру */
-.center-vh { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh !important; }
-.links-stack { width: 100%; max-width: 600px; }
-.links-stack a { display: block; padding: 40px 0; border-bottom: 1px solid #111; text-decoration: none; color: #fff; opacity: 0.4; letter-spacing: 8px; text-align: center; transition: 0.4s; }
+/* СВЯЗЬ — Твой список */
+.center-vh { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+.links-stack { width: 100%; max-width: 700px; }
+.links-stack a { display: block; padding: 45px 0; border-bottom: 1px solid #111; text-decoration: none; color: #fff; opacity: 0.4; letter-spacing: 8px; text-align: center; transition: 0.4s; font-size: 14px; text-transform: uppercase; }
 .links-stack a:hover { opacity: 1; border-bottom: 1px solid #fff; }
 
 /* АДАПТИВ ПОД МОБИЛКИ */
 @media (max-width: 1024px) {
     .container { padding-top: 120px; }
     .about-magazine { flex-direction: column; text-align: center; gap: 40px; }
-    .about-image-side { width: 80%; }
-    .about-content-side { width: 100%; display: flex; flex-direction: column; align-items: center; }
-    .line-thick { margin: 0 auto 30px; }
-    .huge-title { font-size: 38px; }
-    
-    /* Перестраиваем мозаику в 2 колонки */
-    .masonry-wrapper { 
-        justify-content: space-between; 
-    }
-    .masonry-wrapper img { 
-        width: calc(50% - 10px); /* Ровно 2 колонки с зазором */
-        margin-bottom: 15px; 
-    }
-    .split-container { flex-direction: column; }
+    .about-image-side { width: 85%; }
+    .about-content-side { width: 100%; display: flex; flex-direction: column; align-items: center; padding-left: 0; }
+    .masonry-wrapper { column-count: 2; column-gap: 10px; }
+    .masonry-wrapper img { margin-bottom: 10px; }
+    .huge-title { font-size: 34px; }
 }
 
 /* Lightbox */
-#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; }
+#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; display: none; align-items: center; justify-content: center; }
 #lb-img { max-width: 95%; max-height: 95%; object-fit: contain; }

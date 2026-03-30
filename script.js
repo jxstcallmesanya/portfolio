@@ -16,20 +16,20 @@ function showSection(id) {
     if(id === 'projects') renderProjects();
 }
 
+// Загрузка фото в архивы (Авто и Люди)
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     if(!grid) return;
     grid.innerHTML = '';
     
-    // Используем фрагмент для производительности
     const fragment = document.createDocumentFragment();
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
         img.loading = "lazy";
-        // Устанавливаем плавное появление
+        // Плавное проявление
         img.style.opacity = "0";
-        img.onload = () => { img.style.opacity = "1"; };
+        img.onload = () => img.style.opacity = "1";
         img.onclick = () => openLightbox(img.src);
         fragment.appendChild(img);
     }
@@ -39,6 +39,7 @@ function loadGrid(containerId, folder, count) {
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
+// Список проектов
 function renderProjects() {
     const list = document.getElementById('projects-list');
     if(!list) return;
@@ -58,7 +59,7 @@ function openProject(folder, title) {
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
     
-    // Проверяем до 60 фото в папке проекта
+    // Подгружаем до 60 фото из папки проекта
     for(let i = 1; i <= 60; i++) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;
@@ -77,6 +78,7 @@ function openLightbox(src) {
     lb.style.display = 'flex';
 }
 
+// Закрытие при клике вне картинки
 document.getElementById('lightbox').onclick = (e) => {
     if(e.target !== document.getElementById('lb-img')) document.getElementById('lightbox').style.display = 'none';
 };
