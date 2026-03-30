@@ -9,47 +9,40 @@ function showSection(id) {
     }
 }
 
-function loadGrid(containerId, folder, maxCount) {
+// Умная загрузка: проверяем файл перед вставкой в DOM
+async function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
 
-    grid.innerHTML = ''; // Очистка
+    grid.innerHTML = ''; 
     
-    let loadedAny = false;
-    const fragment = document.createDocumentFragment();
-
     for (let i = 1; i <= maxCount; i++) {
-        const img = document.createElement('img');
-        img.setAttribute('loading', 'lazy');
-        // Путь должен строго соответствовать папкам: img/auto/1.webp
-        img.src = `img/${folder}/${i}.webp`; 
+        const imgPath = `img/${folder}/${i}.webp`;
         
-        img.onload = () => {
-            img.style.opacity = '1';
-            loadedAny = true;
-        };
-
-        img.onerror = function() {
-            this.remove(); // Удаляем битую ссылку из DOM
-        };
-
-        img.onclick = () => {
-            const lbImg = document.getElementById('lb-img');
-            lbImg.src = this.src;
-            document.getElementById('lightbox').style.display = 'flex';
-        };
-
-        fragment.appendChild(img);
-    }
-    
-    grid.appendChild(fragment);
-
-    // Если через 2 секунды ничего не появилось — выведем инфо в консоль для отладки
-    setTimeout(() => {
-        if (!grid.querySelector('img')) {
-            console.warn(`В папке img/${folder}/ не найдено подходящих файлов 1.webp, 2.webp...`);
+        try {
+            // Проверяем, существует ли файл (HEAD запрос не качает саму картинку, только инфу)
+            const response = await fetch(imgPath, { method: 'HEAD' });
+            
+            if (response.ok) {
+                const img = document.createElement('img');
+                img.setAttribute('loading', 'lazy');
+                img.src = imgPath;
+                
+                img.onclick = () => {
+                    const lbImg = document.getElementById('lb-img');
+                    lbImg.src = imgPath;
+                    document.getElementById('lightbox').style.display = 'flex';
+                };
+                
+                grid.appendChild(img);
+            } else {
+                // Если файл не найден (404), прекращаем цикл для этой папки
+                break; 
+            }
+        } catch (e) {
+            break; 
         }
-    }, 2000);
+    }
 }
 
 function showAuto() { 
