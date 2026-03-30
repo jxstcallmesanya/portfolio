@@ -1,18 +1,18 @@
-// Укажи здесь реальное количество файлов, которые лежат в папках
+// Точное количество файлов из твоих папок
 const config = { 
-    autoCount: 15, 
-    peopleCount: 10 
+    autoCount: 49, 
+    peopleCount: 15 
 };
 
 function showSection(id) {
-    // Скрываем все секции
+    // Скрываем все секции, включая главную и галереи
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     
-    // Показываем нужную
+    // Показываем нужную секцию
     const target = document.getElementById(id + '-section') || document.getElementById(id);
     if (target) {
         target.classList.add('active');
-        window.scrollTo(0, 0);
+        window.scrollTo(0, 0); // Всегда прыгаем вверх при переключении
     }
 }
 
@@ -20,24 +20,24 @@ function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
 
-    // Очищаем контейнер, чтобы не копились старые фото в памяти
+    // Очищаем контейнер перед загрузкой, чтобы не дублировать фото
     grid.innerHTML = ''; 
 
     for (let i = 1; i <= maxCount; i++) {
         const img = document.createElement('img');
         
-        // Самая важная строка для мобилок — грузит только то, что видно на экране
+        // Важно для мобилок: грузим только то, что доскроллили
         img.setAttribute('loading', 'lazy'); 
         
-        // Путь к файлу
+        // Путь к фото: img/auto/1.webp и т.д.
         img.src = `img/${folder}/${i}.webp`;
 
-        // Если файла нет — просто удаляем пустой элемент, чтобы не было "битой" иконки
+        // Удаляем элемент, если вдруг файл битый или не загрузился
         img.onerror = function() { 
             this.remove(); 
         };
 
-        // Открытие в полный экран
+        // Клик для открытия в лайтбоксе
         img.onclick = function() {
             const lbImg = document.getElementById('lb-img');
             lbImg.src = this.src;
@@ -48,7 +48,7 @@ function loadGrid(containerId, folder, maxCount) {
     }
 }
 
-// Функции для кнопок
+// Функции-обертки для кнопок на главной
 function showAuto() { 
     showSection('auto'); 
     loadGrid('auto-grid', 'auto', config.autoCount); 
@@ -59,11 +59,13 @@ function showPeople() {
     loadGrid('people-grid', 'people', config.peopleCount); 
 }
 
-// Закрытие лайтбокса
+// Закрытие лайтбокса при клике в любое место
 document.getElementById('lightbox').onclick = function() {
     this.style.display = 'none';
-    document.getElementById('lb-img').src = ''; // Чистим память
+    document.getElementById('lb-img').src = ''; // Очистка памяти
 };
 
-// При загрузке страницы показываем главную
-document.addEventListener('DOMContentLoaded', () => showSection('main'));
+// Инициализация при первом открытии
+document.addEventListener('DOMContentLoaded', () => {
+    showSection('main');
+});
