@@ -1,38 +1,52 @@
 const config = {
-    autoCount: 49, 
-    peopleCount: 21 
+    autoCount: 50, // Макс. кол-во фото в папке auto
+    peopleCount: 30 // Макс. кол-во фото в папке people
 };
 
 function showSection(id) {
-    // Сбрасываем скролл перед переключением
-    window.scrollTo(0, 0);
-    
+    // Скрываем всё
     document.querySelectorAll('.content-section').forEach(s => {
         s.classList.remove('active');
-        s.scrollTop = 0; // Сброс скролла внутри самой секции
     });
-
+    
+    // Показываем нужную
     const target = document.getElementById(id + '-section') || document.getElementById(id);
-    if (target) target.classList.add('active');
+    if (target) {
+        target.classList.add('active');
+        window.scrollTo(0, 0); // Скролл вверх
+    }
 }
 
-function loadGrid(containerId, folder, count) {
+function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
     
-    for (let i = count; i >= 1; i--) {
+    for (let i = 1; i <= maxCount; i++) {
         const img = document.createElement('img');
-        img.src = `img/${folder}/${i}.webp`;
+        img.src = `img/${folder}/${i}.webp`; 
         img.loading = "lazy";
+        
+        // Если файла нет — удаляем пустой элемент
+        img.onerror = function() { this.remove(); };
+        
         img.onclick = () => openLightbox(img.src);
         grid.appendChild(img);
     }
 }
 
-function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
-function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
+// Функции для кнопок на главной
+function showAuto() { 
+    showSection('auto'); 
+    loadGrid('auto-grid', 'auto', config.autoCount); 
+}
 
+function showPeople() { 
+    showSection('people'); 
+    loadGrid('people-grid', 'people', config.peopleCount); 
+}
+
+// Лайтбокс
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
     document.getElementById('lb-img').src = src;
@@ -43,4 +57,5 @@ document.getElementById('lightbox').onclick = () => {
     document.getElementById('lightbox').style.display = 'none';
 };
 
+// Запуск главной
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
