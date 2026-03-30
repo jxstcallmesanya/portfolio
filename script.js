@@ -1,9 +1,14 @@
 const config = { autoCount: 50, peopleCount: 50 };
+
 function showSection(id) {
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(id + '-section') || document.getElementById(id);
-    if (target) { target.classList.add('active'); window.scrollTo(0, 0); }
+    if (target) {
+        target.classList.add('active');
+        window.scrollTo(0, 0);
+    }
 }
+
 function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
@@ -12,11 +17,16 @@ function loadGrid(containerId, folder, maxCount) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
         img.onerror = function() { this.remove(); };
-        img.onclick = () => { document.getElementById('lb-img').src = img.src; document.getElementById('lightbox').style.display = 'flex'; };
+        img.onclick = () => {
+            document.getElementById('lb-img').src = img.src;
+            document.getElementById('lightbox').style.display = 'flex';
+        };
         grid.appendChild(img);
     }
 }
+
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
+
 document.getElementById('lightbox').onclick = () => { document.getElementById('lightbox').style.display = 'none'; };
 document.addEventListener('DOMContentLoaded', () => showSection('main'));

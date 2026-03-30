@@ -1,20 +1,21 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
 
+/* ШАПКА */
 .main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
 .brand a { font-size: 14px; letter-spacing: 8px; text-decoration: none; color: #fff; font-weight: 200; text-transform: uppercase; }
 nav ul { display: flex; justify-content: center; gap: 25px; list-style: none; margin-top: 15px; }
 nav a { font-size: 10px; letter-spacing: 2px; text-decoration: none; color: #fff; opacity: 0.5; transition: 0.3s; }
 nav a:hover { opacity: 1; }
 
+/* ПЕРЕКЛЮЧЕНИЕ */
 .content-section { display: none; width: 100%; min-height: 100vh; }
 .active { display: block !important; }
 
-/* ГЛАВНАЯ */
+/* ГЛАВНАЯ: ФОН И АНИМАЦИЯ */
 .split-container { display: flex; height: 100vh; width: 100%; position: relative; }
 .split-side { flex: 1; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-/* Важно: bg-bw и bg-color должны иметь высоту и ширину */
 .bg-bw, .bg-color { 
     position: absolute; 
     top: 0; left: 0; width: 100%; height: 100%;
@@ -25,25 +26,25 @@ nav a:hover { opacity: 1; }
 .bg-bw { filter: grayscale(1) brightness(0.4); z-index: 1; }
 .bg-color { opacity: 0; z-index: 2; }
 
-/* Анимация */
 .split-side:hover .bg-color { opacity: 1; }
 .split-side:hover .bg-bw, .split-side:hover .bg-color { transform: scale(1.05); }
 
 .split-title { position: relative; z-index: 10; pointer-events: none; }
-.split-title h2 { font-size: clamp(30px, 6vw, 60px); letter-spacing: 15px; font-weight: 100; text-transform: uppercase; }
+.split-title h2 { font-size: 60px; letter-spacing: 15px; font-weight: 100; text-transform: uppercase; }
 
 /* ОБО МНЕ */
 .about-magazine { display: flex; gap: 60px; align-items: center; justify-content: center; min-height: 100vh; padding: 100px 10%; }
 .about-image-side { width: 40%; position: relative; }
 .about-image-side img { width: 100%; display: block; filter: contrast(1.1); }
+.est-box { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 5px 15px; font-size: 10px; font-weight: 900; }
 .about-content-side { width: 50%; }
-.huge-title { font-size: clamp(35px, 5vw, 70px); line-height: 1; font-weight: 800; margin-bottom: 20px; }
+.huge-title { font-size: 70px; line-height: 1; font-weight: 800; margin-bottom: 20px; }
 .bio-text { font-size: 16px; color: #999; line-height: 1.6; }
 
-/* ГАЛЕРЕЯ */
+/* СЕТКА */
 .container { max-width: 1300px; margin: 0 auto; padding-top: 150px; }
 .masonry-wrapper { column-count: 3; column-gap: 20px; }
-.masonry-wrapper img { width: 100%; margin-bottom: 20px; cursor: pointer; }
+.masonry-wrapper img { width: 100%; margin-bottom: 20px; cursor: pointer; transition: 0.3s; }
 
 /* СВЯЗЬ */
 .center-vh { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
