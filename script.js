@@ -1,111 +1,79 @@
 const config = {
-    autoCount: 49,
-    peopleCount: 21
+    autoCount: 49, 
+    peopleCount: 21 
 };
 
-// ТВОИ ПРОЕКТЫ - МЕНЯЙ ЗДЕСЬ
+// ТВОИ ПРОЕКТЫ
 const myProjects = [
-    { folder: 'drift_msk', title: 'DRIFT MOSCOW 2026' },
-    { folder: 'bmw_m5', title: 'BMW M5 F90 SMOKE' },
-    { folder: 'wedding_june', title: 'ALEX & ANNA WEDDING' }
+    { folder: 'drift_day', title: 'DRIFT DAY 2026' },
+    { folder: 'night_city', title: 'NIGHT SESSION' }
 ];
 
 function showSection(id) {
     window.scrollTo(0, 0);
-    // Скрываем всё
-    document.querySelectorAll('.split-container, .full-screen-content').forEach(s => {
-        s.classList.remove('active');
-    });
-    
-    // Показываем нужное
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(id + '-section') || document.getElementById(id);
-    if(target) {
-        target.classList.add('active');
-    }
-
+    if(target) target.classList.add('active');
+    
     if(id === 'projects') renderProjects();
 }
 
+// Загрузка архивов (ОБРАТНЫЙ ПОРЯДОК: от Max до 1)
+function loadGrid(containerId, folder, count) {
+    const grid = document.getElementById(containerId);
+    grid.innerHTML = '';
+    
+    // Цикл идет вниз: начинаем с count, пока i >= 1, уменьшаем i
+    for(let i = count; i >= 1; i--) {
+        const img = document.createElement('img');
+        img.src = `img/${folder}/${i}.webp`;
+        img.loading = "lazy";
+        img.onclick = () => openLightbox(img.src);
+        grid.appendChild(img);
+    }
+}
+
+function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
+function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
+
+// Список проектов
 function renderProjects() {
     const list = document.getElementById('projects-list');
-    if(!list) return;
     list.innerHTML = '';
-
-    myProjects.forEach(proj => {
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.innerHTML = `
-            <img src="img/projects/${proj.folder}/1.webp" loading="lazy">
-            <div class="project-info"><h3>${proj.title}</h3></div>
-        `;
-        card.onclick = () => openProject(proj.folder, proj.title);
-        list.appendChild(card);
+    myProjects.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'project-item';
+        div.innerHTML = `<img src="img/projects/${p.folder}/1.webp"><h3>${p.title}</h3>`;
+        div.onclick = () => openProject(p.folder, p.title);
+        list.appendChild(div);
     });
 }
 
+// Просмотр проекта (ОБРАТНЫЙ ПОРЯДОК: от 50 до 1)
 function openProject(folder, title) {
     showSection('single-project');
     document.getElementById('project-title').innerText = title;
-    const grid = document.getElementById('project-images-grid');
-    grid.innerHTML = '';
-
-    // Загружаем до 100 фото из папки проекта
-    for(let i = 1; i <= 100; i++) {
-        const src = `img/projects/${folder}/${i}.webp`;
-        const img = new Image();
-        img.src = src;
-        img.onload = () => {
-            const item = document.createElement('div');
-            item.className = 'masonry-item';
-            img.classList.add('loaded');
-            item.appendChild(img);
-            item.onclick = () => openLightbox(src);
-            grid.appendChild(item);
-        };
-        img.onerror = () => {}; // Просто игнорируем отсутствие файлов
-    }
-}
-
-function loadArchive(containerId, folder, count) {
-    const grid = document.getElementById(containerId);
-    if(!grid) return;
+    const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
     
-    for(let i = count; i >= 1; i--) {
-        const item = document.createElement('div');
-        item.className = 'masonry-item';
+    // Проверяем фото от 50-го до 1-го
+    for(let i = 50; i >= 1; i--) {
         const img = new Image();
-        img.src = `img/${folder}/${i}.webp`;
+        img.src = `img/projects/${folder}/${i}.webp`;
         img.onload = () => {
-            img.classList.add('loaded');
-            item.appendChild(img);
-            item.onclick = () => openLightbox(img.src);
-            grid.appendChild(item);
+            img.onclick = () => openLightbox(img.src);
+            // Добавляем в конец сетки, но так как мы идем от 50 до 1, 
+            // первыми загрузятся и встанут те, что с большим номером
+            grid.appendChild(img);
         };
+        img.onerror = () => {}; 
     }
-}
-
-function showAuto() { 
-    showSection('auto-feed'); 
-    loadArchive('auto-masonry', 'auto', config.autoCount); 
-}
-
-function showPeople() { 
-    showSection('people-feed'); 
-    loadArchive('people-masonry', 'people', config.peopleCount); 
 }
 
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lb-img').src = src;
     lb.style.display = 'flex';
 }
 
-function closeLightbox() {
-    document.getElementById('lightbox').style.display = 'none';
-}
-
-// При запуске показываем главную
-document.addEventListener('DOMContentLoaded', () => {
-    showSection('main');
-});
+document.addEventListener('DOMContentLoaded', () => showSection('main'));

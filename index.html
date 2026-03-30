@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JXSTCALLMESANYA | Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,74 +19,74 @@
         </nav>
     </header>
 
-    <div id="main-section" class="split-container active">
-        <div onclick="showAuto()" class="split-section">
-            <div class="bg-bw" style="background-image: url('img/auto_b.webp');"></div>
-            <div class="bg-color" style="background-image: url('img/auto_a.webp');"></div>
-            <div class="split-text-wrapper"><h2>АВТО</h2></div>
+    <section id="main-section" class="content-section active">
+        <div class="split-container">
+            <div onclick="showAuto()" class="split-side">
+                <div class="bg-bw" style="background-image: url('img/auto_b.webp');"></div>
+                <div class="bg-color" style="background-image: url('img/auto_a.webp');"></div>
+                <div class="split-title"><h2>АВТО</h2></div>
+            </div>
+            <div onclick="showPeople()" class="split-side">
+                <div class="bg-bw" style="background-image: url('img/people_b.webp');"></div>
+                <div class="bg-color" style="background-image: url('img/people_a.webp');"></div>
+                <div class="split-title"><h2>ЛЮДИ</h2></div>
+            </div>
         </div>
-        <div onclick="showPeople()" class="split-section">
-            <div class="bg-bw" style="background-image: url('img/people_b.webp');"></div>
-            <div class="bg-color" style="background-image: url('img/people_a.webp');"></div>
-            <div class="split-text-wrapper"><h2>ЛЮДИ</h2></div>
-        </div>
-    </div>
+    </section>
 
-    <div id="auto-feed-section" class="full-screen-content">
+    <section id="auto-section" class="content-section full-page">
         <div class="container">
-            <div class="feed-header"><span class="label">АРХИВ</span><h2>АВТОМОБИЛИ</h2></div>
-            <div class="masonry-grid" id="auto-masonry"></div>
+            <span class="label">АРХИВ</span><h2>АВТОМОБИЛИ</h2>
+            <div class="grid" id="auto-grid"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="people-feed-section" class="full-screen-content">
+    <section id="people-section" class="content-section full-page">
         <div class="container">
-            <div class="feed-header"><span class="label">АРХИВ</span><h2>ЛЮДИ</h2></div>
-            <div class="masonry-grid" id="people-masonry"></div>
+            <span class="label">АРХИВ</span><h2>ЛЮДИ</h2>
+            <div class="grid" id="people-grid"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="projects-section" class="full-screen-content">
+    <section id="projects-section" class="content-section full-page">
         <div class="container">
             <span class="label">СЪЕМКИ</span>
-            <div class="projects-grid" id="projects-list"></div>
+            <div class="projects-list" id="projects-list"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="single-project-section" class="full-screen-content">
+    <section id="single-project-section" class="content-section full-page">
         <div class="container">
-            <a href="#" onclick="showSection('projects')" class="back-btn">← НАЗАД К ПРОЕКТАМ</a>
-            <h2 id="project-title" class="project-view-title"></h2>
-            <div class="masonry-grid" id="project-images-grid"></div>
+            <a href="#" onclick="showSection('projects')" class="back-link">← НАЗАД К ПРОЕКТАМ</a>
+            <h2 id="project-title"></h2>
+            <div class="grid" id="project-photos"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="about-section" class="full-screen-content">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-photo"><img src="img/me.webp" alt="Me"></div>
-                <div class="about-text">
-                    <span class="label">ОБО МНЕ</span>
-                    <h2>Эстетика в деталях.</h2>
-                    <p>Sony a7 III / Tamron 28-75 G2</p>
-                    <div class="divider"></div>
-                    <p>Автомобильный и репортажный фотограф. Создаю визуальную историю вашего стиля.</p>
-                </div>
+    <section id="about-section" class="content-section full-page">
+        <div class="container about-flex">
+            <div class="about-image"><img src="img/me.webp" alt="Me"></div>
+            <div class="about-info">
+                <span class="label">ОБО МНЕ</span>
+                <h2>Эстетика в деталях.</h2>
+                <p class="specs">Sony a7 III / Tamron 28-75 G2</p>
+                <div class="line"></div>
+                <p class="bio">Автомобильный и репортажный фотограф. Создаю визуальную историю вашего стиля.</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="contact-section" class="full-screen-content">
-        <div class="container">
-            <div class="contact-links">
-                <a href="https://t.me/designer212" target="_blank" class="contact-item">TELEGRAM</a>
-                <a href="https://vk.com/veilside777" target="_blank" class="contact-item">VKONTAKTE</a>
-                <a href="mailto:veilside7774@gmail.com" class="contact-item">EMAIL</a>
+    <section id="contact-section" class="content-section full-page">
+        <div class="container center">
+            <div class="links-stack">
+                <a href="https://t.me/designer212" target="_blank">TELEGRAM</a>
+                <a href="https://vk.com/veilside777" target="_blank">VKONTAKTE</a>
+                <a href="mailto:veilside7774@gmail.com">EMAIL</a>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src=""></div>
+    <div id="lightbox" onclick="this.style.display='none'"><img id="lb-img"></div>
 
     <script src="script.js"></script>
 </body>
