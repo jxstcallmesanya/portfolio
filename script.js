@@ -9,51 +9,47 @@ function showSection(id) {
     }
 }
 
-// Глобальная переменная для контроля загрузки
-let currentGridData = { folder: '', count: 0, loaded: 0 };
-
-async function loadGrid(containerId, folder, maxCount) {
+function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
 
-    // Очищаем всё и сбрасываем счетчики
-    grid.innerHTML = '';
-    currentGridData = { folder, count: maxCount, loaded: 0 };
-
-    // Загружаем первые 10 штук сразу, остальное — через микро-паузу
-    renderBatch(grid, folder, 1, 10);
+    grid.innerHTML = ''; // Очистка
     
-    setTimeout(() => {
-        renderBatch(grid, folder, 11, maxCount);
-    }, 100);
-}
-
-function renderBatch(container, folder, start, end) {
+    let loadedAny = false;
     const fragment = document.createDocumentFragment();
-    
-    for (let i = start; i <= end; i++) {
+
+    for (let i = 1; i <= maxCount; i++) {
         const img = document.createElement('img');
-        img.style.display = 'none'; // Скрываем, пока не загрузится
         img.setAttribute('loading', 'lazy');
-        img.src = `img/${folder}/${i}.webp`;
+        // Путь должен строго соответствовать папкам: img/auto/1.webp
+        img.src = `img/${folder}/${i}.webp`; 
         
         img.onload = () => {
-            img.style.display = 'block';
+            img.style.opacity = '1';
+            loadedAny = true;
         };
 
-        img.onerror = () => {
-            img.remove(); // Просто удаляем, если файла нет (фикс 404)
+        img.onerror = function() {
+            this.remove(); // Удаляем битую ссылку из DOM
         };
 
         img.onclick = () => {
             const lbImg = document.getElementById('lb-img');
-            lbImg.src = img.src;
+            lbImg.src = this.src;
             document.getElementById('lightbox').style.display = 'flex';
         };
 
         fragment.appendChild(img);
     }
-    container.appendChild(fragment);
+    
+    grid.appendChild(fragment);
+
+    // Если через 2 секунды ничего не появилось — выведем инфо в консоль для отладки
+    setTimeout(() => {
+        if (!grid.querySelector('img')) {
+            console.warn(`В папке img/${folder}/ не найдено подходящих файлов 1.webp, 2.webp...`);
+        }
+    }, 2000);
 }
 
 function showAuto() { 
@@ -66,7 +62,6 @@ function showPeople() {
     loadGrid('people-grid', 'people', config.peopleCount); 
 }
 
-// Лайтбокс
 document.getElementById('lightbox').onclick = () => {
     document.getElementById('lightbox').style.display = 'none';
     document.getElementById('lb-img').src = ''; 
