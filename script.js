@@ -3,10 +3,10 @@ const config = {
     peopleCount: 21 
 };
 
+// Твои проекты
 const myProjects = [
     { folder: 'drift_day', title: 'DRIFT DAY 2026' },
-    { folder: 'night_city', title: 'NIGHT SESSION' },
-    { folder: 'wedding_test', title: 'WEDDING TEST' }
+    { folder: 'night_city', title: 'NIGHT SESSION' }
 ];
 
 function showSection(id) {
@@ -17,6 +17,7 @@ function showSection(id) {
     if(id === 'projects') renderProjects();
 }
 
+// Загрузка архивов (От новых к старым)
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     grid.innerHTML = '';
@@ -31,6 +32,7 @@ function loadGrid(containerId, folder, count) {
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
+// Список проектов
 function renderProjects() {
     const list = document.getElementById('projects-list');
     if(!list) return;
@@ -44,6 +46,7 @@ function renderProjects() {
     });
 }
 
+// Внутри проекта (От 50 вниз)
 function openProject(folder, title) {
     showSection('single-project');
     document.getElementById('project-title').innerText = title;
