@@ -3,7 +3,7 @@ const config = {
     peopleCount: 21 
 };
 
-// ТВОИ ПРОЕКТЫ
+// СПИСОК ТВОИХ ПРОЕКТОВ (Добавляй сюда новые папки)
 const myProjects = [
     { folder: 'drift_day', title: 'DRIFT DAY 2026' },
     { folder: 'night_city', title: 'NIGHT SESSION' }
@@ -18,16 +18,14 @@ function showSection(id) {
     if(id === 'projects') renderProjects();
 }
 
-// Загрузка архивов (ОБРАТНЫЙ ПОРЯДОК: от Max до 1)
+// Загрузка АРХИВОВ (От большего к меньшему)
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     grid.innerHTML = '';
     
-    // Цикл идет вниз: начинаем с count, пока i >= 1, уменьшаем i
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
-        img.loading = "lazy";
         img.onclick = () => openLightbox(img.src);
         grid.appendChild(img);
     }
@@ -36,34 +34,35 @@ function loadGrid(containerId, folder, count) {
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
-// Список проектов
+// Рендер плитки проектов
 function renderProjects() {
     const list = document.getElementById('projects-list');
+    if(!list) return;
     list.innerHTML = '';
     myProjects.forEach(p => {
         const div = document.createElement('div');
         div.className = 'project-item';
-        div.innerHTML = `<img src="img/projects/${p.folder}/1.webp"><h3>${p.title}</h3>`;
+        div.innerHTML = `
+            <img src="img/projects/${p.folder}/1.webp" onerror="this.src='img/projects/${p.folder}/1.jpg'">
+            <h3>${p.title}</h3>
+        `;
         div.onclick = () => openProject(p.folder, p.title);
         list.appendChild(div);
     });
 }
 
-// Просмотр проекта (ОБРАТНЫЙ ПОРЯДОК: от 50 до 1)
+// Открытие конкретной съемки (От 50 вниз)
 function openProject(folder, title) {
     showSection('single-project');
     document.getElementById('project-title').innerText = title;
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
     
-    // Проверяем фото от 50-го до 1-го
     for(let i = 50; i >= 1; i--) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;
         img.onload = () => {
             img.onclick = () => openLightbox(img.src);
-            // Добавляем в конец сетки, но так как мы идем от 50 до 1, 
-            // первыми загрузятся и встанут те, что с большим номером
             grid.appendChild(img);
         };
         img.onerror = () => {}; 

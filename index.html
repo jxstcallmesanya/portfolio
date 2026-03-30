@@ -37,14 +37,14 @@
     <section id="auto-section" class="content-section full-page">
         <div class="container">
             <span class="label">АРХИВ</span><h2>АВТОМОБИЛИ</h2>
-            <div class="grid" id="auto-grid"></div>
+            <div class="masonry-wrapper" id="auto-grid"></div>
         </div>
     </section>
 
     <section id="people-section" class="content-section full-page">
         <div class="container">
             <span class="label">АРХИВ</span><h2>ЛЮДИ</h2>
-            <div class="grid" id="people-grid"></div>
+            <div class="masonry-wrapper" id="people-grid"></div>
         </div>
     </section>
 
@@ -58,14 +58,16 @@
     <section id="single-project-section" class="content-section full-page">
         <div class="container">
             <a href="#" onclick="showSection('projects')" class="back-link">← НАЗАД К ПРОЕКТАМ</a>
-            <h2 id="project-title"></h2>
-            <div class="grid" id="project-photos"></div>
+            <h2 id="project-title" class="project-main-title"></h2>
+            <div class="masonry-wrapper" id="project-photos"></div>
         </div>
     </section>
 
     <section id="about-section" class="content-section full-page">
         <div class="container about-flex">
-            <div class="about-image"><img src="img/me.webp" alt="Me"></div>
+            <div class="about-image">
+                <img src="img/me.webp" alt="Me">
+            </div>
             <div class="about-info">
                 <span class="label">ОБО МНЕ</span>
                 <h2>Эстетика в деталях.</h2>
