@@ -4,7 +4,7 @@ const config = {
 };
 
 const galleries = [
-    { id: 'drift', title: 'DRIFT DAY 2026', cover: '1.jpg' }
+    { id: 'drift', title: 'DRIFT DAY 2026', cover: '1.webp' }
 ];
 
 function showSection(id) {
@@ -23,38 +23,28 @@ function showSection(id) {
     if (id === 'gallery') renderGalleryList();
 }
 
-// ЗАГРУЗКА БЕЗ МИНИАТЮР (ОПТИМИЗИРОВАННО)
 function loadArchive(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Фрагмент документа для ускорения отрисовки
-    const fragment = document.createDocumentFragment();
-
     for(let i = count; i >= 1; i--) {
-        const src = `img/${folder}/${i}.jpg`;
+        const src = `img/${folder}/${i}.webp`; // ФОРМАТ WEBP
         const item = document.createElement('div');
         item.className = 'masonry-item';
         
-        const img = document.createElement('img');
+        const img = new Image();
         img.src = src;
-        img.loading = "lazy"; // Браузер сам управляет очередью загрузки
+        img.loading = "lazy";
         
         img.onload = () => {
-            requestAnimationFrame(() => {
-                img.classList.add('loaded');
-            });
+            img.classList.add('loaded');
+            item.appendChild(img);
+            item.onclick = () => openLightbox(src);
+            grid.appendChild(item);
         };
-        
         img.onerror = () => item.remove();
-        
-        item.appendChild(img);
-        item.onclick = () => openLightbox(src);
-        fragment.appendChild(item);
     }
-    
-    grid.appendChild(fragment);
 }
 
 async function openSubGallery(folderId, title) {
@@ -64,7 +54,7 @@ async function openSubGallery(folderId, title) {
     grid.innerHTML = '';
     
     for(let i = 1; i <= 60; i++) {
-        const src = `img/gallery/${folderId}/${i}.jpg`;
+        const src = `img/gallery/${folderId}/${i}.webp`;
         const item = document.createElement('div');
         item.className = 'masonry-item';
         const img = new Image();
@@ -107,16 +97,9 @@ document.addEventListener('click', (e) => {
 
 function openLightbox(src) {
     const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
-    lb.classList.remove('ready');
+    document.getElementById('lightbox-img').src = src;
     lb.style.display = 'flex';
-    
-    lbImg.src = src;
-    lbImg.onload = () => {
-        lb.classList.add('ready');
-    };
 }
-
 function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; }
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
