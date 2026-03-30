@@ -66,3 +66,20 @@ nav a:hover { opacity: 1; }
 
 .center-vh { display: flex; justify-content: center; align-items: center; height: 100vh; }
 .links-stack a { display: block; padding: 25px 0; border-bottom: 1px solid #111; color: #fff; text-decoration: none; font-size: 18px; letter-spacing: 5px; text-align: center; width: 280px; opacity: 0.5; }
+@media (max-width: 768px) {
+    /* ... твои текущие правки для split-container здесь остаются ... */
+
+    /* ИСПРАВЛЕНИЕ СЕТКИ ДЛЯ МОБИЛКИ */
+    .container {
+        padding: 120px 10px 40px; /* Уменьшаем боковые отступы, чтобы фотки были крупнее */
+    }
+
+    .masonry-wrapper {
+        column-count: 2; /* Делаем 2 колонки вместо одной */
+        column-gap: 10px; /* Уменьшаем расстояние между фото */
+    }
+
+    .masonry-wrapper img {
+        margin-bottom: 10px; /* Уменьшаем отступ снизу у каждой фотки */
+    }
+}
