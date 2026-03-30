@@ -1,4 +1,4 @@
-const config = { autoCount: 50, peopleCount: 50 };
+const config = { autoCount: 30, peopleCount: 30 };
 
 function showSection(id) {
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -13,11 +13,13 @@ function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
+    
     for (let i = 1; i <= maxCount; i++) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
         img.onerror = function() { this.remove(); };
-        img.onclick = () => {
+        img.onclick = (e) => {
+            e.stopPropagation();
             document.getElementById('lb-img').src = img.src;
             document.getElementById('lightbox').style.display = 'flex';
         };
@@ -28,5 +30,10 @@ function loadGrid(containerId, folder, maxCount) {
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
 function showPeople() { showSection('people'); loadGrid('people-grid', 'people', config.peopleCount); }
 
-document.getElementById('lightbox').onclick = () => { document.getElementById('lightbox').style.display = 'none'; };
-document.addEventListener('DOMContentLoaded', () => showSection('main'));
+document.getElementById('lightbox').onclick = () => { 
+    document.getElementById('lightbox').style.display = 'none'; 
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    showSection('main');
+});
