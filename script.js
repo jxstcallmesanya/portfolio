@@ -1,12 +1,7 @@
-const config = {
-    autoCount: 50, 
-    peopleCount: 30 
-};
+const config = { autoCount: 50, peopleCount: 50 };
 
 function showSection(id) {
-    document.querySelectorAll('.content-section').forEach(s => {
-        s.classList.remove('active');
-    });
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(id + '-section') || document.getElementById(id);
     if (target) {
         target.classList.add('active');
@@ -18,11 +13,9 @@ function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
-    
     for (let i = 1; i <= maxCount; i++) {
         const img = document.createElement('img');
-        img.src = `img/${folder}/${i}.webp`; 
-        img.loading = "lazy";
+        img.src = `img/${folder}/${i}.webp`;
         img.onerror = function() { this.remove(); };
         img.onclick = () => openLightbox(img.src);
         grid.appendChild(img);
@@ -38,8 +31,5 @@ function openLightbox(src) {
     lb.style.display = 'flex';
 }
 
-document.getElementById('lightbox').onclick = () => {
-    document.getElementById('lightbox').style.display = 'none';
-};
-
+document.getElementById('lightbox').onclick = () => { document.getElementById('lightbox').style.display = 'none'; };
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
