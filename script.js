@@ -9,24 +9,40 @@ function showSection(id) {
     }
 }
 
-function loadGrid(containerId, folder, maxCount) {
+// Глобальная переменная для контроля загрузки
+let currentGridData = { folder: '', count: 0, loaded: 0 };
+
+async function loadGrid(containerId, folder, maxCount) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
-    
-    // Очищаем сетку перед новой загрузкой, чтобы освободить память
-    grid.innerHTML = ''; 
 
-    for (let i = 1; i <= maxCount; i++) {
+    // Очищаем всё и сбрасываем счетчики
+    grid.innerHTML = '';
+    currentGridData = { folder, count: maxCount, loaded: 0 };
+
+    // Загружаем первые 10 штук сразу, остальное — через микро-паузу
+    renderBatch(grid, folder, 1, 10);
+    
+    setTimeout(() => {
+        renderBatch(grid, folder, 11, maxCount);
+    }, 100);
+}
+
+function renderBatch(container, folder, start, end) {
+    const fragment = document.createDocumentFragment();
+    
+    for (let i = start; i <= end; i++) {
         const img = document.createElement('img');
-        
-        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ:
-        // loading="lazy" заставляет браузер грузить фото только при скролле
-        img.setAttribute('loading', 'lazy'); 
-        
+        img.style.display = 'none'; // Скрываем, пока не загрузится
+        img.setAttribute('loading', 'lazy');
         img.src = `img/${folder}/${i}.webp`;
         
-        img.onerror = function() { 
-            this.remove(); 
+        img.onload = () => {
+            img.style.display = 'block';
+        };
+
+        img.onerror = () => {
+            img.remove(); // Просто удаляем, если файла нет (фикс 404)
         };
 
         img.onclick = () => {
@@ -34,9 +50,10 @@ function loadGrid(containerId, folder, maxCount) {
             lbImg.src = img.src;
             document.getElementById('lightbox').style.display = 'flex';
         };
-        
-        grid.appendChild(img);
+
+        fragment.appendChild(img);
     }
+    container.appendChild(fragment);
 }
 
 function showAuto() { 
@@ -49,10 +66,10 @@ function showPeople() {
     loadGrid('people-grid', 'people', config.peopleCount); 
 }
 
-// Закрытие лайтбокса
-document.getElementById('lightbox').onclick = () => { 
-    document.getElementById('lightbox').style.display = 'none'; 
-    document.getElementById('lb-img').src = ''; // Очищаем путь, чтобы выгрузить из памяти
+// Лайтбокс
+document.getElementById('lightbox').onclick = () => {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lb-img').src = ''; 
 };
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
