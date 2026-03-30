@@ -1,65 +1,59 @@
 /* БАЗОВЫЕ НАСТРОЙКИ */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; width: 100%; }
+body { font-family: 'Inter', sans-serif; background: #000; color: #fff; line-height: 1.5; }
 
-/* ХЕДЕР — Строго по центру */
-.main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
-.brand a { font-size: 14px; letter-spacing: 8px; text-decoration: none; color: #fff; font-weight: 200; display: inline-block; margin-bottom: 15px; }
-nav ul { display: flex; justify-content: center; gap: 25px; list-style: none; }
-nav a { font-size: 10px; letter-spacing: 2px; text-decoration: none; color: #fff; opacity: 0.5; transition: 0.3s; }
+/* ХЕДЕР — Центровка намертво */
+.main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 25px 0; text-align: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); border-bottom: 1px solid #111; }
+.brand a { font-size: 13px; letter-spacing: 6px; text-decoration: none; color: #fff; font-weight: 300; display: block; margin-bottom: 12px; text-transform: uppercase; }
+nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; }
+nav a { font-size: 9px; letter-spacing: 2px; text-decoration: none; color: #fff; opacity: 0.6; text-transform: uppercase; transition: 0.3s; }
 nav a:hover { opacity: 1; }
 
-/* УПРАВЛЕНИЕ СЕКЦИЯМИ */
-.content-section { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; overflow-y: auto; background: #000; width: 100%; }
-.active { opacity: 1; pointer-events: auto; z-index: 10; position: fixed; }
+/* СЕКЦИИ — Исправлено исчезновение */
+.content-section { display: none; width: 100%; min-height: 100vh; padding-top: 120px; background: #000; }
+.active { display: block !important; }
 
-/* ИДЕАЛЬНАЯ МОЗАИКА (MASONRY COLUMNS) */
-.container { max-width: 1300px; margin: 0 auto; padding: 160px 20px 80px; }
+/* ГЛАВНАЯ (СПЛИТ) */
+#main-section { padding-top: 0; }
+.split-container { display: flex; height: 100vh; width: 100%; }
+.split-side { flex: 1; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.bg-bw, .bg-color { position: absolute; inset: 0; background-size: cover; background-position: center; transition: 0.7s ease; }
+.bg-bw { filter: grayscale(1) brightness(0.3); z-index: 1; }
+.bg-color { opacity: 0; z-index: 2; }
+.split-side:hover .bg-color { opacity: 1; }
+.split-title h2 { font-size: clamp(24px, 5vw, 60px); letter-spacing: 12px; font-weight: 200; position: relative; z-index: 10; text-transform: uppercase; }
+
+/* ИДЕАЛЬНАЯ МОЗАИКА (MASONRY БЕЗ ОШИБОК) */
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 15px 100px; }
 .masonry-wrapper { 
-    column-count: 3; /* 3 колонки на десктопе */
-    column-gap: 20px; /* Отступ между колонками */
+    column-count: 3; 
+    column-gap: 15px; 
     width: 100%;
 }
 .masonry-wrapper img { 
     width: 100%; 
     display: block; 
-    margin-bottom: 20px; /* Отступ между фото по вертикали */
-    break-inside: avoid; /* Чтобы фото не разрывалось между колонками */
+    margin-bottom: 15px; 
+    break-inside: avoid; 
     cursor: pointer; 
-    transition: 0.4s; 
-    height: auto !important; /* ЗАПРЕТ на сплющивание */
-    background: #0a0a0a;
+    transition: 0.3s ease;
+    height: auto !important; /* Против сплющивания */
 }
 .masonry-wrapper img:hover { filter: brightness(1.2); }
 
-/* ОБО МНЕ — Новый дизайн из макета */
-.about-magazine { display: flex; gap: 60px; align-items: center; min-height: 80vh; }
-.about-image-side { width: 45%; position: relative; }
-.about-image-side img { width: 100%; display: block; filter: contrast(1.1); }
-.est-box { position: absolute; bottom: -10px; right: 20px; background: #fff; color: #000; padding: 5px 15px; font-size: 10px; font-weight: 900; letter-spacing: 2px; }
-.about-content-side { width: 55%; padding-left: 20px; }
-.creative-tag { color: #fff; border: 1px solid red; display: inline-block; padding: 3px 10px; font-size: 10px; letter-spacing: 1px; margin-bottom: 20px; }
-.huge-title { font-size: clamp(40px, 6vw, 80px); line-height: 0.9; font-weight: 800; text-transform: uppercase; margin-bottom: 25px; }
-.specs-line { font-size: 12px; letter-spacing: 2px; color: #999; margin-bottom: 30px; border-top: 1px solid #222; padding-top: 15px; }
-.bio-text { font-size: 16px; line-height: 1.6; color: #777; max-width: 450px; }
-
-/* СВЯЗЬ — Твой список */
-.center-vh { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
-.links-stack { width: 100%; max-width: 700px; }
-.links-stack a { display: block; padding: 45px 0; border-bottom: 1px solid #111; text-decoration: none; color: #fff; opacity: 0.4; letter-spacing: 8px; text-align: center; transition: 0.4s; font-size: 14px; text-transform: uppercase; }
+/* СВЯЗЬ (ИСПРАВЛЕНО) */
+.center-vh { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 70vh; }
+.links-stack { width: 100%; max-width: 600px; padding: 0 20px; }
+.links-stack a { display: block; padding: 35px 0; border-bottom: 1px solid #111; text-decoration: none; color: #fff; opacity: 0.5; letter-spacing: 6px; text-align: center; transition: 0.4s; font-size: 12px; text-transform: uppercase; }
 .links-stack a:hover { opacity: 1; border-bottom: 1px solid #fff; }
 
-/* АДАПТИВ ПОД МОБИЛКИ */
-@media (max-width: 1024px) {
-    .container { padding-top: 120px; }
-    .about-magazine { flex-direction: column; text-align: center; gap: 40px; }
-    .about-image-side { width: 85%; }
-    .about-content-side { width: 100%; display: flex; flex-direction: column; align-items: center; padding-left: 0; }
+/* АДАПТИВ */
+@media (max-width: 800px) {
     .masonry-wrapper { column-count: 2; column-gap: 10px; }
     .masonry-wrapper img { margin-bottom: 10px; }
-    .huge-title { font-size: 34px; }
+    .split-container { flex-direction: column; }
 }
 
 /* Lightbox */
-#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; display: none; align-items: center; justify-content: center; }
-#lb-img { max-width: 95%; max-height: 95%; object-fit: contain; }
+#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; cursor: pointer; }
+#lb-img { max-width: 90%; max-height: 90%; object-fit: contain; }
