@@ -21,15 +21,19 @@ function loadGrid(containerId, folder, count) {
     if(!grid) return;
     grid.innerHTML = '';
     
+    // Используем фрагмент для производительности
+    const fragment = document.createDocumentFragment();
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
         img.src = `img/${folder}/${i}.webp`;
         img.loading = "lazy";
+        // Устанавливаем плавное появление
         img.style.opacity = "0";
-        img.onload = () => img.style.opacity = "1";
+        img.onload = () => { img.style.opacity = "1"; };
         img.onclick = () => openLightbox(img.src);
-        grid.appendChild(img);
+        fragment.appendChild(img);
     }
+    grid.appendChild(fragment);
 }
 
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
@@ -54,6 +58,7 @@ function openProject(folder, title) {
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
     
+    // Проверяем до 60 фото в папке проекта
     for(let i = 1; i <= 60; i++) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;

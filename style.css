@@ -22,22 +22,30 @@ nav a:hover { opacity: 1; }
 .split-side:hover .bg-color { opacity: 1; }
 .split-title h2 { font-size: clamp(30px, 6vw, 70px); letter-spacing: 15px; font-weight: 100; position: relative; z-index: 10; }
 
-/* ИДЕАЛЬНАЯ МОЗАИКА (GRID) */
-.container { max-width: 1400px; margin: 0 auto; padding: 160px 20px 80px; }
+/* ИДЕАЛЬНАЯ ПЛОТНАЯ МОЗАИКА (FLEX) */
+.container { max-width: 1300px; margin: 0 auto; padding: 160px 20px 80px; }
 .masonry-wrapper { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); /* 3 колонки на десктопе */
-    grid-gap: 20px; /* Одинаковое расстояние между всеми фото */
-    align-items: start;
+    display: flex; /* Переходим на флекс */
+    flex-wrap: wrap; /* Разрешаем перенос на новую строку */
+    justify-content: space-between; /* Распределяем по ширине */
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
+
+/* Элемент мозаики — Фикс дыр */
 .masonry-wrapper img { 
-    width: 100%; 
+    width: calc(33.333% - 14px); /* Ровно 3 колонки с учетом зазора */
     display: block; 
+    margin-bottom: 20px; /* Одинаковый отступ по вертикали */
     cursor: pointer; 
     transition: 0.4s; 
-    background: #111; 
+    background: #0a0a0a; /* Тонкая заглушка, пока фото грузится */
 }
-.masonry-wrapper img:hover { filter: brightness(1.1); }
+
+.masonry-wrapper img:hover { 
+    filter: brightness(1.1); 
+}
 
 /* ОБО МНЕ — Возвращаем стиль */
 .about-magazine { display: flex; gap: 80px; align-items: center; min-height: 80vh; }
@@ -64,7 +72,14 @@ nav a:hover { opacity: 1; }
     .line-thick { margin: 0 auto 30px; }
     .huge-title { font-size: 38px; }
     
-    .masonry-wrapper { grid-template-columns: repeat(2, 1fr); grid-gap: 10px; } /* 2 колонки на мобилках */
+    /* Перестраиваем мозаику в 2 колонки */
+    .masonry-wrapper { 
+        justify-content: space-between; 
+    }
+    .masonry-wrapper img { 
+        width: calc(50% - 10px); /* Ровно 2 колонки с зазором */
+        margin-bottom: 15px; 
+    }
     .split-container { flex-direction: column; }
 }
 
