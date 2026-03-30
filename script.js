@@ -16,12 +16,13 @@ function showSection(id) {
     }
 }
 
+// Загрузка с сохранением порядка
 function loadArchive(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Создаем массив плейсхолдеров, чтобы зафиксировать порядок
+    // 1. Создаем пустые блоки заранее в правильном порядке
     const items = [];
     for(let i = count; i >= 1; i--) {
         const item = document.createElement('div');
@@ -30,7 +31,7 @@ function loadArchive(containerId, folder, count) {
         items.push({ num: i, element: item });
     }
 
-    // Загружаем фото в созданные блоки
+    // 2. Наполняем блоки картинками .webp
     items.forEach(obj => {
         const src = `img/${folder}/${obj.num}.webp`;
         const img = new Image();
