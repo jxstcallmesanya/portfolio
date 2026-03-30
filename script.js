@@ -3,7 +3,6 @@ const config = {
     peopleCount: 21 
 };
 
-// Твои проекты
 const myProjects = [
     { folder: 'drift_day', title: 'DRIFT DAY 2026' },
     { folder: 'night_city', title: 'NIGHT SESSION' }
@@ -11,22 +10,41 @@ const myProjects = [
 
 function showSection(id) {
     window.scrollTo(0, 0);
-    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    // Закрываем все секции
+    document.querySelectorAll('.content-section').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none'; // Полностью скрываем для производительности
+    });
+    
     const target = document.getElementById(id + '-section') || document.getElementById(id);
-    if(target) target.classList.add('active');
+    if(target) {
+        target.style.display = 'block';
+        setTimeout(() => target.classList.add('active'), 10);
+    }
+    
     if(id === 'projects') renderProjects();
 }
 
-// Загрузка архивов (От новых к старым)
+// Умная загрузка сетки (Архивы)
 function loadGrid(containerId, folder, count) {
     const grid = document.getElementById(containerId);
     grid.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
     for(let i = count; i >= 1; i--) {
         const img = document.createElement('img');
+        img.style.opacity = "0";
         img.src = `img/${folder}/${i}.webp`;
+        img.loading = "lazy";
+        
+        img.onload = () => {
+            img.style.opacity = "1";
+        };
+        
         img.onclick = () => openLightbox(img.src);
-        grid.appendChild(img);
+        fragment.appendChild(img);
     }
+    grid.appendChild(fragment);
 }
 
 function showAuto() { showSection('auto'); loadGrid('auto-grid', 'auto', config.autoCount); }
@@ -40,24 +58,29 @@ function renderProjects() {
     myProjects.forEach(p => {
         const div = document.createElement('div');
         div.className = 'project-item';
-        div.innerHTML = `<img src="img/projects/${p.folder}/1.webp"><h3>${p.title}</h3>`;
+        div.innerHTML = `<img src="img/projects/${p.folder}/1.webp" loading="lazy"><h3>${p.title}</h3>`;
         div.onclick = () => openProject(p.folder, p.title);
         list.appendChild(div);
     });
 }
 
-// Внутри проекта (От 50 вниз)
+// Загрузка внутри проекта (с проверкой наличия)
 function openProject(folder, title) {
     showSection('single-project');
     document.getElementById('project-title').innerText = title;
     const grid = document.getElementById('project-photos');
     grid.innerHTML = '';
-    for(let i = 50; i >= 1; i--) {
+    
+    // Лимит 60 фото для производительности мобилок
+    for(let i = 60; i >= 1; i--) {
         const img = new Image();
         img.src = `img/projects/${folder}/${i}.webp`;
+        
         img.onload = () => {
-            img.onclick = () => openLightbox(img.src);
-            grid.appendChild(img);
+            const galleryImg = document.createElement('img');
+            galleryImg.src = img.src;
+            galleryImg.onclick = () => openLightbox(galleryImg.src);
+            grid.appendChild(galleryImg);
         };
     }
 }
@@ -67,5 +90,12 @@ function openLightbox(src) {
     document.getElementById('lb-img').src = src;
     lb.style.display = 'flex';
 }
+
+// Закрытие лайтбокса при клике на фон
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if(e.target !== document.getElementById('lb-img')) {
+        this.style.display = 'none';
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => showSection('main'));
