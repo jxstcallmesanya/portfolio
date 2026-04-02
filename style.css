@@ -37,7 +37,8 @@ body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow
 }
 .brand-btn:focus-visible,
 .nav-btn:focus-visible,
-.split-side:focus-visible {
+.split-side:focus-visible,
+.gallery-back:focus-visible {
     outline-offset: -2px;
 }
 
@@ -127,6 +128,50 @@ nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; ma
 
 /* СЕТКА ГАЛЕРЕИ */
 .container { max-width: 1200px; margin: 0 auto; padding: 140px 20px 60px; }
+
+.gallery-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding: 0 0 16px;
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-start;
+    font: inherit;
+    color: #888;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #1a1a1a;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.35s ease, border-color 0.35s ease;
+}
+.gallery-back:hover,
+.gallery-back:focus-visible {
+    color: #fff;
+    border-bottom-color: #c00;
+}
+.gallery-back-label {
+    font-size: 10px;
+    font-weight: 200;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+}
+.gallery-back-arrow {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 200;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform 0.35s ease, color 0.35s ease;
+}
+.gallery-back:hover .gallery-back-arrow,
+.gallery-back:focus-visible .gallery-back-arrow {
+    transform: translateX(-4px);
+    color: #fff;
+}
+
 .masonry-wrapper { column-count: 3; column-gap: 15px; }
 .masonry-wrapper img { width: 100%; margin-bottom: 15px; cursor: pointer; display: block; }
 
@@ -187,6 +232,9 @@ nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; ma
     .split-side:hover .bg-bw, .split-side:hover .bg-color { transform: none; }
     .nav-btn { transition: none; }
     .links-stack a { transition: none; }
+    .gallery-back { transition: none; }
+    .gallery-back:hover .gallery-back-arrow,
+    .gallery-back:focus-visible .gallery-back-arrow { transform: none; }
 }
 
 /* МОБИЛЬНАЯ ВЕРСИЯ */
@@ -206,6 +254,15 @@ nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; ma
 
     .container {
         padding: 120px 10px 40px;
+    }
+
+    .gallery-back {
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+    }
+
+    .gallery-back-label {
+        letter-spacing: 0.35em;
     }
 
     .masonry-wrapper {

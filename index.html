@@ -79,11 +79,23 @@
 
         <section id="auto-section" class="content-section" aria-label="Галерея автомобильной съёмки">
             <h2 class="visually-hidden">Галерея — автомобили</h2>
-            <div class="container"><div id="auto-grid" class="masonry-wrapper"></div></div>
+            <div class="container gallery-page">
+                <button type="button" class="gallery-back" onclick="showSection('main')" aria-label="Назад к выбору раздела галереи">
+                    <span class="gallery-back-arrow" aria-hidden="true">←</span>
+                    <span class="gallery-back-label">НАЗАД</span>
+                </button>
+                <div id="auto-grid" class="masonry-wrapper"></div>
+            </div>
         </section>
         <section id="people-section" class="content-section" aria-label="Галерея репортажной съёмки">
             <h2 class="visually-hidden">Галерея — люди</h2>
-            <div class="container"><div id="people-grid" class="masonry-wrapper"></div></div>
+            <div class="container gallery-page">
+                <button type="button" class="gallery-back" onclick="showSection('main')" aria-label="Назад к выбору раздела галереи">
+                    <span class="gallery-back-arrow" aria-hidden="true">←</span>
+                    <span class="gallery-back-label">НАЗАД</span>
+                </button>
+                <div id="people-grid" class="masonry-wrapper"></div>
+            </div>
         </section>
 
         <section id="about-section" class="content-section" aria-label="Обо мне">
