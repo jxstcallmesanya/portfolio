@@ -3,66 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JXSTCALLMESANYA | Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Автомобильный и репортажный фотограф. Портфолио: авто и люди, высокий контраст и кинематографичность. Sony A7 III / Tamron 28-75 G2.">
+    <link rel="canonical" href="https://portfolio-jxstcallmesanya.vercel.app/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://portfolio-jxstcallmesanya.vercel.app/">
+    <meta property="og:title" content="JXSTCALLMESANYA | Портфолио фотографа">
+    <meta property="og:description" content="Автомобильный и репортажный фотограф. Эстетика в деталях.">
+    <meta property="og:image" content="https://portfolio-jxstcallmesanya.vercel.app/img/me.webp">
+    <meta property="og:locale" content="ru_RU">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="JXSTCALLMESANYA | Портфолио фотографа">
+    <meta name="twitter:description" content="Автомобильный и репортажный фотограф. Эстетика в деталях.">
+    <meta name="twitter:image" content="https://portfolio-jxstcallmesanya.vercel.app/img/me.webp">
+
+    <title>JXSTCALLMESANYA | Портфолио фотографа</title>
+
+    <link rel="preload" as="image" href="img/auto_b.webp">
+    <link rel="preload" as="image" href="img/people_b.webp">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "JXSTCALLMESANYA",
+      "url": "https://portfolio-jxstcallmesanya.vercel.app/",
+      "image": "https://portfolio-jxstcallmesanya.vercel.app/img/me.webp",
+      "jobTitle": "Фотограф",
+      "description": "Автомобильный и репортажный фотограф. Съёмка авто и репортаж.",
+      "sameAs": [
+        "https://t.me/jxstcallmesanya",
+        "https://vk.com/jxstcallmesanya"
+      ]
+    }
+    </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Перейти к содержимому</a>
 
     <header class="main-header">
-        <div class="brand"><a href="#" onclick="showSection('main')">JXSTCALLMESANYA</a></div>
-        <nav>
+        <div class="brand">
+            <button type="button" class="brand-btn" onclick="showSection('main')">JXSTCALLMESANYA</button>
+        </div>
+        <nav aria-label="Основное меню">
             <ul>
-                <li><a href="#" onclick="showSection('about')">ОБО МНЕ</a></li>
-                <li><a href="#" onclick="showSection('projects')">ГАЛЕРЕЯ</a></li>
-                <li><a href="#" onclick="showSection('contact')">СВЯЗЬ</a></li>
+                <li><button type="button" class="nav-btn" onclick="showSection('about')">ОБО МНЕ</button></li>
+                <li><button type="button" class="nav-btn" onclick="showSection('main')">ГАЛЕРЕЯ</button></li>
+                <li><button type="button" class="nav-btn" onclick="showSection('contact')">СВЯЗЬ</button></li>
             </ul>
         </nav>
     </header>
 
-    <section id="main-section" class="content-section active">
-        <div class="split-container">
-            <div class="split-side" onclick="showAuto()">
-                <div class="bg-bw" style="background-image: url('img/auto_b.webp');"></div>
-                <div class="bg-color" style="background-image: url('img/auto_a.webp');"></div>
-                <div class="split-title"><h2>АВТО</h2></div>
+    <main id="main-content">
+        <section id="main-section" class="content-section active" aria-label="Главная">
+            <h1 class="visually-hidden">JXSTCALLMESANYA — автомобильный и репортажный фотограф, портфолио</h1>
+            <div class="split-container">
+                <button type="button" class="split-side" onclick="showAuto()" aria-label="Открыть галерею автомобильной съёмки">
+                    <span class="bg-bw" style="background-image: url('img/auto_b.webp');" aria-hidden="true"></span>
+                    <span class="bg-color" style="background-image: url('img/auto_a.webp');" aria-hidden="true"></span>
+                    <span class="split-title"><span class="split-heading">АВТО</span></span>
+                </button>
+                <button type="button" class="split-side" onclick="showPeople()" aria-label="Открыть галерею репортажной съёмки">
+                    <span class="bg-bw" style="background-image: url('img/people_b.webp');" aria-hidden="true"></span>
+                    <span class="bg-color" style="background-image: url('img/people_a.webp');" aria-hidden="true"></span>
+                    <span class="split-title"><span class="split-heading">ЛЮДИ</span></span>
+                </button>
             </div>
-            <div class="split-side" onclick="showPeople()">
-                <div class="bg-bw" style="background-image: url('img/people_b.webp');"></div>
-                <div class="bg-color" style="background-image: url('img/people_a.webp');"></div>
-                <div class="split-title"><h2>ЛЮДИ</h2></div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="auto-section" class="content-section"><div class="container"><div id="auto-grid" class="masonry-wrapper"></div></div></section>
-    <section id="people-section" class="content-section"><div class="container"><div id="people-grid" class="masonry-wrapper"></div></div></section>
+        <section id="auto-section" class="content-section" aria-label="Галерея автомобильной съёмки">
+            <h2 class="visually-hidden">Галерея — автомобили</h2>
+            <div class="container"><div id="auto-grid" class="masonry-wrapper"></div></div>
+        </section>
+        <section id="people-section" class="content-section" aria-label="Галерея репортажной съёмки">
+            <h2 class="visually-hidden">Галерея — люди</h2>
+            <div class="container"><div id="people-grid" class="masonry-wrapper"></div></div>
+        </section>
 
-    <section id="about-section" class="content-section">
-        <div class="about-magazine">
-            <div class="about-image-side">
-                <img src="img/me.webp" alt="Me">
+        <section id="about-section" class="content-section" aria-label="Обо мне">
+            <div class="about-magazine">
+                <div class="about-image-side">
+                    <img src="img/me.webp" alt="Портрет фотографа JXSTCALLMESANYA" loading="lazy" decoding="async">
+                </div>
+                <div class="about-content-side">
+                    <p class="creative-tag">CREATIVE PHOTOGRAPHER</p>
+                    <h2 class="huge-title">ЭСТЕТИКА<br>В ДЕТАЛЯХ</h2>
+                    <p class="specs-line">SONY A7 III / TAMRON 28-75 G2</p>
+                    <p class="bio-text">Автомобильный и репортажный фотограф. Создаю визуальную историю вашего стиля через призму высокого контраста и кинематографичности.</p>
+                </div>
             </div>
-            <div class="about-content-side">
-                <div class="creative-tag">CREATIVE PHOTOGRAPHER</div>
-                <h1 class="huge-title">ЭСТЕТИКА<br>В ДЕТАЛЯХ</h1>
-                <div class="specs-line">SONY A7 III / TAMRON 28-75 G2</div>
-                <p class="bio-text">Автомобильный и репортажный фотограф. Создаю визуальную историю вашего стиля через призму высокого контраста и кинематографичности.</p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="contact-section" class="content-section">
-        <div class="center-vh">
-            <div class="links-stack">
-                <a href="https://t.me/jxstcallmesanya" target="_blank">TELEGRAM</a>
-                <a href="https://vk.com/jxstcallmesanya" target="_blank">VKONTAKTE</a>
-                <a href="mailto:work@mail.ru">EMAIL</a>
+        <section id="contact-section" class="content-section" aria-label="Связь">
+            <h2 class="visually-hidden">Контакты</h2>
+            <div class="center-vh">
+                <div class="links-stack">
+                    <a href="https://t.me/jxstcallmesanya" target="_blank" rel="noopener noreferrer">TELEGRAM</a>
+                    <a href="https://vk.com/jxstcallmesanya" target="_blank" rel="noopener noreferrer">VKONTAKTE</a>
+                    <a href="mailto:work@mail.ru">EMAIL</a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <div id="lightbox"><img id="lb-img" src=""></div>
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии" hidden>
+        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Закрыть просмотр">&times;</button>
+        <img id="lb-img" src="" alt="">
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

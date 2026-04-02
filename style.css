@@ -1,41 +1,124 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
 
+/* Доступность: ссылка «пропустить» */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 3000;
+    padding: 12px 20px;
+    background: #fff;
+    color: #000;
+    text-decoration: none;
+    font-size: 14px;
+}
+.skip-link:focus {
+    left: 12px;
+    top: 12px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Фокус с клавиатуры */
+:focus { outline: none; }
+:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+.brand-btn:focus-visible,
+.nav-btn:focus-visible,
+.split-side:focus-visible {
+    outline-offset: -2px;
+}
+
 /* ХЕДЕР */
-.main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 20px 0; text-align: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
-.brand a { font-size: clamp(12px, 2vw, 14px); letter-spacing: 8px; text-decoration: none; color: #fff; font-weight: 200; text-transform: uppercase; }
-nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; margin-top: 10px; }
-nav a { font-size: 10px; letter-spacing: 2px; text-decoration: none; color: #fff; opacity: 0.5; transition: 0.3s; }
-nav a:hover { opacity: 1; }
+.main-header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 20px 0; text-align: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
+
+.brand-btn {
+    font: inherit;
+    font-size: clamp(12px, 2vw, 14px);
+    letter-spacing: 8px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 200;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; margin-top: 10px; flex-wrap: wrap; }
+.nav-btn {
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    color: #aaa;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 1;
+    transition: color 0.3s, opacity 0.3s;
+}
+.nav-btn:hover { color: #fff; }
+.nav-btn:focus-visible { color: #fff; }
 
 .content-section { display: none; width: 100%; min-height: 100vh; }
 .active { display: block !important; }
 
 /* ГЛАВНАЯ (SPLIT) */
 .split-container { display: flex; height: 100vh; width: 100%; position: relative; }
-.split-side { flex: 1; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.split-side {
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font: inherit;
+    color: inherit;
+    border: none;
+    padding: 0;
+    background: transparent;
+    min-height: 0;
+}
 
-/* bg-bw и bg-color должны иметь высоту и ширину */
-.bg-bw, .bg-color { 
-    position: absolute; inset: 0; 
-    background-size: cover; background-position: center; 
-    transition: transform 1.2s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.8s ease; 
+.bg-bw, .bg-color {
+    display: block;
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transition: transform 1.2s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.8s ease;
     width: 100%; height: 100%;
 }
 .bg-bw { filter: grayscale(1) brightness(0.3); z-index: 1; opacity: 1; }
 .bg-color { opacity: 0; z-index: 2; }
 
-/* Эффект наведения */
 .split-side:hover .bg-color { opacity: 1; }
 .split-side:hover .bg-bw, .split-side:hover .bg-color { transform: scale(1.05); }
 
 .split-title { position: relative; z-index: 10; pointer-events: none; }
-.split-title h2 { font-size: clamp(24px, 5vw, 50px); letter-spacing: 15px; font-weight: 100; text-transform: uppercase; }
+.split-heading {
+    display: block;
+    font-size: clamp(24px, 5vw, 50px);
+    letter-spacing: 15px;
+    font-weight: 100;
+    text-transform: uppercase;
+}
 
 /* ОБО МНЕ */
 .about-magazine { display: flex; gap: 5%; align-items: center; justify-content: center; min-height: 100vh; padding: 120px 10% 60px; flex-direction: row; }
 .about-image-side { width: 40%; max-width: 500px; }
-.about-image-side img { width: 100%; display: block; filter: contrast(1.1); }
+.about-image-side img { width: 100%; height: auto; display: block; filter: contrast(1.1); }
 .about-content-side { width: 50%; }
 .creative-tag { color: #fff; border: 1px solid #ff0000; display: inline-block; padding: 5px 15px; font-size: 10px; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
 .huge-title { font-size: clamp(40px, 5vw, 85px); line-height: 1; font-weight: 800; text-transform: uppercase; margin-bottom: 30px; }
@@ -47,39 +130,90 @@ nav a:hover { opacity: 1; }
 .masonry-wrapper { column-count: 3; column-gap: 15px; }
 .masonry-wrapper img { width: 100%; margin-bottom: 15px; cursor: pointer; display: block; }
 
+.center-vh { display: flex; justify-content: center; align-items: center; height: 100vh; }
+.links-stack a {
+    display: block;
+    padding: 25px 0;
+    border-bottom: 1px solid #111;
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    letter-spacing: 5px;
+    text-align: center;
+    width: 280px;
+    color: #aaa;
+    transition: color 0.3s;
+}
+.links-stack a:hover { color: #fff; }
+
+/* ЛАЙТБОКС */
+.lightbox[hidden] {
+    display: none !important;
+}
+.lightbox:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#lb-img {
+    max-width: 90%;
+    max-height: 85%;
+    object-fit: contain;
+    cursor: default;
+}
+.lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    z-index: 2001;
+    font-size: 36px;
+    line-height: 1;
+    color: #fff;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    opacity: 0.7;
+}
+.lightbox-close:hover { opacity: 1; }
+
+/* Уменьшение анимаций по запросу системы */
+@media (prefers-reduced-motion: reduce) {
+    .bg-bw, .bg-color { transition: none; }
+    .split-side:hover .bg-bw, .split-side:hover .bg-color { transform: none; }
+    .nav-btn { transition: none; }
+    .links-stack a { transition: none; }
+}
+
 /* МОБИЛЬНАЯ ВЕРСИЯ */
 @media (max-width: 768px) {
+    .main-header {
+        backdrop-filter: none;
+        background: rgba(0,0,0,0.95);
+    }
+
     .split-container { flex-direction: column; }
     .split-side { height: 50vh; width: 100%; }
-    .split-title h2 { font-size: 28px; letter-spacing: 10px; }
+    .split-heading { font-size: 28px; letter-spacing: 10px; }
 
     .about-magazine { flex-direction: column; padding: 100px 20px 40px; text-align: left; }
     .about-image-side, .about-content-side { width: 100%; max-width: none; }
     .about-image-side { margin-bottom: 30px; }
-    
-    .masonry-wrapper { column-count: 1; }
-}
 
-/* ЛАЙТБОКС */
-#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; }
-#lb-img { max-width: 90%; max-height: 85%; object-fit: contain; }
-
-.center-vh { display: flex; justify-content: center; align-items: center; height: 100vh; }
-.links-stack a { display: block; padding: 25px 0; border-bottom: 1px solid #111; color: #fff; text-decoration: none; font-size: 18px; letter-spacing: 5px; text-align: center; width: 280px; opacity: 0.5; }
-@media (max-width: 768px) {
-    /* ... твои текущие правки для split-container здесь остаются ... */
-
-    /* ИСПРАВЛЕНИЕ СЕТКИ ДЛЯ МОБИЛКИ */
     .container {
-        padding: 120px 10px 40px; /* Уменьшаем боковые отступы, чтобы фотки были крупнее */
+        padding: 120px 10px 40px;
     }
 
     .masonry-wrapper {
-        column-count: 2; /* Делаем 2 колонки вместо одной */
-        column-gap: 10px; /* Уменьшаем расстояние между фото */
+        column-count: 2;
+        column-gap: 10px;
     }
 
     .masonry-wrapper img {
-        margin-bottom: 10px; /* Уменьшаем отступ снизу у каждой фотки */
+        margin-bottom: 10px;
     }
 }
