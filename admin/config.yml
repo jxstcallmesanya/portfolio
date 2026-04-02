@@ -1,0 +1,46 @@
+# Замените repo на свой, если форк: owner/name
+backend:
+  name: github
+  repo: jxstcallmesanya/portfolio
+  branch: main
+  # Для входа через GitHub нужен OAuth (см. README-CMS.md). Пока не настроено — используйте npm run gallery:scan локально.
+
+local_backend: false
+
+media_folder: img
+public_folder: img
+
+collections:
+  - name: gallery
+    label: Галерея
+    files:
+      - name: manifest
+        label: Фотографии
+        file: gallery.json
+        fields:
+          - label: Авто
+            name: auto
+            widget: list
+            allow_add: true
+            allow_delete: true
+            summary: "{{image}}"
+            field:
+              label: Файл
+              name: image
+              widget: image
+              media_folder: img/auto
+              public_folder: img/auto
+              choose_url: false
+          - label: Люди
+            name: people
+            widget: list
+            allow_add: true
+            allow_delete: true
+            summary: "{{image}}"
+            field:
+              label: Файл
+              name: image
+              widget: image
+              media_folder: img/people
+              public_folder: img/people
+              choose_url: false
