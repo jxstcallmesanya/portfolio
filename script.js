@@ -48,6 +48,7 @@ let lastFocusedThumb = null;
 let lightboxGalleryKey = null;
 let lightboxIndex = -1;
 let currentSectionId = 'main';
+let forceManualGalleryMode = false;
 
 function isMemoryConstrainedDevice() {
   return (
@@ -63,6 +64,10 @@ function isLikelyIOSWebKit() {
   const webkit = /AppleWebKit/i.test(ua);
   const chromium = /CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);
   return iOS && webkit && !chromium;
+}
+
+function isVeryLowMemoryMode() {
+  return forceManualGalleryMode || isLikelyIOSWebKit();
 }
 
 function trackEvent(name, label, extra = {}) {
@@ -187,6 +192,8 @@ function releaseSectionMemory(sectionId) {
   const grid = document.getElementById(`${sectionId}-grid`);
   if (!grid) return;
   grid.querySelectorAll('.gallery-thumb').forEach((img) => teardownGalleryImage(img));
+  grid.innerHTML = '';
+  galleryRendered[sectionId] = false;
   clearGalleryQueues();
 }
 
@@ -325,6 +332,7 @@ function teardownGalleryImage(img) {
 }
 
 function createGalleryLoadObserver() {
+  if (isVeryLowMemoryMode()) return null;
   if (!('IntersectionObserver' in window)) return null;
 
   const tight = isMemoryConstrainedDevice();
@@ -399,7 +407,7 @@ function clearGalleryQueues() {
 
 function getMobileInitialLimit() {
   if (!isMemoryConstrainedDevice()) return null;
-  return isLikelyIOSWebKit() ? 18 : 24;
+  return isVeryLowMemoryMode() ? 8 : 24;
 }
 
 function updateLoadMoreVisibility(galleryKey, shownCount, totalCount) {
@@ -425,7 +433,7 @@ function renderLightboxImage() {
   const current = items[lightboxIndex];
   if (!current) return;
 
-  lbImg.src = current.fullSrc;
+  lbImg.src = isVeryLowMemoryMode() ? (current.thumbSrc || current.fullSrc) : current.fullSrc;
   lbImg.alt = altForGallery(lightboxGalleryKey, lightboxIndex + 1);
   updateLightboxNavButtons();
 }
@@ -561,15 +569,32 @@ function appendGalleryBatch(containerId, galleryKey, entries, startIndex, count)
   return end - startIndex;
 }
 
+function loadThumbBatchSynchronously(grid, startIndex, count) {
+  const thumbs = Array.from(grid.querySelectorAll('.gallery-thumb'));
+  const end = Math.min(startIndex + count, thumbs.length);
+  for (let i = startIndex; i < end; i++) {
+    const img = thumbs[i];
+    if (!img || img.dataset.imageReady === '1') continue;
+    requestGalleryImageLoad(img, entryFromDataset(img));
+  }
+  return Math.max(0, end - startIndex);
+}
+
 function bindLoadMore(galleryKey, containerId) {
   const btn = document.getElementById(`${galleryKey}-load-more`);
   if (!btn) return;
   btn.onclick = () => {
     const rendered = Number(btn.dataset.renderedCount || '0');
     const total = galleryEntries[galleryKey].length;
-    const nextChunk = isLikelyIOSWebKit() ? 12 : 18;
+    const nextChunk = isVeryLowMemoryMode() ? 6 : (isLikelyIOSWebKit() ? 12 : 18);
     appendGalleryBatch(containerId, galleryKey, galleryEntries[galleryKey], rendered, nextChunk);
     const nextRendered = Math.min(rendered + nextChunk, total);
+    if (isVeryLowMemoryMode()) {
+      const grid = document.getElementById(containerId);
+      if (grid) {
+        loadThumbBatchSynchronously(grid, rendered, nextChunk);
+      }
+    }
     btn.dataset.renderedCount = String(nextRendered);
     updateLoadMoreVisibility(galleryKey, nextRendered, total);
     trackEvent('gallery_load_more', galleryKey, { rendered: nextRendered, total });
@@ -589,6 +614,12 @@ function renderGalleryGrid(containerId, galleryKey, entries) {
   const mobileLimit = getMobileInitialLimit();
   const initialCount = mobileLimit == null ? entries.length : Math.min(entries.length, mobileLimit);
   appendGalleryBatch(containerId, galleryKey, entries, 0, initialCount);
+  if (isVeryLowMemoryMode()) {
+    const grid = document.getElementById(containerId);
+    if (grid) {
+      loadThumbBatchSynchronously(grid, 0, initialCount);
+    }
+  }
 
   const btn = document.getElementById(`${galleryKey}-load-more`);
   if (btn) {
@@ -643,11 +674,18 @@ async function routeByHash(source) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  maxConcurrentGalleryLoads = isLikelyIOSWebKit() ? 1 : (isMemoryConstrainedDevice() ? 2 : 8);
+  forceManualGalleryMode = window.location.search.includes('safe=1');
+  if (isVeryLowMemoryMode()) {
+    document.body.classList.add('low-memory-mode');
+  }
+  maxConcurrentGalleryLoads = isVeryLowMemoryMode() ? 1 : (isMemoryConstrainedDevice() ? 2 : 8);
   galleryLoadObserver = createGalleryLoadObserver();
   galleryUnloadObserver = createGalleryUnloadObserver();
 
   document.querySelectorAll('.split-side [data-bg]').forEach((el) => {
+    if (isVeryLowMemoryMode() && el.classList.contains('bg-color')) {
+      return;
+    }
     const src = el.dataset.bg;
     if (!src) return;
     const i = new Image();

@@ -392,6 +392,25 @@ nav ul {
     text-underline-offset: 2px;
 }
 
+body.low-memory-mode .masonry-wrapper {
+    column-count: 2 !important;
+    column-gap: 6px;
+}
+body.low-memory-mode .gallery-item {
+    margin-bottom: 6px;
+    contain-intrinsic-size: 40vw 96px;
+}
+body.low-memory-mode .gallery-thumb {
+    min-height: 56px;
+}
+body.low-memory-mode .gallery-load-more {
+    width: 100%;
+}
+body.low-memory-mode #lb-img {
+    max-width: 96%;
+    max-height: 72vh;
+}
+
 .gallery-load-more {
     margin: 8px auto 20px;
     display: block;
