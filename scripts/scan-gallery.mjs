@@ -28,11 +28,17 @@ function listSortedFiles(dirRelative) {
 
 function toPaths(files, folder) {
   const prefix = `img/${folder}`;
-  return files.map((f) => `${prefix}/${f}`);
+  return files.map((f) => {
+    const p = `${prefix}/${f}`;
+    return { full: p, thumb: p };
+  });
 }
 
 function defaultSequential(folder, count) {
-  return Array.from({ length: count }, (_, i) => `img/${folder}/${i + 1}.webp`);
+  return Array.from({ length: count }, (_, i) => {
+    const p = `img/${folder}/${i + 1}.webp`;
+    return { full: p, thumb: p };
+  });
 }
 
 const autoFiles = listSortedFiles('img/auto');
