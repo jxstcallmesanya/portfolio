@@ -23,9 +23,6 @@
 
     <title>JXSTCALLMESANYA | Фотограф: авто и репортаж</title>
 
-    <link rel="preload" as="image" href="img/auto_b.webp">
-    <link rel="preload" as="image" href="img/people_b.webp">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;800&display=swap" rel="stylesheet">
@@ -89,13 +86,13 @@
             <h1 class="visually-hidden">JXSTCALLMESANYA — портфолио фотографа: автомобильная и репортажная съёмка</h1>
             <div class="split-container">
                 <button type="button" class="split-side" data-open-gallery="auto" aria-label="Открыть галерею автомобильной съёмки">
-                    <span class="bg-bw" style="background-image: url('img/auto_b.webp');" aria-hidden="true"></span>
-                    <span class="bg-color" style="background-image: url('img/auto_a.webp');" aria-hidden="true"></span>
+                    <span class="bg-bw" data-bg="img/auto_b.webp" aria-hidden="true"></span>
+                    <span class="bg-color" data-bg="img/auto_a.webp" aria-hidden="true"></span>
                     <span class="split-title"><span class="split-heading">АВТО</span></span>
                 </button>
                 <button type="button" class="split-side" data-open-gallery="people" aria-label="Открыть галерею репортажной съёмки">
-                    <span class="bg-bw" style="background-image: url('img/people_b.webp');" aria-hidden="true"></span>
-                    <span class="bg-color" style="background-image: url('img/people_a.webp');" aria-hidden="true"></span>
+                    <span class="bg-bw" data-bg="img/people_b.webp" aria-hidden="true"></span>
+                    <span class="bg-color" data-bg="img/people_a.webp" aria-hidden="true"></span>
                     <span class="split-title"><span class="split-heading">ЛЮДИ</span></span>
                 </button>
                 <div class="hero-panel">
@@ -119,6 +116,7 @@
                 </button>
                 <p class="gallery-intro">Автомобильная съёмка для личных коллекций, предпродажи и брендов. Больше SEO-информации и примеров — на <a href="/auto/">отдельной странице услуги</a>.</p>
                 <div id="auto-grid" class="masonry-wrapper"></div>
+                <button type="button" id="auto-load-more" class="gallery-load-more" hidden>Показать ещё</button>
             </div>
         </section>
 
@@ -131,6 +129,7 @@
                 </button>
                 <p class="gallery-intro">Репортажная съёмка мероприятий, backstage и событий. Подробности и FAQ — на <a href="/people/">странице репортажной съёмки</a>.</p>
                 <div id="people-grid" class="masonry-wrapper"></div>
+                <button type="button" id="people-load-more" class="gallery-load-more" hidden>Показать ещё</button>
             </div>
         </section>
 
