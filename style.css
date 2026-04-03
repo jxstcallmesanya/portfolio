@@ -287,14 +287,19 @@ nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; ma
         letter-spacing: 0.35em;
     }
 
-    /* Одна колонка: меньше одновременных декодов, стабильнее Safari */
+    /* Плотная сетка: больше миниатюр на экране (память контролируется в script.js) */
     .masonry-wrapper {
-        column-count: 1;
-        column-gap: 0;
+        column-count: 3;
+        column-gap: 5px;
     }
 
     .gallery-item {
-        margin-bottom: 12px;
-        contain-intrinsic-size: 100vw 280px;
+        margin-bottom: 5px;
+        contain-intrinsic-size: 30vw 72px;
+    }
+
+    .masonry-wrapper .gallery-thumb {
+        min-height: 48px;
+        border-radius: 1px;
     }
 }

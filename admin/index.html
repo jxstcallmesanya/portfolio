@@ -3,10 +3,54 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex" />
-  <title>Редактор галереи — JXSTCALLMESANYA</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Админ — галерея</title>
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.4.0/dist/decap-cms.js"></script>
+  <div class="wrap">
+    <header class="top">
+      <h1 class="logo">JXSTCALLMESANYA</h1>
+      <p class="tag">Загрузка в галерею</p>
+    </header>
+
+    <section id="panel-login" class="card" hidden>
+      <h2>Вход</h2>
+      <p class="hint">Пароль задаётся в переменных окружения Vercel (<code>ADMIN_PASSWORD</code>).</p>
+      <form id="form-login" class="form">
+        <label class="label">Пароль</label>
+        <input type="password" id="login-password" class="input" autocomplete="current-password" required />
+        <button type="submit" class="btn btn-primary">Войти</button>
+      </form>
+      <p id="login-msg" class="msg" role="status"></p>
+    </section>
+
+    <section id="panel-dash" class="dash" hidden>
+      <div class="row-between">
+        <h2>Панель</h2>
+        <button type="button" id="btn-logout" class="btn btn-ghost">Выйти</button>
+      </div>
+
+      <div class="card">
+        <h3>Авто</h3>
+        <p class="hint">JPG, PNG, WebP, GIF · до ~4 МБ за файл (лимит Vercel). Можно выбрать несколько.</p>
+        <input type="file" id="files-auto" class="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
+        <button type="button" id="btn-upload-auto" class="btn btn-primary">Загрузить в «Авто»</button>
+      </div>
+
+      <div class="card">
+        <h3>Люди</h3>
+        <p class="hint">Те же форматы и лимит.</p>
+        <input type="file" id="files-people" class="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
+        <button type="button" id="btn-upload-people" class="btn btn-primary">Загрузить в «Люди»</button>
+      </div>
+
+      <p id="dash-msg" class="msg" role="status"></p>
+    </section>
+
+    <p id="boot-msg" class="msg">Проверка сессии…</p>
+  </div>
+
+  <script src="admin.js" type="module"></script>
 </body>
 </html>

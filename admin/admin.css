@@ -1,0 +1,172 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #000;
+  color: #e0e0e0;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.top {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo {
+  font-size: 11px;
+  font-weight: 200;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.tag {
+  margin-top: 10px;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.card {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  padding: 22px 20px;
+  margin-bottom: 16px;
+}
+
+.card h2,
+.card h3 {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.dash .row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.dash .row-between h2 {
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.hint {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 14px;
+}
+
+.hint code {
+  font-size: 11px;
+  color: #999;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  color: #fff;
+  font-size: 15px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #c00;
+}
+
+.file {
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.btn {
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #c00;
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #e00;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #888;
+  border: 1px solid #333;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: #fff;
+  border-color: #666;
+}
+
+.msg {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #aaa;
+  min-height: 1.2em;
+}
+
+.msg.err {
+  color: #f66;
+}
+
+.msg.ok {
+  color: #8c8;
+}
+
+[hidden] {
+  display: none !important;
+}

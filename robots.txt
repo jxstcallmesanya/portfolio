@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 
 Sitemap: https://portfolio-jxstcallmesanya.vercel.app/sitemap.xml
