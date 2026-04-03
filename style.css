@@ -172,17 +172,27 @@ nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; ma
     color: #fff;
 }
 
-.masonry-wrapper { column-count: 3; column-gap: 15px; }
-.masonry-wrapper img { width: 100%; margin-bottom: 15px; cursor: pointer; display: block; }
-.masonry-wrapper img.gallery-thumb {
+.masonry-wrapper {
+    column-count: 3;
+    column-gap: 15px;
+}
+.gallery-item {
+    break-inside: avoid;
+    margin-bottom: 15px;
+    content-visibility: auto;
+    contain-intrinsic-size: 280px 360px;
+}
+.masonry-wrapper .gallery-thumb {
+    width: 100%;
+    display: block;
     min-height: 96px;
     background: #141414;
 }
-.masonry-wrapper img.gallery-thumb:not([data-image-ready="1"]) {
+.masonry-wrapper .gallery-thumb:not([data-image-ready="1"]) {
     cursor: wait;
     pointer-events: none;
 }
-.masonry-wrapper img.gallery-thumb[data-image-ready="1"] {
+.masonry-wrapper .gallery-thumb[data-image-ready="1"] {
     cursor: pointer;
     pointer-events: auto;
 }
@@ -277,12 +287,14 @@ nav ul { display: flex; justify-content: center; gap: 20px; list-style: none; ma
         letter-spacing: 0.35em;
     }
 
+    /* Одна колонка: меньше одновременных декодов, стабильнее Safari */
     .masonry-wrapper {
-        column-count: 2;
-        column-gap: 10px;
+        column-count: 1;
+        column-gap: 0;
     }
 
-    .masonry-wrapper img {
-        margin-bottom: 10px;
+    .gallery-item {
+        margin-bottom: 12px;
+        contain-intrinsic-size: 100vw 280px;
     }
 }
