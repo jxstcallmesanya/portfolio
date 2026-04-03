@@ -392,6 +392,24 @@ nav ul {
     text-underline-offset: 2px;
 }
 
+.gallery-load-more {
+    margin: 8px auto 20px;
+    display: block;
+    font: inherit;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #fff;
+    background: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    padding: 11px 15px;
+    cursor: pointer;
+}
+.gallery-load-more:hover,
+.gallery-load-more:focus-visible {
+    border-color: #c00;
+}
+
 .masonry-wrapper {
     column-count: 3;
     column-gap: 15px;
@@ -566,6 +584,9 @@ nav ul {
     .masonry-wrapper .gallery-thumb {
         min-height: 48px;
         border-radius: 1px;
+    }
+    .gallery-load-more {
+        width: 100%;
     }
     .floating-cta {
         left: 10px;

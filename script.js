@@ -47,6 +47,7 @@ const unloadDebounceTimers = new WeakMap();
 let lastFocusedThumb = null;
 let lightboxGalleryKey = null;
 let lightboxIndex = -1;
+let currentSectionId = 'main';
 
 function isMemoryConstrainedDevice() {
   return (
@@ -54,6 +55,14 @@ function isMemoryConstrainedDevice() {
     /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
   );
+}
+
+function isLikelyIOSWebKit() {
+  const ua = navigator.userAgent || '';
+  const iOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const webkit = /AppleWebKit/i.test(ua);
+  const chromium = /CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);
+  return iOS && webkit && !chromium;
 }
 
 function trackEvent(name, label, extra = {}) {
@@ -89,11 +98,16 @@ function updateActiveNav(sectionId) {
 }
 
 function showSection(sectionId) {
+  const prevSectionId = currentSectionId;
+  if (prevSectionId && prevSectionId !== sectionId) {
+    releaseSectionMemory(prevSectionId);
+  }
   document.querySelectorAll('.content-section').forEach((s) => s.classList.remove('active'));
   const target = document.getElementById(`${sectionId}-section`);
   if (!target) return;
   target.classList.add('active');
   updateActiveNav(sectionId);
+  currentSectionId = sectionId;
   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 }
 
@@ -166,6 +180,14 @@ function entryFromDataset(img) {
     srcset: img.dataset.srcset || '',
     sizes: img.dataset.sizes || ''
   };
+}
+
+function releaseSectionMemory(sectionId) {
+  if (sectionId !== 'auto' && sectionId !== 'people') return;
+  const grid = document.getElementById(`${sectionId}-grid`);
+  if (!grid) return;
+  grid.querySelectorAll('.gallery-thumb').forEach((img) => teardownGalleryImage(img));
+  clearGalleryQueues();
 }
 
 function processGalleryLoadQueue() {
@@ -375,6 +397,17 @@ function clearGalleryQueues() {
   galleryLoadInflight = 0;
 }
 
+function getMobileInitialLimit() {
+  if (!isMemoryConstrainedDevice()) return null;
+  return isLikelyIOSWebKit() ? 18 : 24;
+}
+
+function updateLoadMoreVisibility(galleryKey, shownCount, totalCount) {
+  const btn = document.getElementById(`${galleryKey}-load-more`);
+  if (!btn) return;
+  btn.hidden = shownCount >= totalCount;
+}
+
 function updateLightboxNavButtons() {
   const prev = document.getElementById('lightbox-prev');
   const next = document.getElementById('lightbox-next');
@@ -518,6 +551,31 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
   }
 }
 
+function appendGalleryBatch(containerId, galleryKey, entries, startIndex, count) {
+  const grid = document.getElementById(containerId);
+  if (!grid) return 0;
+  const end = Math.min(startIndex + count, entries.length);
+  for (let i = startIndex; i < end; i++) {
+    appendGalleryThumb(grid, galleryKey, entries[i], i);
+  }
+  return end - startIndex;
+}
+
+function bindLoadMore(galleryKey, containerId) {
+  const btn = document.getElementById(`${galleryKey}-load-more`);
+  if (!btn) return;
+  btn.onclick = () => {
+    const rendered = Number(btn.dataset.renderedCount || '0');
+    const total = galleryEntries[galleryKey].length;
+    const nextChunk = isLikelyIOSWebKit() ? 12 : 18;
+    appendGalleryBatch(containerId, galleryKey, galleryEntries[galleryKey], rendered, nextChunk);
+    const nextRendered = Math.min(rendered + nextChunk, total);
+    btn.dataset.renderedCount = String(nextRendered);
+    updateLoadMoreVisibility(galleryKey, nextRendered, total);
+    trackEvent('gallery_load_more', galleryKey, { rendered: nextRendered, total });
+  };
+}
+
 function renderGalleryGrid(containerId, galleryKey, entries) {
   const grid = document.getElementById(containerId);
   if (!grid) return;
@@ -527,7 +585,17 @@ function renderGalleryGrid(containerId, galleryKey, entries) {
   grid.innerHTML = '';
 
   galleryEntries[galleryKey] = entries;
-  entries.forEach((entry, i) => appendGalleryThumb(grid, galleryKey, entry, i));
+
+  const mobileLimit = getMobileInitialLimit();
+  const initialCount = mobileLimit == null ? entries.length : Math.min(entries.length, mobileLimit);
+  appendGalleryBatch(containerId, galleryKey, entries, 0, initialCount);
+
+  const btn = document.getElementById(`${galleryKey}-load-more`);
+  if (btn) {
+    btn.dataset.renderedCount = String(initialCount);
+  }
+  bindLoadMore(galleryKey, containerId);
+  updateLoadMoreVisibility(galleryKey, initialCount, entries.length);
 }
 
 async function runAutoGallery(forceReload = false) {
@@ -575,9 +643,21 @@ async function routeByHash(source) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  maxConcurrentGalleryLoads = isMemoryConstrainedDevice() ? 2 : 8;
+  maxConcurrentGalleryLoads = isLikelyIOSWebKit() ? 1 : (isMemoryConstrainedDevice() ? 2 : 8);
   galleryLoadObserver = createGalleryLoadObserver();
   galleryUnloadObserver = createGalleryUnloadObserver();
+
+  document.querySelectorAll('.split-side [data-bg]').forEach((el) => {
+    const src = el.dataset.bg;
+    if (!src) return;
+    const i = new Image();
+    i.decoding = 'async';
+    i.loading = 'eager';
+    i.src = src;
+    i.onload = () => {
+      el.style.backgroundImage = `url('${src}')`;
+    };
+  });
 
   const year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
