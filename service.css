@@ -1,0 +1,148 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #000;
+  color: #fff;
+  line-height: 1.6;
+}
+a { color: inherit; }
+
+.service-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid #171717;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+}
+
+.back-link {
+  text-decoration: none;
+  color: #b8b8b8;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.back-link:hover { color: #fff; }
+
+.top-cta,
+.cta,
+.btn {
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  padding: 10px 13px;
+  border: 1px solid #353535;
+  display: inline-block;
+}
+.top-cta,
+.cta,
+.btn {
+  background: #c00;
+  border-color: #c00;
+  color: #fff;
+}
+.top-cta:hover,
+.cta:hover,
+.btn:hover {
+  background: #e00000;
+  border-color: #e00000;
+}
+
+.page,
+.service-main {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 48px 16px 64px;
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 11px;
+  color: #8e8e8e;
+}
+h1 {
+  margin-top: 10px;
+  font-size: clamp(30px, 5vw, 58px);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.lead {
+  margin-top: 14px;
+  max-width: 760px;
+  color: #bfbfbf;
+}
+
+.hero {
+  border: 1px solid #1b1b1b;
+  background: linear-gradient(180deg, #090909 0%, #040404 100%);
+  padding: 32px 22px;
+}
+
+section {
+  margin-top: 26px;
+  border: 1px solid #171717;
+  background: #060606;
+  padding: 22px 18px;
+}
+section h2 {
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+section p {
+  margin-top: 10px;
+  color: #b0b0b0;
+}
+section ul,
+section ol {
+  margin-top: 10px;
+  padding-left: 20px;
+  color: #b0b0b0;
+}
+section li + li {
+  margin-top: 6px;
+}
+
+.cards {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.card {
+  border: 1px solid #1f1f1f;
+  background: #040404;
+  padding: 14px;
+}
+.card h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.card p { color: #aeaeae; }
+
+.faq details + details { margin-top: 8px; }
+.faq summary {
+  cursor: pointer;
+  font-size: 17px;
+}
+.faq p {
+  margin: 8px 0 0;
+}
+
+.cta-box,
+.cta-section {
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .cards { grid-template-columns: 1fr; }
+}

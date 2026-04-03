@@ -1,4 +1,10 @@
 const $ = (id) => document.getElementById(id);
+let csrfToken = '';
+
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+  return m ? decodeURIComponent(m[1]) : '';
+}
 
 function setMsg(el, text, kind) {
   el.textContent = text || '';
@@ -22,7 +28,11 @@ async function apiLogin(password) {
 }
 
 async function apiLogout() {
-  await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+  await fetch('/api/logout', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: csrfToken ? { 'x-csrf-token': csrfToken } : {}
+  });
 }
 
 async function apiUpload(section, file) {
@@ -32,6 +42,7 @@ async function apiUpload(section, file) {
   const r = await fetch('/api/upload', {
     method: 'POST',
     credentials: 'same-origin',
+    headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
     body: fd
   });
   const data = await r.json().catch(() => ({}));
@@ -101,6 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const boot = $('boot-msg');
   try {
     const s = await apiSession();
+    csrfToken = s.csrfToken || getCookie('admin_csrf') || '';
     boot.hidden = true;
     if (s.ok) showDash();
     else showLogin();
@@ -117,6 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const data = await apiLogin(pw);
       if (data.ok) {
+        csrfToken = data.csrfToken || getCookie('admin_csrf') || '';
         $('login-password').value = '';
         setMsg(msg, '');
         showDash();

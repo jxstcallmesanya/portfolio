@@ -1,8 +1,47 @@
 import busboy from 'busboy';
-import { getSessionTokenFromRequest, verifySessionToken } from '../lib/auth.js';
+import {
+  getSessionTokenFromRequest,
+  verifySessionToken,
+  verifyCsrfToken,
+  isTrustedOrigin
+} from '../lib/auth.js';
 import { uploadImageToRepo } from '../lib/githubGallery.js';
 
 const MAX_BYTES = 4 * 1024 * 1024;
+
+function hasValidImageSignature(buffer, mime) {
+  if (!Buffer.isBuffer(buffer) || buffer.length < 12) return false;
+
+  if (mime === 'image/jpeg' || mime === 'image/jpg') {
+    return buffer[0] === 0xff && buffer[1] === 0xd8;
+  }
+
+  if (mime === 'image/png') {
+    return (
+      buffer[0] === 0x89 &&
+      buffer[1] === 0x50 &&
+      buffer[2] === 0x4e &&
+      buffer[3] === 0x47 &&
+      buffer[4] === 0x0d &&
+      buffer[5] === 0x0a &&
+      buffer[6] === 0x1a &&
+      buffer[7] === 0x0a
+    );
+  }
+
+  if (mime === 'image/gif') {
+    const sig = buffer.slice(0, 6).toString('ascii');
+    return sig === 'GIF87a' || sig === 'GIF89a';
+  }
+
+  if (mime === 'image/webp') {
+    const riff = buffer.slice(0, 4).toString('ascii');
+    const webp = buffer.slice(8, 12).toString('ascii');
+    return riff === 'RIFF' && webp === 'WEBP';
+  }
+
+  return false;
+}
 
 function parseMultipart(req) {
   return new Promise((resolve, reject) => {
@@ -68,6 +107,20 @@ export default async function handler(req, res) {
     return;
   }
 
+  if (!isTrustedOrigin(req)) {
+    res.statusCode = 403;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.end(JSON.stringify({ ok: false, error: 'Origin not allowed' }));
+    return;
+  }
+
+  if (!verifyCsrfToken(req)) {
+    res.statusCode = 403;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.end(JSON.stringify({ ok: false, error: 'CSRF check failed' }));
+    return;
+  }
+
   try {
     const { fields, fileBuffer, fileInfo } = await parseMultipart(req);
     const section = fields.section;
@@ -95,6 +148,18 @@ export default async function handler(req, res) {
         JSON.stringify({
           ok: false,
           error: 'Допустимы только JPG, PNG, WebP, GIF'
+        })
+      );
+      return;
+    }
+
+    if (!hasValidImageSignature(fileBuffer, mime)) {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.end(
+        JSON.stringify({
+          ok: false,
+          error: 'Файл не похож на корректное изображение'
         })
       );
       return;
