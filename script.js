@@ -1,4 +1,4 @@
-const config = { autoCount: 49, peopleCount: 15 };
+const config = { autoCount: 0, peopleCount: 0 };
 
 const IMG_PLACEHOLDER =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -187,14 +187,46 @@ function entryFromDataset(img) {
   };
 }
 
+function cancelInflightImageLoad(img) {
+  if (!img || img.dataset.loadingNow !== '1') return;
+  img.dataset.loadingNow = '0';
+  galleryLoadInflight = Math.max(0, galleryLoadInflight - 1);
+}
+
 function releaseSectionMemory(sectionId) {
   if (sectionId !== 'auto' && sectionId !== 'people') return;
+  if (!isVeryLowMemoryMode()) return;
   const grid = document.getElementById(`${sectionId}-grid`);
   if (!grid) return;
-  grid.querySelectorAll('.gallery-thumb').forEach((img) => teardownGalleryImage(img));
+  grid.querySelectorAll('.gallery-thumb').forEach((img) => {
+    cancelInflightImageLoad(img);
+    const pendingUnload = unloadDebounceTimers.get(img);
+    if (pendingUnload) {
+      clearTimeout(pendingUnload);
+      unloadDebounceTimers.delete(img);
+    }
+    if (galleryLoadObserver) {
+      try {
+        galleryLoadObserver.unobserve(img);
+      } catch (_) {
+        /* ignore */
+      }
+    }
+    if (galleryUnloadObserver) {
+      try {
+        galleryUnloadObserver.unobserve(img);
+      } catch (_) {
+        /* ignore */
+      }
+    }
+    img.removeAttribute('srcset');
+    img.removeAttribute('sizes');
+    img.removeAttribute('src');
+  });
   grid.innerHTML = '';
   galleryRendered[sectionId] = false;
   clearGalleryQueues();
+  processGalleryLoadQueue();
 }
 
 function processGalleryLoadQueue() {
@@ -206,10 +238,15 @@ function processGalleryLoadQueue() {
 }
 
 function startGalleryImageNetworkLoad(img, entry) {
+  if (img.dataset.loadingNow === '1') return;
+  img.dataset.loadingNow = '1';
   galleryLoadInflight++;
 
   const finish = () => {
-    galleryLoadInflight--;
+    if (img.dataset.loadingNow === '1') {
+      img.dataset.loadingNow = '0';
+      galleryLoadInflight = Math.max(0, galleryLoadInflight - 1);
+    }
     processGalleryLoadQueue();
   };
 
@@ -272,7 +309,12 @@ function startGalleryImageNetworkLoad(img, entry) {
       }
     }
     if (img.isConnected) {
-      img.closest('.gallery-item')?.remove();
+      img.dataset.imageReady = 'error';
+      img.dataset.loadQueued = '0';
+      img.classList.add('thumb-error');
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
+      img.src = IMG_PLACEHOLDER;
     }
     finish();
   };
@@ -290,7 +332,13 @@ function startGalleryImageNetworkLoad(img, entry) {
 }
 
 function requestGalleryImageLoad(img, entry) {
-  if (img.dataset.imageReady === '1' || img.dataset.loadQueued === '1') return;
+  if (
+    img.dataset.imageReady === '1' ||
+    img.dataset.loadQueued === '1' ||
+    img.dataset.loadingNow === '1'
+  ) {
+    return;
+  }
   img.dataset.loadQueued = '1';
 
   if (galleryLoadInflight < maxConcurrentGalleryLoads) {
@@ -301,6 +349,7 @@ function requestGalleryImageLoad(img, entry) {
 }
 
 function teardownGalleryImage(img) {
+  cancelInflightImageLoad(img);
   const pendingUnload = unloadDebounceTimers.get(img);
   if (pendingUnload) {
     clearTimeout(pendingUnload);
@@ -317,6 +366,8 @@ function teardownGalleryImage(img) {
   img.dataset.imageReady = '0';
   img.dataset.loadQueued = '0';
   img.dataset.usedFullFallback = '0';
+  img.dataset.loadingNow = '0';
+  img.classList.remove('thumb-error');
   img.removeAttribute('srcset');
   img.removeAttribute('sizes');
   img.removeAttribute('src');
@@ -512,7 +563,7 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
   img.className = 'gallery-thumb';
   img.alt = altForGallery(galleryKey, index + 1);
   img.decoding = 'async';
-  img.loading = 'eager';
+  img.loading = 'lazy';
   img.tabIndex = 0;
 
   img.dataset.gallery = galleryKey;
@@ -524,6 +575,7 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
   img.dataset.imageReady = '0';
   img.dataset.loadQueued = '0';
   img.dataset.usedFullFallback = '0';
+  img.classList.remove('thumb-error');
   img.src = IMG_PLACEHOLDER;
 
   if (entry.width && entry.height) {
@@ -550,6 +602,9 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
   if (galleryLoadObserver) {
     galleryLoadObserver.observe(img);
   } else {
+    if (isVeryLowMemoryMode()) {
+      return;
+    }
     const delay = staggerFallbackMs;
     staggerFallbackMs += 120;
     setTimeout(() => {
@@ -574,7 +629,7 @@ function loadThumbBatchSynchronously(grid, startIndex, count) {
   const end = Math.min(startIndex + count, thumbs.length);
   for (let i = startIndex; i < end; i++) {
     const img = thumbs[i];
-    if (!img || img.dataset.imageReady === '1') continue;
+    if (!img || img.dataset.imageReady === '1' || img.dataset.imageReady === 'error') continue;
     requestGalleryImageLoad(img, entryFromDataset(img));
   }
   return Math.max(0, end - startIndex);
@@ -586,7 +641,7 @@ function bindLoadMore(galleryKey, containerId) {
   btn.onclick = () => {
     const rendered = Number(btn.dataset.renderedCount || '0');
     const total = galleryEntries[galleryKey].length;
-    const nextChunk = isVeryLowMemoryMode() ? 6 : (isLikelyIOSWebKit() ? 12 : 18);
+    const nextChunk = isVeryLowMemoryMode() ? 4 : (isLikelyIOSWebKit() ? 12 : 18);
     appendGalleryBatch(containerId, galleryKey, galleryEntries[galleryKey], rendered, nextChunk);
     const nextRendered = Math.min(rendered + nextChunk, total);
     if (isVeryLowMemoryMode()) {
