@@ -405,6 +405,7 @@ function createGalleryLoadObserver() {
 }
 
 function createGalleryUnloadObserver() {
+  if (isVeryLowMemoryMode()) return null;
   if (!('IntersectionObserver' in window)) return null;
   if (!isMemoryConstrainedDevice()) return null;
 
