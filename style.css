@@ -192,8 +192,7 @@ a { color: inherit; }
     z-index: 1000;
     padding: 20px 0 14px;
     text-align: center;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(10px);
+    background: #050505;
     border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
@@ -361,17 +360,34 @@ nav ul {
 }
 
 .about-magazine {
-    display: flex;
-    gap: 5%;
-    align-items: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.82fr);
+    grid-template-areas: "content image";
+    gap: clamp(16px, 4vw, 56px);
+    align-items: start;
     justify-content: center;
-    min-height: 100vh;
-    padding: 120px 10% 70px;
-    flex-direction: row;
+    min-height: auto;
+    padding: 120px 8% 70px;
 }
-.about-image-side { width: 40%; max-width: 500px; }
-.about-image-side img { width: 100%; height: auto; display: block; filter: contrast(1.1); }
-.about-content-side { width: 50%; }
+.about-image-side {
+    grid-area: image;
+    width: 100%;
+    max-width: 420px;
+    justify-self: end;
+}
+.about-image-side img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: contrast(1.1);
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+}
+.about-content-side {
+    grid-area: content;
+    width: 100%;
+    max-width: 680px;
+}
 .creative-tag {
     color: #fff;
     border: 1px solid #c00;
@@ -402,7 +418,7 @@ nav ul {
     font-size: 17px;
     line-height: 1.8;
     color: #b0b0b0;
-    max-width: 540px;
+    max-width: none;
 }
 .about-list {
     margin-top: 18px;
@@ -687,8 +703,7 @@ body.low-memory-mode #lb-img {
 
 @media (max-width: 768px) {
     .main-header {
-        backdrop-filter: none;
-        background: rgba(0,0,0,0.95);
+        background: #050505;
     }
     nav ul { gap: 12px; }
     .split-container { flex-direction: column; height: auto; min-height: 100vh; }
@@ -706,15 +721,33 @@ body.low-memory-mode #lb-img {
         margin-top: -1px;
     }
     .about-magazine {
-        flex-direction: column;
-        padding: 104px 20px 40px;
+        grid-template-columns: minmax(0, 1fr) minmax(112px, 41%);
+        grid-template-areas: "content image";
+        gap: 14px;
+        padding: 104px 14px 40px;
         text-align: left;
+        align-items: start;
     }
-    .about-image-side, .about-content-side {
+    .about-content-side {
         width: 100%;
         max-width: none;
     }
-    .about-image-side { margin-bottom: 30px; }
+    .about-image-side {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 0;
+    }
+    .about-image-side img {
+        aspect-ratio: 3 / 4;
+    }
+    .huge-title {
+        font-size: clamp(34px, 9vw, 52px);
+        margin-bottom: 18px;
+    }
+    .bio-text {
+        font-size: 15px;
+        line-height: 1.6;
+    }
     .container { padding: 120px 12px 40px; }
     .gallery-back {
         margin-bottom: 16px;
