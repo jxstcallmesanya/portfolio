@@ -252,7 +252,11 @@
     <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии" hidden>
         <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Закрыть просмотр">&times;</button>
         <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Предыдущее фото">←</button>
-        <img id="lb-img" src="" alt="">
+        <div class="lightbox-stage" id="lightbox-stage">
+            <img id="lb-img" src="" alt="" draggable="false">
+            <div class="lightbox-watermark" aria-hidden="true">© JXSTCALLMESANYA</div>
+            <div class="lightbox-shield" id="lightbox-shield" aria-hidden="true"></div>
+        </div>
         <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Следующее фото">→</button>
     </div>
     <script src="script.js"></script>

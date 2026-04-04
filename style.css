@@ -410,6 +410,11 @@ body.low-memory-mode #lb-img {
     max-width: 96%;
     max-height: 72vh;
 }
+body.low-memory-mode .lightbox-watermark {
+    font-size: 10px;
+    right: 12px;
+    bottom: 12px;
+}
 
 .gallery-load-more {
     margin: 8px auto 20px;
@@ -510,6 +515,47 @@ body.low-memory-mode #lb-img {
     max-height: 84vh;
     object-fit: contain;
     cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    pointer-events: none;
+}
+.lightbox-stage {
+    position: relative;
+    display: inline-block;
+    max-width: min(92%, 1400px);
+    max-height: 84vh;
+}
+.lightbox-shield {
+    position: absolute;
+    inset: 0;
+    z-index: 2002;
+    background: transparent;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+.lightbox-watermark {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 2003;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.75);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.gallery-thumb,
+.split-side,
+.about-image-side img {
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 .lightbox-close,
 .lightbox-nav {

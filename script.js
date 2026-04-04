@@ -481,12 +481,15 @@ function updateLightboxNavButtons() {
 
 function renderLightboxImage() {
   const lbImg = document.getElementById('lb-img');
+  const lightbox = document.getElementById('lightbox');
   const items = galleryEntries[lightboxGalleryKey] || [];
   const current = items[lightboxIndex];
   if (!current) return;
 
-  lbImg.src = isVeryLowMemoryMode() ? (current.thumbSrc || current.fullSrc) : current.fullSrc;
+  const src = isVeryLowMemoryMode() ? (current.thumbSrc || current.fullSrc) : current.fullSrc;
+  lbImg.src = src;
   lbImg.alt = altForGallery(lightboxGalleryKey, lightboxIndex + 1);
+  lbImg.setAttribute('aria-hidden', 'true');
   updateLightboxNavButtons();
 }
 
@@ -801,6 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lb-img');
+  const lbShield = document.getElementById('lightbox-shield');
   const closeBtn = document.getElementById('lightbox-close');
   const prevBtn = document.getElementById('lightbox-prev');
   const nextBtn = document.getElementById('lightbox-next');
@@ -825,8 +829,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   lbImg.addEventListener('click', (e) => e.stopPropagation());
+  if (lbShield) {
+    lbShield.addEventListener('click', (e) => e.stopPropagation());
+  }
+
+  document.addEventListener('contextmenu', (e) => {
+    if (e.target.closest('.gallery-thumb') || e.target.closest('#lightbox')) {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('dragstart', (e) => {
+    if (e.target.closest('.gallery-thumb') || e.target.closest('#lightbox')) {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.target.closest('.gallery-thumb') || e.target.closest('#lightbox')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && ['s', 'S', 'u', 'U'].includes(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    if (e.key === 'PrintScreen') {
+      e.preventDefault();
+      return;
+    }
     if (!lightbox.hidden) {
       if (e.key === 'Escape') {
         closeLightbox();
