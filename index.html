@@ -61,7 +61,22 @@
     }
     </script>
 </head>
-<body>
+<body class="app-loading">
+    <div id="site-loader" class="site-loader" aria-live="polite" aria-label="Загрузка сайта">
+        <div class="site-loader-inner">
+            <div class="camera-loader" aria-hidden="true">
+                <span class="camera-top"></span>
+                <span class="camera-body">
+                    <span class="camera-lens"></span>
+                    <span class="camera-viewfinder"></span>
+                </span>
+                <span class="camera-shutter"></span>
+            </div>
+            <p class="loader-brand">JXSTCALLMESANYA</p>
+            <p class="loader-text">Подготавливаем кадр...</p>
+        </div>
+        <span class="loader-flash" aria-hidden="true"></span>
+    </div>
     <a href="#main-content" class="skip-link">Перейти к содержимому</a>
     <noscript><p class="noscript-note">Для полноценной работы сайта включите JavaScript.</p></noscript>
 
