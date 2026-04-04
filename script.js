@@ -124,8 +124,6 @@ function showSection(sectionId) {
   target.classList.add('active');
   updateActiveNav(sectionId);
   currentSectionId = sectionId;
-  const shouldHideMobileHeader = sectionId === 'main';
-  document.body.classList.toggle('mobile-main-no-header', shouldHideMobileHeader);
   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 }
 
@@ -857,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document
     .querySelectorAll(
-      '.nav-btn, .mobile-sheet-link, .gallery-thumb, .hero-cta, .gallery-load-more, .floating-cta'
+      '.nav-btn, .gallery-thumb, .hero-cta, .gallery-load-more, .floating-cta'
     )
     .forEach((el) => {
       el.addEventListener('click', () => enableTapFx(el));
@@ -927,20 +925,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lb-img');
   const lbShield = document.getElementById('lightbox-shield');
-  const mobileSheet = document.getElementById('mobile-sheet');
   const closeBtn = document.getElementById('lightbox-close');
   const prevBtn = document.getElementById('lightbox-prev');
   const nextBtn = document.getElementById('lightbox-next');
-
-  if (mobileSheet) {
-    mobileSheet.querySelectorAll('.mobile-sheet-link').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.navTarget;
-        if (target) navigateToSection(target);
-        trackEvent('mobile_sheet_nav', target || '');
-      });
-    });
-  }
 
   lightbox.addEventListener('click', (e) => {
     if (e.target === lightbox) closeLightbox();
