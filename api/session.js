@@ -1,4 +1,8 @@
-import { getSessionTokenFromRequest, verifySessionToken } from '../lib/auth.js';
+import {
+  getSessionTokenFromRequest,
+  verifySessionToken,
+  getCsrfTokenFromRequest
+} from '../lib/auth.js';
 
 export default function handler(req, res) {
   if (req.method !== 'GET') {
@@ -11,5 +15,5 @@ export default function handler(req, res) {
   const ok = verifySessionToken(getSessionTokenFromRequest(req));
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.end(JSON.stringify({ ok }));
+  res.end(JSON.stringify({ ok, csrfToken: ok ? getCsrfTokenFromRequest(req) : null }));
 }

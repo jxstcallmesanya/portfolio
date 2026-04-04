@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Автомобильный и репортажный фотограф. Портфолио: авто и люди, высокий контраст и кинематографичность. Sony A7 III / Tamron 28-75 G2.">
+    <meta name="description" content="Фотограф в Москве: автомобильная и репортажная съёмка. Портфолио, кейсы, пакеты услуг, быстрый выход на съёмку.">
+    <meta name="theme-color" content="#000000">
     <link rel="canonical" href="https://portfolio-jxstcallmesanya.vercel.app/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="/site.webmanifest">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://portfolio-jxstcallmesanya.vercel.app/">
-    <meta property="og:title" content="JXSTCALLMESANYA | Портфолио фотографа">
-    <meta property="og:description" content="Автомобильный и репортажный фотограф. Эстетика в деталях.">
+    <meta property="og:title" content="JXSTCALLMESANYA | Фотограф в Москве">
+    <meta property="og:description" content="Автомобильная и репортажная съёмка. Эстетика в деталях, контраст и кинематографичность.">
     <meta property="og:image" content="https://portfolio-jxstcallmesanya.vercel.app/img/me.webp">
     <meta property="og:locale" content="ru_RU">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="JXSTCALLMESANYA | Портфолио фотографа">
-    <meta name="twitter:description" content="Автомобильный и репортажный фотограф. Эстетика в деталях.">
+    <meta name="twitter:title" content="JXSTCALLMESANYA | Фотограф в Москве">
+    <meta name="twitter:description" content="Автомобильная и репортажная съёмка. Эстетика в деталях.">
     <meta name="twitter:image" content="https://portfolio-jxstcallmesanya.vercel.app/img/me.webp">
 
-    <title>JXSTCALLMESANYA | Портфолио фотографа</title>
-
-    <link rel="preload" as="image" href="img/auto_b.webp">
-    <link rel="preload" as="image" href="img/people_b.webp">
+    <title>JXSTCALLMESANYA | Фотограф: авто и репортаж</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,70 +31,109 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "JXSTCALLMESANYA",
-      "url": "https://portfolio-jxstcallmesanya.vercel.app/",
-      "image": "https://portfolio-jxstcallmesanya.vercel.app/img/me.webp",
-      "jobTitle": "Фотограф",
-      "description": "Автомобильный и репортажный фотограф. Съёмка авто и репортаж.",
-      "sameAs": [
-        "https://t.me/jxstcallmesanya",
-        "https://vk.com/jxstcallmesanya"
+      "@graph": [
+        {
+          "@type": "Person",
+          "name": "JXSTCALLMESANYA",
+          "url": "https://portfolio-jxstcallmesanya.vercel.app/",
+          "image": "https://portfolio-jxstcallmesanya.vercel.app/img/me.webp",
+          "jobTitle": "Фотограф",
+          "description": "Автомобильный и репортажный фотограф в Москве и МО.",
+          "sameAs": [
+            "https://t.me/jxstcallmesanya",
+            "https://vk.com/jxstcallmesanya"
+          ]
+        },
+        {
+          "@type": "Service",
+          "name": "Автомобильная и репортажная фотосъёмка",
+          "provider": {
+            "@type": "Person",
+            "name": "JXSTCALLMESANYA"
+          },
+          "areaServed": "Moscow",
+          "serviceType": [
+            "Автомобильная фотосъёмка",
+            "Репортажная фотосъёмка"
+          ]
+        }
       ]
     }
     </script>
 </head>
-<body>
+<body class="app-loading">
+    <div id="site-loader" class="site-loader" aria-live="polite" aria-label="Загрузка сайта">
+        <div class="loader-ring" aria-hidden="true"></div>
+        <p class="loader-brand">JXSTCALLMESANYA</p>
+    </div>
     <a href="#main-content" class="skip-link">Перейти к содержимому</a>
+    <noscript><p class="noscript-note">Для полноценной работы сайта включите JavaScript.</p></noscript>
 
     <header class="main-header">
         <div class="brand">
-            <button type="button" class="brand-btn" onclick="showSection('main')">JXSTCALLMESANYA</button>
+            <button type="button" class="brand-btn" data-action="home">JXSTCALLMESANYA</button>
         </div>
         <nav aria-label="Основное меню">
             <ul>
-                <li><button type="button" class="nav-btn" onclick="showSection('about')">ОБО МНЕ</button></li>
-                <li><button type="button" class="nav-btn" onclick="showSection('main')">ГАЛЕРЕЯ</button></li>
-                <li><button type="button" class="nav-btn" onclick="showSection('contact')">СВЯЗЬ</button></li>
+                <li><button type="button" class="nav-btn" data-nav-target="main">ГАЛЕРЕЯ</button></li>
+                <li><button type="button" class="nav-btn" data-nav-target="about">ОБО МНЕ</button></li>
+                <li><button type="button" class="nav-btn" data-nav-target="cases">КЕЙСЫ</button></li>
+                <li><button type="button" class="nav-btn" data-nav-target="packages">ПАКЕТЫ</button></li>
+                <li><button type="button" class="nav-btn" data-nav-target="faq">FAQ</button></li>
+                <li><button type="button" class="nav-btn" data-nav-target="contact">СВЯЗЬ</button></li>
             </ul>
         </nav>
     </header>
 
     <main id="main-content">
         <section id="main-section" class="content-section active" aria-label="Главная">
-            <h1 class="visually-hidden">JXSTCALLMESANYA — автомобильный и репортажный фотограф, портфолио</h1>
+            <h1 class="visually-hidden">JXSTCALLMESANYA — портфолио фотографа: автомобильная и репортажная съёмка</h1>
             <div class="split-container">
-                <button type="button" class="split-side" onclick="showAuto()" aria-label="Открыть галерею автомобильной съёмки">
-                    <span class="bg-bw" style="background-image: url('img/auto_b.webp');" aria-hidden="true"></span>
-                    <span class="bg-color" style="background-image: url('img/auto_a.webp');" aria-hidden="true"></span>
+                <button type="button" class="split-side" data-open-gallery="auto" aria-label="Открыть галерею автомобильной съёмки">
+                    <span class="bg-bw" data-bg="img/auto_b.webp" aria-hidden="true"></span>
+                    <span class="bg-color" data-bg="img/auto_a.webp" aria-hidden="true"></span>
                     <span class="split-title"><span class="split-heading">АВТО</span></span>
                 </button>
-                <button type="button" class="split-side" onclick="showPeople()" aria-label="Открыть галерею репортажной съёмки">
-                    <span class="bg-bw" style="background-image: url('img/people_b.webp');" aria-hidden="true"></span>
-                    <span class="bg-color" style="background-image: url('img/people_a.webp');" aria-hidden="true"></span>
+                <button type="button" class="split-side" data-open-gallery="people" aria-label="Открыть галерею репортажной съёмки">
+                    <span class="bg-bw" data-bg="img/people_b.webp" aria-hidden="true"></span>
+                    <span class="bg-color" data-bg="img/people_a.webp" aria-hidden="true"></span>
                     <span class="split-title"><span class="split-heading">ЛЮДИ</span></span>
                 </button>
+                <div class="hero-panel">
+                    <p class="hero-kicker">Фотограф в Москве</p>
+                    <p class="hero-text">Съёмка с высоким контрастом и кинематографичной эстетикой. Для брендов, частных клиентов и мероприятий.</p>
+                    <div class="hero-actions">
+                        <a class="hero-cta hero-cta-primary" href="https://t.me/jxstcallmesanya" target="_blank" rel="noopener noreferrer" data-track-event="cta_click" data-track-label="hero_telegram">Обсудить съёмку</a>
+                        <button type="button" class="hero-cta hero-cta-ghost" data-open-gallery="auto">Смотреть авто-портфолио</button>
+                        <button type="button" class="hero-cta hero-cta-ghost" data-open-gallery="people">Смотреть репортаж</button>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section id="auto-section" class="content-section" aria-label="Галерея автомобильной съёмки">
             <h2 class="visually-hidden">Галерея — автомобили</h2>
             <div class="container gallery-page">
-                <button type="button" class="gallery-back" onclick="showSection('main')" aria-label="Назад к выбору раздела галереи">
+                <button type="button" class="gallery-back" data-nav-target="main" aria-label="Назад к выбору раздела галереи">
                     <span class="gallery-back-arrow" aria-hidden="true">←</span>
                     <span class="gallery-back-label">НАЗАД</span>
                 </button>
+                <p class="gallery-intro">Автомобильная съёмка для личных коллекций, предпродажи и брендов. Больше SEO-информации и примеров — на <a href="/auto/">отдельной странице услуги</a>.</p>
                 <div id="auto-grid" class="masonry-wrapper"></div>
+                <button type="button" id="auto-load-more" class="gallery-load-more" hidden>Показать ещё</button>
             </div>
         </section>
+
         <section id="people-section" class="content-section" aria-label="Галерея репортажной съёмки">
             <h2 class="visually-hidden">Галерея — люди</h2>
             <div class="container gallery-page">
-                <button type="button" class="gallery-back" onclick="showSection('main')" aria-label="Назад к выбору раздела галереи">
+                <button type="button" class="gallery-back" data-nav-target="main" aria-label="Назад к выбору раздела галереи">
                     <span class="gallery-back-arrow" aria-hidden="true">←</span>
                     <span class="gallery-back-label">НАЗАД</span>
                 </button>
+                <p class="gallery-intro">Репортажная съёмка мероприятий, backstage и событий. Подробности и FAQ — на <a href="/people/">странице репортажной съёмки</a>.</p>
                 <div id="people-grid" class="masonry-wrapper"></div>
+                <button type="button" id="people-load-more" class="gallery-load-more" hidden>Показать ещё</button>
             </div>
         </section>
 
@@ -104,29 +143,125 @@
                     <img src="img/me.webp" alt="Портрет фотографа JXSTCALLMESANYA" loading="lazy" decoding="async">
                 </div>
                 <div class="about-content-side">
-                    <p class="creative-tag">CREATIVE PHOTOGRAPHER</p>
+                    <p class="creative-tag">Creative Photographer</p>
                     <h2 class="huge-title">ЭСТЕТИКА<br>В ДЕТАЛЯХ</h2>
-                    <p class="specs-line">SONY A7 III / TAMRON 28-75 G2</p>
-                    <p class="bio-text">Автомобильный и репортажный фотограф. Создаю визуальную историю вашего стиля через призму высокого контраста и кинематографичности.</p>
+                    <p class="specs-line">Sony A7 III / Tamron 28-75 G2</p>
+                    <p class="bio-text">Автомобильный и репортажный фотограф. Помогаю передать характер человека, бренда или автомобиля через контраст, динамику и внимание к деталям.</p>
+                    <ul class="about-list">
+                        <li>Работаю в Москве и Московской области</li>
+                        <li>Помогаю с референсами и локациями</li>
+                        <li>Отдача превью и финального набора в оговорённые сроки</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="cases-section" class="content-section" aria-label="Кейсы и отзывы">
+            <div class="container narrow">
+                <h2 class="section-title">Кейсы и отзывы</h2>
+                <div class="cards-grid">
+                    <article class="info-card">
+                        <h3>Кейс: съёмка автомобиля для продажи</h3>
+                        <p><strong>Задача:</strong> показать состояние и характер авто в объявлении и соцсетях.</p>
+                        <p><strong>Результат:</strong> полный набор ракурсов и деталей, визуально целостная серия для карточек и сторис.</p>
+                    </article>
+                    <article class="info-card">
+                        <h3>Кейс: городской репортаж мероприятия</h3>
+                        <p><strong>Задача:</strong> передать атмосферу без постановки и не мешать гостям.</p>
+                        <p><strong>Результат:</strong> серия живых кадров с акцентом на эмоции, динамику и свет.</p>
+                    </article>
+                    <article class="info-card">
+                        <h3>Что говорят клиенты</h3>
+                        <p>«Быстро нашли общий визуальный язык. Получили кадры, которые смотрятся как часть кампании.»</p>
+                        <p>«Комфортный процесс на съёмке и очень сильная финальная подборка.»</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="packages-section" class="content-section" aria-label="Пакеты и цены">
+            <div class="container narrow">
+                <h2 class="section-title">Пакеты и цены</h2>
+                <div class="cards-grid">
+                    <article class="price-card">
+                        <h3>Start</h3>
+                        <p class="price-value">от 8 000 ₽</p>
+                        <ul>
+                            <li>До 1 часа съёмки</li>
+                            <li>Базовая цветокоррекция</li>
+                            <li>Подборка лучших кадров</li>
+                        </ul>
+                    </article>
+                    <article class="price-card">
+                        <h3>Story</h3>
+                        <p class="price-value">от 15 000 ₽</p>
+                        <ul>
+                            <li>До 2 часов съёмки</li>
+                            <li>Расширенный набор кадров</li>
+                            <li>Подготовка материалов для соцсетей</li>
+                        </ul>
+                    </article>
+                    <article class="price-card">
+                        <h3>Campaign</h3>
+                        <p class="price-value">по запросу</p>
+                        <ul>
+                            <li>Коммерческая съёмка под бренд</li>
+                            <li>Сценарий, референсы, продакшн</li>
+                            <li>Индивидуальные условия и дедлайны</li>
+                        </ul>
+                    </article>
+                </div>
+                <p class="section-footnote">Точная стоимость зависит от сложности, локации и целей съёмки.</p>
+            </div>
+        </section>
+
+        <section id="faq-section" class="content-section" aria-label="FAQ">
+            <div class="container narrow">
+                <h2 class="section-title">Частые вопросы</h2>
+                <div class="faq-list">
+                    <details>
+                        <summary>Сколько ждать готовые фотографии?</summary>
+                        <p>Обычно превью отправляю быстро, а финальные кадры — в согласованные сроки после съёмки.</p>
+                    </details>
+                    <details>
+                        <summary>Поможешь с позированием и идеями?</summary>
+                        <p>Да, до съёмки можно собрать референсы, выбрать локации и формат подачи под ваш запрос.</p>
+                    </details>
+                    <details>
+                        <summary>Можно снимать для бренда и коммерции?</summary>
+                        <p>Да, доступны коммерческие съёмки для соцсетей, рекламы и контента бренда.</p>
+                    </details>
                 </div>
             </div>
         </section>
 
         <section id="contact-section" class="content-section" aria-label="Связь">
-            <h2 class="visually-hidden">Контакты</h2>
             <div class="center-vh">
                 <div class="links-stack">
-                    <a href="https://t.me/jxstcallmesanya" target="_blank" rel="noopener noreferrer">TELEGRAM</a>
-                    <a href="https://vk.com/jxstcallmesanya" target="_blank" rel="noopener noreferrer">VKONTAKTE</a>
-                    <a href="mailto:work@mail.ru">EMAIL</a>
+                    <h2 class="section-title">Связаться</h2>
+                    <a href="https://t.me/jxstcallmesanya" target="_blank" rel="noopener noreferrer" data-track-event="contact_click" data-track-label="telegram">Telegram</a>
+                    <a href="https://vk.com/jxstcallmesanya" target="_blank" rel="noopener noreferrer" data-track-event="contact_click" data-track-label="vkontakte">VKontakte</a>
+                    <a href="mailto:work@mail.ru" data-track-event="contact_click" data-track-label="email">Email</a>
                 </div>
             </div>
         </section>
     </main>
 
+    <a class="floating-cta" href="https://t.me/jxstcallmesanya" target="_blank" rel="noopener noreferrer" data-track-event="cta_click" data-track-label="floating_telegram">Написать в Telegram</a>
+
+    <footer class="main-footer">
+        <p>© <span id="year"></span> JXSTCALLMESANYA · Фотограф (Москва и МО)</p>
+    </footer>
+
     <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии" hidden>
         <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Закрыть просмотр">&times;</button>
-        <img id="lb-img" src="" alt="">
+        <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Предыдущее фото">←</button>
+        <div class="lightbox-stage" id="lightbox-stage">
+            <img id="lb-img" src="" alt="" draggable="false">
+            <div class="lightbox-watermark" aria-hidden="true">© JXSTCALLMESANYA</div>
+            <div class="lightbox-shield" id="lightbox-shield" aria-hidden="true"></div>
+        </div>
+        <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Следующее фото">→</button>
     </div>
     <script src="script.js"></script>
 </body>

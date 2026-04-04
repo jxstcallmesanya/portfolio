@@ -26,17 +26,46 @@ function listSortedFiles(dirRelative) {
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 }
 
+function isThumbName(fileName) {
+  return /(?:^|[-_.])thumb(?:[-_.]|$)/i.test(fileName);
+}
+
+function toThumbPath(fullPath) {
+  const m = fullPath.match(/^img\/(auto|people)\/([^/]+)$/i);
+  if (!m) return '';
+  const section = m[1].toLowerCase();
+  const name = m[2];
+  const extMatch = name.match(/\.([a-z0-9]+)$/i);
+  if (!extMatch) return '';
+  const ext = extMatch[0];
+  const base = name.slice(0, -ext.length);
+  return `img/thumbs/${section}/${base}.webp`;
+}
+
+function fileExists(relPath) {
+  if (!relPath) return false;
+  return fs.existsSync(path.join(root, relPath));
+}
+
 function toPaths(files, folder) {
   const prefix = `img/${folder}`;
-  return files.map((f) => `${prefix}/${f}`);
+  return files.map((f) => {
+    const p = `${prefix}/${f}`;
+    const thumbCandidate = toThumbPath(p);
+    const thumb = fileExists(thumbCandidate) ? thumbCandidate : p;
+    return { full: p, thumb };
+  }).reverse();
 }
 
 function defaultSequential(folder, count) {
-  return Array.from({ length: count }, (_, i) => `img/${folder}/${i + 1}.webp`);
+  return Array.from({ length: count }, (_, i) => {
+    const p = `img/${folder}/${i + 1}.webp`;
+    return { full: p, thumb: p };
+  });
 }
 
-const autoFiles = listSortedFiles('img/auto');
-const peopleFiles = listSortedFiles('img/people');
+const autoFiles = listSortedFiles('img/auto').filter((f) => !isThumbName(f));
+const peopleFiles = listSortedFiles('img/people').filter((f) => !isThumbName(f));
 
 const out = {
   auto: autoFiles.length ? toPaths(autoFiles, 'auto') : defaultSequential('auto', FALLBACK.auto),

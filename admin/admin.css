@@ -105,7 +105,7 @@ body {
 
 .input:focus {
   outline: none;
-  border-color: #c00;
+  border-color: #d4af37;
 }
 
 .file {
@@ -133,12 +133,12 @@ body {
 }
 
 .btn-primary {
-  background: #c00;
+  background: #d4af37;
   color: #fff;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #e00;
+  background: #e2c35a;
 }
 
 .btn-ghost {
