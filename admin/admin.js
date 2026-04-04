@@ -12,6 +12,11 @@ function setMsg(el, text, kind) {
   if (kind) el.classList.add(kind);
 }
 
+function selectedSection() {
+  const el = document.querySelector('input[name="gallery-section"]:checked');
+  return el?.value || 'auto';
+}
+
 async function apiSession() {
   const r = await fetch('/api/session', { credentials: 'same-origin' });
   return r.json();
@@ -35,15 +40,34 @@ async function apiLogout() {
   });
 }
 
-async function apiUpload(section, file) {
+/** Загрузка файла в репозиторий без изменения gallery.json */
+async function apiUploadBlob(section, file) {
   const fd = new FormData();
   fd.append('section', section);
+  fd.append('skipGallery', '1');
   fd.append('file', file);
   const r = await fetch('/api/upload', {
     method: 'POST',
     credentials: 'same-origin',
     headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
     body: fd
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    throw new Error(data.error || `Ошибка ${r.status}`);
+  }
+  return data;
+}
+
+async function apiCommitSeries(section, cover, items) {
+  const r = await fetch('/api/gallery-commit-series', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+    },
+    body: JSON.stringify({ section, cover, items })
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
@@ -64,48 +88,51 @@ function showDash() {
   $('boot-msg').textContent = '';
 }
 
-async function uploadMany(section, inputEl, msgEl) {
-  const files = Array.from(inputEl.files || []);
-  if (!files.length) {
-    setMsg(msgEl, 'Выберите файлы', 'err');
+async function saveSeriesFlow() {
+  const section = selectedSection();
+  const coverInput = $('cover-file');
+  const moreInput = $('more-files');
+  const msgEl = $('dash-msg');
+  const btn = $('btn-save-series');
+
+  const coverFile = coverInput.files?.[0];
+  if (!coverFile) {
+    setMsg(msgEl, 'Выберите обложку или одно фото', 'err');
     return;
   }
 
-  const btnAuto = $('btn-upload-auto');
-  const btnPeople = $('btn-upload-people');
-  const busy = [btnAuto, btnPeople];
-  busy.forEach((b) => {
-    if (b) b.disabled = true;
-  });
+  const moreFiles = Array.from(moreInput.files || []);
 
-  let ok = 0;
-  let fail = 0;
+  btn.disabled = true;
+  setMsg(msgEl, 'Загрузка обложки…');
 
-  for (let i = 0; i < files.length; i++) {
-    const f = files[i];
-    setMsg(msgEl, `Загрузка ${i + 1} / ${files.length}: ${f.name}…`);
-    try {
-      await apiUpload(section, f);
-      ok++;
-    } catch (e) {
-      fail++;
-      setMsg(msgEl, `${f.name}: ${e.message}`, 'err');
-      break;
+  try {
+    const coverRes = await apiUploadBlob(section, coverFile);
+    const cover = { full: coverRes.path, thumb: coverRes.thumbPath };
+
+    const items = [];
+    for (let i = 0; i < moreFiles.length; i++) {
+      const f = moreFiles[i];
+      setMsg(msgEl, `Загрузка ${i + 1} из ${moreFiles.length} (доп. фото): ${f.name}…`);
+      const res = await apiUploadBlob(section, f);
+      items.push({ full: res.path, thumb: res.thumbPath });
     }
-  }
 
-  if (fail === 0) {
+    setMsg(msgEl, 'Запись в gallery.json…');
+    await apiCommitSeries(section, cover, items);
+
     setMsg(
       msgEl,
-      `Готово: загружено ${ok} файл(ов). Сайт обновится после деплоя Vercel (1–2 мин).`,
+      `Готово: ${items.length ? `серия из ${items.length + 1} фото` : 'одно фото'}. После деплоя Vercel (1–2 мин) обновится сайт.`,
       'ok'
     );
-    inputEl.value = '';
+    coverInput.value = '';
+    moreInput.value = '';
+  } catch (e) {
+    setMsg(msgEl, e.message || String(e), 'err');
+  } finally {
+    btn.disabled = false;
   }
-
-  busy.forEach((b) => {
-    if (b) b.disabled = false;
-  });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -148,11 +175,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     setMsg($('dash-msg'), '');
   });
 
-  $('btn-upload-auto').addEventListener('click', () =>
-    uploadMany('auto', $('files-auto'), $('dash-msg'))
-  );
-
-  $('btn-upload-people').addEventListener('click', () =>
-    uploadMany('people', $('files-people'), $('dash-msg'))
-  );
+  $('btn-save-series').addEventListener('click', () => saveSeriesFlow());
 });

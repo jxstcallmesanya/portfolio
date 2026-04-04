@@ -526,6 +526,86 @@ body.low-memory-mode .lightbox-watermark {
 }
 .gallery-item {
     margin: 0;
+    position: relative;
+}
+.gallery-count-badge {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 3;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    pointer-events: none;
+}
+.series-sheet[hidden] {
+    display: none !important;
+}
+.series-sheet:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: 1900;
+    background: rgba(0, 0, 0, 0.94);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.series-sheet-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 16px 48px;
+    min-height: 100%;
+}
+.series-sheet-top {
+    padding: 8px 0 20px;
+}
+.series-sheet-back {
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #aaa;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 0;
+}
+.series-sheet-back:hover,
+.series-sheet-back:focus-visible {
+    color: #fff;
+}
+.series-sheet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+.series-sheet-cell {
+    margin: 0;
+}
+.series-sheet-thumb {
+    width: 100%;
+    display: block;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: #141414;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.series-sheet-thumb:not([data-image-ready="1"]) {
+    cursor: wait;
+    pointer-events: none;
+}
+.series-sheet-thumb[data-image-ready="1"] {
+    cursor: pointer;
+    pointer-events: auto;
 }
 .masonry-wrapper .gallery-thumb {
     width: 100%;
@@ -678,6 +758,7 @@ body.low-memory-mode .lightbox-watermark {
     -webkit-backdrop-filter: blur(8px) saturate(130%);
 }
 .gallery-thumb,
+.series-sheet-thumb,
 .split-side,
 .about-image-side img {
     -webkit-touch-callout: none;

@@ -6,7 +6,7 @@ import {
   verifyCsrfToken,
   isTrustedOrigin
 } from '../lib/auth.js';
-import { uploadImageToRepo } from '../lib/githubGallery.js';
+import { putImageInRepo, appendSingleToGallery } from '../lib/githubGallery.js';
 
 const MAX_BYTES = 4 * 1024 * 1024;
 
@@ -139,6 +139,10 @@ export default async function handler(req, res) {
   try {
     const { fields, fileBuffer, fileInfo } = await parseMultipart(req);
     const section = fields.section;
+    const skipGallery =
+      fields.skipGallery === '1' ||
+      fields.skipGallery === 'true' ||
+      fields.skipGallery === 'yes';
 
     if (!fileBuffer || !fileBuffer.length) {
       res.statusCode = 400;
@@ -188,13 +192,16 @@ export default async function handler(req, res) {
       thumbBuffer = null;
     }
 
-    const result = await uploadImageToRepo(
+    const result = await putImageInRepo(
       section,
       fileBuffer,
       fileInfo?.filename,
       fileInfo?.mimeType,
       thumbBuffer
     );
+    if (!skipGallery) {
+      await appendSingleToGallery(section, result.path, result.thumbPath);
+    }
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

@@ -13,7 +13,7 @@ body {
 }
 
 .wrap {
-  max-width: 480px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 48px 20px 80px;
 }
@@ -169,4 +169,33 @@ body {
 
 [hidden] {
   display: none !important;
+}
+
+.section-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 18px;
+}
+
+.section-fieldset .label {
+  margin-bottom: 10px;
+}
+
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.radio-label {
+  font-size: 14px;
+  color: #ccc;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.radio-label input {
+  accent-color: #d4af37;
 }
