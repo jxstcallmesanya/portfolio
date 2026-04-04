@@ -21,7 +21,8 @@ export default function handler(req, res) {
   }
 
   res.statusCode = 200;
-  res.setHeader('Set-Cookie', [buildClearSessionCookie(), buildClearCsrfCookie()]);
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.appendHeader('Set-Cookie', buildClearSessionCookie());
+  res.appendHeader('Set-Cookie', buildClearCsrfCookie());
   res.end(JSON.stringify({ ok: true }));
 }

@@ -1,7 +1,9 @@
 import {
   getSessionTokenFromRequest,
   verifySessionToken,
-  getCsrfTokenFromRequest
+  getCsrfTokenFromRequest,
+  createCsrfToken,
+  buildCsrfCookie
 } from '../lib/auth.js';
 
 export default function handler(req, res) {
@@ -13,7 +15,15 @@ export default function handler(req, res) {
   }
 
   const ok = verifySessionToken(getSessionTokenFromRequest(req));
+  let csrfToken = ok ? getCsrfTokenFromRequest(req) : null;
+
+  /* Сессия после обновления кода могла остаться без admin_csrf — выдаём токен и cookie */
+  if (ok && !csrfToken) {
+    csrfToken = createCsrfToken();
+    res.appendHeader('Set-Cookie', buildCsrfCookie(csrfToken, 7 * 86400));
+  }
+
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.end(JSON.stringify({ ok, csrfToken: ok ? getCsrfTokenFromRequest(req) : null }));
+  res.end(JSON.stringify({ ok, csrfToken: ok ? csrfToken : null }));
 }

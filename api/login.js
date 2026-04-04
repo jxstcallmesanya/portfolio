@@ -130,11 +130,9 @@ export default async function handler(req, res) {
     const token = createSessionToken();
     const csrf = createCsrfToken();
     res.statusCode = 200;
-    res.setHeader('Set-Cookie', [
-      buildSessionCookie(token, 7 * 86400),
-      buildCsrfCookie(csrf, 7 * 86400)
-    ]);
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.appendHeader('Set-Cookie', buildSessionCookie(token, 7 * 86400));
+    res.appendHeader('Set-Cookie', buildCsrfCookie(csrf, 7 * 86400));
     res.end(JSON.stringify({ ok: true, csrfToken: csrf }));
   } catch (e) {
     res.statusCode = 500;
