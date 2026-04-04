@@ -127,7 +127,7 @@ nav ul {
     right: 0;
     bottom: -6px;
     height: 1px;
-    background: #c00;
+    background: #d4af37;
 }
 
 .content-section { display: none; width: 100%; min-height: 100vh; }
@@ -225,10 +225,10 @@ nav ul {
     text-decoration: none;
 }
 .hero-cta-primary {
-    background: #c00;
-    border-color: #c00;
+    background: #b8922f;
+    border-color: #d4af37;
 }
-.hero-cta-primary:hover { background: #e00000; border-color: #e00000; }
+.hero-cta-primary:hover { background: #c9a341; border-color: #e5c15c; }
 .hero-cta-ghost:hover { border-color: #777; color: #fff; }
 
 .container {
@@ -260,7 +260,7 @@ nav ul {
 .about-content-side { width: 50%; }
 .creative-tag {
     color: #fff;
-    border: 1px solid #c00;
+    border: 1px solid #d4af37;
     display: inline-block;
     padding: 5px 15px;
     font-size: 10px;
@@ -388,7 +388,7 @@ nav ul {
 .gallery-back:hover,
 .gallery-back:focus-visible {
     color: #fff;
-    border-bottom-color: #c00;
+    border-bottom-color: #d4af37;
 }
 .gallery-back-label {
     font-size: 10px;
@@ -458,7 +458,7 @@ body.low-memory-mode .lightbox-watermark {
 }
 .gallery-load-more:hover,
 .gallery-load-more:focus-visible {
-    border-color: #c00;
+    border-color: #d4af37;
 }
 
 .masonry-wrapper {
@@ -508,7 +508,7 @@ body.low-memory-mode .lightbox-watermark {
     right: 16px;
     bottom: 16px;
     z-index: 1200;
-    background: linear-gradient(145deg, rgba(255,0,0,0.75), rgba(150,0,0,0.42));
+    background: linear-gradient(145deg, rgba(212,175,55,0.78), rgba(133,104,30,0.48));
     backdrop-filter: blur(12px) saturate(130%);
     -webkit-backdrop-filter: blur(12px) saturate(130%);
     color: #fff;
@@ -519,10 +519,10 @@ body.low-memory-mode .lightbox-watermark {
     padding: 12px 14px;
     border: 1px solid rgba(255,255,255,0.24);
     border-radius: 999px;
-    box-shadow: 0 8px 24px rgba(170,0,0,0.35);
+    box-shadow: 0 8px 24px rgba(158,125,32,0.38);
 }
 .floating-cta:hover {
-    background: linear-gradient(145deg, rgba(255,30,30,0.8), rgba(170,0,0,0.5));
+    background: linear-gradient(145deg, rgba(227,191,76,0.84), rgba(149,117,37,0.56));
     border-color: rgba(255,255,255,0.34);
 }
 
@@ -765,7 +765,7 @@ body.low-memory-mode .lightbox-watermark {
         text-align: center;
     }
     .mobile-sheet-btn.is-primary {
-        background: linear-gradient(145deg, rgba(255,0,0,0.8), rgba(145,0,0,0.42));
+        background: linear-gradient(145deg, rgba(212,175,55,0.82), rgba(133,104,30,0.48));
         border-color: rgba(255,255,255,0.36);
     }
     .mobile-sheet-more {

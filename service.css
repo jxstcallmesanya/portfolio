@@ -43,15 +43,15 @@ a { color: inherit; }
 .top-cta,
 .cta,
 .btn {
-  background: #c00;
-  border-color: #c00;
+  background: #c7a44a;
+  border-color: #c7a44a;
   color: #fff;
 }
 .top-cta:hover,
 .cta:hover,
 .btn:hover {
-  background: #e00000;
-  border-color: #e00000;
+  background: #d8b65e;
+  border-color: #d8b65e;
 }
 
 .page,
