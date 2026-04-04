@@ -1,4 +1,29 @@
 {
-  "auto": [],
+  "auto": [
+    {
+      "cover": {
+        "full": "img/auto/1775296473778-a2acaf4c.webp",
+        "thumb": "img/thumbs/auto/1775296473778-a2acaf4c-thumb.webp"
+      },
+      "items": [
+        {
+          "full": "img/auto/1775296477917-67c26eef.webp",
+          "thumb": "img/thumbs/auto/1775296477917-67c26eef-thumb.webp"
+        },
+        {
+          "full": "img/auto/1775296481490-b507707f.webp",
+          "thumb": "img/thumbs/auto/1775296481490-b507707f-thumb.webp"
+        },
+        {
+          "full": "img/auto/1775296484486-05b95194.webp",
+          "thumb": "img/thumbs/auto/1775296484486-05b95194-thumb.webp"
+        },
+        {
+          "full": "img/auto/1775296487625-f00ac281.webp",
+          "thumb": "img/thumbs/auto/1775296487625-f00ac281-thumb.webp"
+        }
+      ]
+    }
+  ],
   "people": []
 }
