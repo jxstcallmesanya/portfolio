@@ -1,4 +1,5 @@
 import busboy from 'busboy';
+import sharp from 'sharp';
 import {
   getSessionTokenFromRequest,
   verifySessionToken,
@@ -92,6 +93,20 @@ function parseMultipart(req) {
   });
 }
 
+async function buildThumbnailBuffer(buffer, mime) {
+  const isAnimatedGif = mime === 'image/gif';
+  const pipeline = sharp(buffer, { animated: isAnimatedGif, failOn: 'none' })
+    .rotate()
+    .resize({
+      width: 640,
+      height: 640,
+      fit: 'inside',
+      withoutEnlargement: true
+    });
+
+  return pipeline.webp({ quality: 68, effort: 4 }).toBuffer();
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.statusCode = 405;
@@ -165,11 +180,20 @@ export default async function handler(req, res) {
       return;
     }
 
+    let thumbBuffer = null;
+    try {
+      thumbBuffer = await buildThumbnailBuffer(fileBuffer, mime);
+    } catch (thumbErr) {
+      console.warn('[upload] thumb generation failed, fallback to original', thumbErr?.message || thumbErr);
+      thumbBuffer = null;
+    }
+
     const result = await uploadImageToRepo(
       section,
       fileBuffer,
       fileInfo?.filename,
-      fileInfo?.mimeType
+      fileInfo?.mimeType,
+      thumbBuffer
     );
 
     res.statusCode = 200;
