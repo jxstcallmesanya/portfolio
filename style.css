@@ -492,6 +492,30 @@ body.low-memory-mode .lightbox-watermark {
 }
 .floating-cta:hover { background: #e00000; border-color: #e00000; }
 
+.mobile-sheet {
+    display: none;
+}
+
+.tap-pop {
+    animation: tapPop 220ms ease-out;
+}
+
+@keyframes tapPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(0.97); }
+    100% { transform: scale(1); }
+}
+
+.reveal-item {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.reveal-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .main-footer {
     border-top: 1px solid #111;
     color: #707070;
@@ -654,10 +678,56 @@ body.low-memory-mode .lightbox-watermark {
     .gallery-load-more {
         width: 100%;
     }
-    .floating-cta {
+    .floating-cta { display: none; }
+
+    .mobile-sheet {
+        display: block;
+        position: fixed;
         left: 10px;
         right: 10px;
+        bottom: 10px;
+        z-index: 1300;
+        background: rgba(10,10,10,0.94);
+        border: 1px solid #232323;
+        border-radius: 14px;
+        padding: 8px;
+        backdrop-filter: blur(10px);
+    }
+    .mobile-sheet-main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .mobile-sheet-btn {
+        font: inherit;
+        border: 1px solid #2b2b2b;
+        background: #0f0f0f;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 10px;
+        padding: 11px 10px;
+        border-radius: 10px;
+        text-decoration: none;
         text-align: center;
+    }
+    .mobile-sheet-btn.is-primary {
+        background: #c00;
+        border-color: #c00;
+    }
+    .mobile-sheet-more {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .mobile-sheet-more .mobile-sheet-btn {
+        font-size: 9px;
+        padding: 9px 8px;
+        color: #c8c8c8;
+    }
+    .main-footer {
+        padding-bottom: 168px;
     }
     .lightbox-nav {
         top: auto;
