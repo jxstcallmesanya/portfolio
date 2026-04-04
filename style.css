@@ -5,7 +5,56 @@ body {
     color: #fff;
     overflow-x: hidden;
 }
+body.app-loading {
+    overflow: hidden;
+}
 a { color: inherit; }
+
+.site-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    background: #000;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.site-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.site-loader-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+}
+.loader-brand {
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: #c9a94f;
+}
+.loader-text {
+    color: #a8a8a8;
+    font-size: 13px;
+}
+.loader-ring {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid rgba(201,169,79,0.25);
+    border-top-color: #c9a94f;
+    animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
 .noscript-note {
     padding: 12px 16px;
@@ -75,6 +124,14 @@ a { color: inherit; }
     backdrop-filter: blur(16px) saturate(140%);
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     border-bottom-color: rgba(255,255,255,0.22);
+}
+
+@media (max-width: 768px) {
+    body.mobile-main-no-header .main-header {
+        opacity: 0;
+        transform: translateY(-120%);
+        pointer-events: none;
+    }
 }
 
 .brand-btn {
@@ -681,6 +738,12 @@ body.low-memory-mode .lightbox-watermark {
         background: linear-gradient(140deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
         backdrop-filter: blur(12px) saturate(125%);
         -webkit-backdrop-filter: blur(12px) saturate(125%);
+    }
+    body.header-hidden-mobile .main-header {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-8px);
     }
     nav ul { gap: 12px; }
     .split-container { flex-direction: column; height: auto; min-height: 100vh; }
