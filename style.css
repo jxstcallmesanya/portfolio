@@ -63,9 +63,18 @@ a { color: inherit; }
     z-index: 1000;
     padding: 20px 0 14px;
     text-align: center;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(140deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+    backdrop-filter: blur(12px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+}
+
+.main-header.is-scrolled {
+    background: linear-gradient(140deg, rgba(255,255,255,0.16), rgba(255,255,255,0.03));
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border-bottom-color: rgba(255,255,255,0.22);
 }
 
 .brand-btn {
@@ -92,18 +101,24 @@ nav ul {
     font-size: 10px;
     letter-spacing: 2px;
     color: #8e8e8e;
-    background: none;
-    border: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 7px 10px;
     cursor: pointer;
-    transition: color 0.3s, opacity 0.3s;
+    transition: color 0.25s, border-color 0.25s, background 0.25s, transform 0.2s;
 }
 .nav-btn:hover,
 .nav-btn:focus-visible {
     color: #fff;
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
 }
 .nav-btn.is-active {
     color: #fff;
     position: relative;
+    border-color: rgba(255,255,255,0.3);
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
 }
 .nav-btn.is-active::after {
     content: '';
@@ -289,9 +304,21 @@ nav ul {
 }
 .info-card,
 .price-card {
-    border: 1px solid #1c1c1c;
-    background: #070707;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(155deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015));
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 26px rgba(0,0,0,0.24);
     padding: 18px 16px;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.info-card:hover,
+.price-card:hover,
+.info-card:focus-within,
+.price-card:focus-within {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.22);
+    background: linear-gradient(155deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
 }
 .info-card h3,
 .price-card h3 {
@@ -481,16 +508,23 @@ body.low-memory-mode .lightbox-watermark {
     right: 16px;
     bottom: 16px;
     z-index: 1200;
-    background: #c00;
+    background: linear-gradient(145deg, rgba(255,0,0,0.75), rgba(150,0,0,0.42));
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
     color: #fff;
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 0.13em;
     font-size: 10px;
     padding: 12px 14px;
-    border: 1px solid #c00;
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(170,0,0,0.35);
 }
-.floating-cta:hover { background: #e00000; border-color: #e00000; }
+.floating-cta:hover {
+    background: linear-gradient(145deg, rgba(255,30,30,0.8), rgba(170,0,0,0.5));
+    border-color: rgba(255,255,255,0.34);
+}
 
 .mobile-sheet {
     display: none;
@@ -549,6 +583,11 @@ body.low-memory-mode .lightbox-watermark {
     display: inline-block;
     max-width: min(92%, 1400px);
     max-height: 84vh;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(155deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
 }
 .lightbox-shield {
     position: absolute;
@@ -565,14 +604,20 @@ body.low-memory-mode .lightbox-watermark {
     right: 16px;
     bottom: 16px;
     z-index: 2003;
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     text-shadow: 0 1px 6px rgba(0,0,0,0.75);
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
+    background: linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255,255,255,0.33);
+    border-radius: 999px;
+    padding: 6px 10px;
+    backdrop-filter: blur(8px) saturate(130%);
+    -webkit-backdrop-filter: blur(8px) saturate(130%);
 }
 .gallery-thumb,
 .split-side,
@@ -586,8 +631,11 @@ body.low-memory-mode .lightbox-watermark {
     position: absolute;
     z-index: 2001;
     color: #fff;
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.25);
+    background: linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.03));
+    border: 1px solid rgba(255,255,255,0.36);
+    backdrop-filter: blur(10px) saturate(130%);
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
     cursor: pointer;
 }
 .lightbox-close {
@@ -630,8 +678,9 @@ body.low-memory-mode .lightbox-watermark {
 
 @media (max-width: 768px) {
     .main-header {
-        backdrop-filter: none;
-        background: rgba(0,0,0,0.95);
+        background: linear-gradient(140deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        backdrop-filter: blur(12px) saturate(125%);
+        -webkit-backdrop-filter: blur(12px) saturate(125%);
     }
     nav ul { gap: 12px; }
     .split-container { flex-direction: column; height: auto; min-height: 100vh; }
@@ -687,11 +736,13 @@ body.low-memory-mode .lightbox-watermark {
         right: 10px;
         bottom: 10px;
         z-index: 1300;
-        background: rgba(10,10,10,0.94);
-        border: 1px solid #232323;
+        background: linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+        border: 1px solid rgba(255,255,255,0.28);
         border-radius: 14px;
         padding: 8px;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(16px) saturate(130%);
+        -webkit-backdrop-filter: blur(16px) saturate(130%);
+        box-shadow: 0 18px 34px rgba(0,0,0,0.42);
     }
     .mobile-sheet-main {
         display: grid;
@@ -700,8 +751,10 @@ body.low-memory-mode .lightbox-watermark {
     }
     .mobile-sheet-btn {
         font: inherit;
-        border: 1px solid #2b2b2b;
-        background: #0f0f0f;
+        border: 1px solid rgba(255,255,255,0.24);
+        background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         color: #fff;
         text-transform: uppercase;
         letter-spacing: 0.12em;
@@ -712,8 +765,8 @@ body.low-memory-mode .lightbox-watermark {
         text-align: center;
     }
     .mobile-sheet-btn.is-primary {
-        background: #c00;
-        border-color: #c00;
+        background: linear-gradient(145deg, rgba(255,0,0,0.8), rgba(145,0,0,0.42));
+        border-color: rgba(255,255,255,0.36);
     }
     .mobile-sheet-more {
         margin-top: 8px;

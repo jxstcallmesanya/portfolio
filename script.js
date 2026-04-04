@@ -791,6 +791,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  const mainHeader = document.querySelector('.main-header');
+  const updateHeaderGlassState = () => {
+    if (!mainHeader) return;
+    const glassOn = window.scrollY > 56;
+    mainHeader.classList.toggle('is-scrolled', glassOn);
+  };
+  updateHeaderGlassState();
+  window.addEventListener('scroll', updateHeaderGlassState, { passive: true });
+
   const brandBtn = document.querySelector('[data-action="home"]');
   if (brandBtn) {
     brandBtn.addEventListener('click', () => {
