@@ -610,10 +610,13 @@ body.low-memory-mode .lightbox-watermark {
 
 .main-footer {
     border-top: 1px solid #111;
-    color: #707070;
+    color: #a4a4a4;
     padding: 20px 16px 90px;
     text-align: center;
     font-size: 12px;
+}
+.main-footer p {
+    color: inherit;
 }
 
 .lightbox[hidden] { display: none !important; }

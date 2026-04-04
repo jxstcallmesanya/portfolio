@@ -879,7 +879,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const waitForInitialAssets = () => new Promise((resolve) => {
-    const heroEls = Array.from(document.querySelectorAll('.split-side [data-bg]'));
+    // Prioritize only above-the-fold grayscale hero backgrounds for first paint.
+    const heroEls = Array.from(document.querySelectorAll('.split-side .bg-bw[data-bg]'));
     const urls = heroEls
       .map((el) => el.dataset.bg)
       .filter((src) => typeof src === 'string' && src.trim().length > 0);
