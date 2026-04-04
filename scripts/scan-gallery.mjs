@@ -31,7 +31,7 @@ function toPaths(files, folder) {
   return files.map((f) => {
     const p = `${prefix}/${f}`;
     return { full: p, thumb: p };
-  });
+  }).reverse();
 }
 
 function defaultSequential(folder, count) {
