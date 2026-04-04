@@ -492,8 +492,8 @@ body.low-memory-mode .gallery-load-more {
     width: 100%;
 }
 body.low-memory-mode #lb-img {
-    max-width: 96%;
-    max-height: 72vh;
+    max-width: min(96%, 1400px);
+    max-height: 84vh;
 }
 body.low-memory-mode .lightbox-watermark {
     font-size: 10px;

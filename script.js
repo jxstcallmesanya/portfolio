@@ -565,7 +565,10 @@ function renderLightboxImage() {
   const current = items[lightboxIndex];
   if (!current) return;
 
-  const src = isVeryLowMemoryMode() ? (current.thumbSrc || current.fullSrc) : current.fullSrc;
+  // В лайтбоксе всегда полный файл (премиальное качество). Режим safe=1 оставляет прежнюю экономию по памяти.
+  const src = forceManualGalleryMode
+    ? (current.thumbSrc || current.fullSrc)
+    : (current.fullSrc || current.thumbSrc);
   lbImg.src = src;
   const altKey = lightboxAltSection || lightboxGalleryKey;
   if (altKey === 'auto' || altKey === 'people') {
@@ -709,13 +712,13 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
   lastSeriesSheetOpener = triggerEl || document.activeElement;
   grid.innerHTML = '';
 
-  gridEntry.seriesExtras.forEach((slide, j) => {
+  gridEntry.slides.forEach((slide, j) => {
     const cell = document.createElement('div');
     cell.className = 'series-sheet-cell';
 
     const img = document.createElement('img');
     img.className = 'series-sheet-thumb';
-    img.alt = altForGallery(galleryKey, j + 2);
+    img.alt = altForGallery(galleryKey, j + 1);
     img.decoding = 'async';
     img.loading = 'lazy';
     img.tabIndex = 0;
@@ -731,7 +734,7 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
 
     const openSlideLb = () => {
       if (img.dataset.imageReady !== '1') return;
-      openLightboxSlides(gridEntry.slides, j + 1, img, galleryKey);
+      openLightboxSlides(gridEntry.slides, j, img, galleryKey);
     };
 
     img.addEventListener('click', openSlideLb);
@@ -753,7 +756,7 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
 
   sheet.hidden = false;
   document.body.style.overflow = 'hidden';
-  trackEvent('series_sheet_open', galleryKey, { extras: gridEntry.seriesExtras.length });
+  trackEvent('series_sheet_open', galleryKey, { slides: gridEntry.slides.length });
   document.getElementById('series-sheet-back')?.focus();
 }
 
@@ -809,7 +812,7 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
     const badge = document.createElement('span');
     badge.className = 'gallery-count-badge';
     badge.setAttribute('aria-hidden', 'true');
-    badge.textContent = String(entry.seriesExtras.length);
+    badge.textContent = String(entry.slides.length);
     item.appendChild(badge);
   }
   grid.appendChild(item);
