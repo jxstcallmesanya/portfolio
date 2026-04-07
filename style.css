@@ -876,7 +876,7 @@ body.low-memory-mode .lightbox-watermark {
     }
     .about-magazine {
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
         gap: 16px;
         min-height: auto;
