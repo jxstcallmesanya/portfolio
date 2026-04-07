@@ -1,5 +1,6 @@
 const $ = (id) => document.getElementById(id);
 let csrfToken = '';
+let galleryCache = { auto: [], people: [] };
 
 function getCookie(name) {
   const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
@@ -15,6 +16,28 @@ function setMsg(el, text, kind) {
 function selectedSection() {
   const el = document.querySelector('input[name="gallery-section"]:checked');
   return el?.value || 'auto';
+}
+
+function manageSection() {
+  const el = document.querySelector('input[name="manage-section"]:checked');
+  return el?.value || 'auto';
+}
+
+function previewPath(entry) {
+  if (typeof entry === 'string') return entry;
+  if (!entry || typeof entry !== 'object') return '';
+  if (entry.cover && typeof entry.cover === 'object') {
+    return entry.cover.full || entry.cover.thumb || '';
+  }
+  return entry.full || entry.thumb || '';
+}
+
+function entryLabel(entry) {
+  if (typeof entry === 'string') return 'Одно фото';
+  if (entry && entry.cover && Array.isArray(entry.items)) {
+    return `Серия · ${1 + entry.items.length} кадров`;
+  }
+  return 'Одно фото';
 }
 
 async function apiSession() {
@@ -40,7 +63,33 @@ async function apiLogout() {
   });
 }
 
-/** Загрузка файла в репозиторий без изменения gallery.json */
+async function apiGallery() {
+  const r = await fetch('/api/gallery', { credentials: 'same-origin' });
+  return r.json();
+}
+
+async function apiStats() {
+  const r = await fetch('/api/stats', { credentials: 'same-origin' });
+  return r.json();
+}
+
+async function apiGalleryMutate(body) {
+  const r = await fetch('/api/gallery-mutate', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    throw new Error(data.error || `Ошибка ${r.status}`);
+  }
+  return data;
+}
+
 async function apiUploadBlob(section, file) {
   const fd = new FormData();
   fd.append('section', section);
@@ -88,6 +137,114 @@ function showDash() {
   $('boot-msg').textContent = '';
 }
 
+function renderStats(data) {
+  const box = $('stats-box');
+  const hint = $('stats-hint');
+  if (!box) return;
+
+  if (!data.ok) {
+    box.innerHTML = `<p class="hint err">${data.hint || 'Статистика недоступна'}</p>`;
+    if (hint) hint.classList.add('stats-warn');
+    return;
+  }
+
+  if (hint) {
+    if (data.kvConfigured === false) hint.classList.add('stats-warn');
+    else hint.classList.remove('stats-warn');
+  }
+
+  const rows = (data.days || [])
+    .slice(-14)
+    .map(
+      (d) =>
+        `<tr><td>${d.date}</td><td class="num">${d.count}</td></tr>`
+    )
+    .join('');
+  box.innerHTML = `<table class="stats-table"><thead><tr><th>Дата (МСК)</th><th>Визиты</th></tr></thead><tbody>${rows}</tbody></table><p class="hint mini">Показаны последние 14 дней из 30 загруженных.</p>`;
+}
+
+async function loadStats() {
+  try {
+    const s = await apiStats();
+    renderStats(s);
+  } catch {
+    $('stats-box').innerHTML = '<p class="hint err">Не удалось загрузить статистику</p>';
+  }
+}
+
+function renderGalleryManage() {
+  const section = manageSection();
+  const list = $('gallery-manage-list');
+  if (!list) return;
+  const entries = galleryCache[section] || [];
+  if (!entries.length) {
+    list.innerHTML = '<p class="hint">В этом разделе пока пусто.</p>';
+    return;
+  }
+
+  list.innerHTML = entries
+    .map((entry, index) => {
+      const prev = previewPath(entry);
+      const src = prev ? `/${prev.replace(/^\//, '')}` : '';
+      const label = entryLabel(entry);
+      return `
+        <div class="gallery-manage-row" data-index="${index}">
+          <div class="gallery-manage-thumb-wrap">
+            ${src ? `<img class="gallery-manage-thumb" src="${src}" alt="" loading="lazy" />` : '<div class="gallery-manage-ph"></div>'}
+          </div>
+          <div class="gallery-manage-meta">
+            <span class="gallery-manage-label">#${index + 1} · ${label}</span>
+            <span class="gallery-manage-path">${prev || '—'}</span>
+          </div>
+          <div class="gallery-manage-actions">
+            <button type="button" class="btn btn-mini btn-ghost" data-act="up" ${index === 0 ? 'disabled' : ''} aria-label="Выше">↑</button>
+            <button type="button" class="btn btn-mini btn-ghost" data-act="down" ${index === entries.length - 1 ? 'disabled' : ''} aria-label="Ниже">↓</button>
+            <button type="button" class="btn btn-mini btn-danger" data-act="del" aria-label="Удалить">Удалить</button>
+          </div>
+        </div>`;
+    })
+    .join('');
+
+  list.querySelectorAll('button[data-act]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('.gallery-manage-row');
+      const index = Number(row?.dataset.index);
+      if (Number.isNaN(index)) return;
+      const act = btn.dataset.act;
+      const msgEl = $('dash-msg');
+      try {
+        if (act === 'del') {
+          if (!confirm(`Удалить элемент #${index + 1} из ${section}?`)) return;
+          setMsg(msgEl, 'Удаление…');
+          await apiGalleryMutate({ action: 'delete', section, index });
+        } else if (act === 'up') {
+          setMsg(msgEl, 'Сохранение порядка…');
+          await apiGalleryMutate({ action: 'move', section, index, direction: 'up' });
+        } else if (act === 'down') {
+          setMsg(msgEl, 'Сохранение порядка…');
+          await apiGalleryMutate({ action: 'move', section, index, direction: 'down' });
+        }
+        setMsg(msgEl, 'Готово. После деплоя Vercel изменения на сайте.', 'ok');
+        await loadGalleryData();
+      } catch (e) {
+        setMsg(msgEl, e.message || String(e), 'err');
+      }
+    });
+  });
+}
+
+async function loadGalleryData() {
+  try {
+    const g = await apiGallery();
+    if (!g.ok || !g.gallery) throw new Error('Нет данных');
+    galleryCache.auto = Array.isArray(g.gallery.auto) ? g.gallery.auto : [];
+    galleryCache.people = Array.isArray(g.gallery.people) ? g.gallery.people : [];
+    renderGalleryManage();
+  } catch {
+    $('gallery-manage-list').innerHTML = '<p class="hint err">Не удалось загрузить gallery.json</p>';
+  }
+}
+
 async function saveSeriesFlow() {
   const section = selectedSection();
   const coverInput = $('cover-file');
@@ -128,6 +285,7 @@ async function saveSeriesFlow() {
     );
     coverInput.value = '';
     moreInput.value = '';
+    await loadGalleryData();
   } catch (e) {
     setMsg(msgEl, e.message || String(e), 'err');
   } finally {
@@ -141,8 +299,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const s = await apiSession();
     csrfToken = s.csrfToken || getCookie('admin_csrf') || '';
     boot.hidden = true;
-    if (s.ok) showDash();
-    else showLogin();
+    if (s.ok) {
+      showDash();
+      await loadStats();
+      await loadGalleryData();
+    } else {
+      showLogin();
+    }
   } catch {
     setMsg(boot, 'Не удалось связаться с API. Убедитесь, что проект задеплоен на Vercel с папкой /api.', 'err');
     showLogin();
@@ -160,6 +323,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('login-password').value = '';
         setMsg(msg, '');
         showDash();
+        await loadStats();
+        await loadGalleryData();
       } else {
         setMsg(msg, data.error || 'Ошибка входа', 'err');
       }
@@ -176,4 +341,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   $('btn-save-series').addEventListener('click', () => saveSeriesFlow());
+
+  document.querySelectorAll('input[name="manage-section"]').forEach((r) => {
+    r.addEventListener('change', () => renderGalleryManage());
+  });
+
+  $('btn-refresh-gallery')?.addEventListener('click', async () => {
+    setMsg($('dash-msg'), 'Обновление…');
+    await loadGalleryData();
+    setMsg($('dash-msg'), 'Список обновлён', 'ok');
+  });
 });

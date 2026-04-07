@@ -7,6 +7,7 @@ import {
   isTrustedOrigin
 } from '../lib/auth.js';
 import { putImageInRepo, appendSingleToGallery } from '../lib/githubGallery.js';
+import { prepareUploadBuffer } from '../lib/imageWebp.js';
 
 const MAX_BYTES = 4 * 1024 * 1024;
 
@@ -184,19 +185,34 @@ export default async function handler(req, res) {
       return;
     }
 
+    let masterBuffer = fileBuffer;
+    let masterMime = mime;
+    try {
+      const prep = await prepareUploadBuffer(fileBuffer, mime);
+      masterBuffer = prep.buffer;
+      masterMime = prep.mime;
+    } catch (convErr) {
+      console.warn('[upload] webp conversion failed, using original', convErr?.message || convErr);
+    }
+
     let thumbBuffer = null;
     try {
-      thumbBuffer = await buildThumbnailBuffer(fileBuffer, mime);
+      thumbBuffer = await buildThumbnailBuffer(masterBuffer, masterMime);
     } catch (thumbErr) {
       console.warn('[upload] thumb generation failed, fallback to original', thumbErr?.message || thumbErr);
       thumbBuffer = null;
     }
 
+    const outName =
+      masterMime === 'image/webp' && /\.(jpe?g|png|gif)$/i.test(fileInfo?.filename || '')
+        ? String(fileInfo.filename).replace(/\.[^.]+$/, '.webp')
+        : fileInfo?.filename;
+
     const result = await putImageInRepo(
       section,
-      fileBuffer,
-      fileInfo?.filename,
-      fileInfo?.mimeType,
+      masterBuffer,
+      outName || fileInfo?.filename,
+      masterMime,
       thumbBuffer
     );
     if (!skipGallery) {

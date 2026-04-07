@@ -32,14 +32,35 @@
       </div>
 
       <div class="card">
+        <h3>Посещения (МСК, в день)</h3>
+        <p class="hint" id="stats-hint">
+          Счётчик работает после подключения <strong>Vercel KV</strong> в проекте и переменных <code>KV_REST_API_URL</code>, <code>KV_REST_API_TOKEN</code>.
+          Уникальных «посетителей» нет — считаются просмотры главной (один раз за сессию браузера).
+        </p>
+        <div id="stats-box" class="stats-box"></div>
+      </div>
+
+      <div class="card">
+        <h3>Управление галереей</h3>
+        <p class="hint">Порядок сверху вниз = как на сайте (сверху — новее). Удаление убирает запись из <code>gallery.json</code> и файлы в репозитории.</p>
+        <fieldset class="section-fieldset">
+          <legend class="label">Раздел</legend>
+          <div class="radio-row">
+            <label class="radio-label"><input type="radio" name="manage-section" value="auto" checked /> Авто</label>
+            <label class="radio-label"><input type="radio" name="manage-section" value="people" /> Люди</label>
+          </div>
+        </fieldset>
+        <button type="button" id="btn-refresh-gallery" class="btn btn-ghost btn-inline">Обновить список</button>
+        <div id="gallery-manage-list" class="gallery-manage-list"></div>
+      </div>
+
+      <div class="card">
         <h3>Добавить в галерею</h3>
         <p class="hint">
-          JPG, PNG, WebP, GIF · до ~4 МБ <strong>на каждый файл</strong> (лимит Vercel Hobby). Сначала загружаются файлы на GitHub,
-          затем одна запись в <code>gallery.json</code>.
+          JPG, PNG, WebP, GIF · до ~4 МБ <strong>на каждый файл</strong>. <strong>JPEG и PNG при загрузке конвертируются в WebP</strong> (анимационный GIF сохраняется как GIF).
         </p>
         <p class="hint">
-          <strong>Одно фото:</strong> выберите только обложку и нажмите «Сохранить». <strong>Серия:</strong> обложка + остальные кадры —
-          на сетке появится счётчик, по тапу откроется подборка.
+          <strong>Одно фото:</strong> только обложка → «Сохранить». <strong>Серия:</strong> обложка + остальные кадры.
         </p>
 
         <fieldset class="section-fieldset">

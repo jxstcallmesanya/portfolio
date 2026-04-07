@@ -947,6 +947,15 @@ async function routeByHash(source) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (!sessionStorage.getItem('pf_visit')) {
+      sessionStorage.setItem('pf_visit', '1');
+      fetch('/api/track', { method: 'POST', keepalive: true }).catch(() => {});
+    }
+  } catch (_) {
+    /* ignore */
+  }
+
   const startupLoader = document.getElementById('site-loader');
   document.body.classList.add('app-loading');
 
