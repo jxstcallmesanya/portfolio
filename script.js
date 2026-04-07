@@ -114,18 +114,51 @@ function updateActiveNav(sectionId) {
   });
 }
 
-function showSection(sectionId) {
-  const prevSectionId = currentSectionId;
-  if (prevSectionId && prevSectionId !== sectionId) {
-    releaseSectionMemory(prevSectionId);
+function prefersReducedMotion() {
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return false;
   }
-  document.querySelectorAll('.content-section').forEach((s) => s.classList.remove('active'));
-  const target = document.getElementById(`${sectionId}-section`);
-  if (!target) return;
-  target.classList.add('active');
-  updateActiveNav(sectionId);
-  currentSectionId = sectionId;
-  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+}
+
+function isStandaloneDisplayMode() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia('(display-mode: minimal-ui)').matches ||
+    (typeof navigator !== 'undefined' && navigator.standalone === true)
+  );
+}
+
+function showSection(sectionId, options = {}) {
+  const targetPre = document.getElementById(`${sectionId}-section`);
+  if (sectionId === currentSectionId && targetPre?.classList.contains('active')) {
+    return;
+  }
+
+  const runUpdate = () => {
+    const prevSectionId = currentSectionId;
+    if (prevSectionId && prevSectionId !== sectionId) {
+      releaseSectionMemory(prevSectionId);
+    }
+    document.querySelectorAll('.content-section').forEach((s) => s.classList.remove('active'));
+    const target = document.getElementById(`${sectionId}-section`);
+    if (!target) return;
+    target.classList.add('active');
+    updateActiveNav(sectionId);
+    currentSectionId = sectionId;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
+  const skipVt =
+    options.skipTransition === true || prefersReducedMotion() || typeof document.startViewTransition !== 'function';
+
+  if (skipVt) {
+    runUpdate();
+    return;
+  }
+
+  document.startViewTransition(runUpdate);
 }
 
 function navigateToSection(sectionId) {
@@ -1008,8 +1041,8 @@ function renderGalleryGrid(containerId, galleryKey, entries) {
   updateLoadMoreVisibility(galleryKey, initialCount, entries.length);
 }
 
-async function runAutoGallery(forceReload = false) {
-  showSection('auto');
+async function runAutoGallery(forceReload = false, options = {}) {
+  showSection('auto', options);
   if (galleryRendered.auto && !forceReload) return;
 
   try {
@@ -1024,8 +1057,8 @@ async function runAutoGallery(forceReload = false) {
   }
 }
 
-async function runPeopleGallery(forceReload = false) {
-  showSection('people');
+async function runPeopleGallery(forceReload = false, options = {}) {
+  showSection('people', options);
   if (galleryRendered.people && !forceReload) return;
 
   try {
@@ -1042,12 +1075,13 @@ async function runPeopleGallery(forceReload = false) {
 
 async function routeByHash(source) {
   const sectionId = sectionFromHash(window.location.hash);
+  const vtOpts = { skipTransition: source === 'init' };
   if (sectionId === 'auto') {
-    await runAutoGallery();
+    await runAutoGallery(false, vtOpts);
   } else if (sectionId === 'people') {
-    await runPeopleGallery();
+    await runPeopleGallery(false, vtOpts);
   } else {
-    showSection(sectionId);
+    showSection(sectionId, vtOpts);
   }
   trackEvent('section_view', sectionId, { source: source || 'unknown' });
 }
@@ -1218,6 +1252,46 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('hashchange', () => {
     void routeByHash('hashchange');
   });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener(
+      'load',
+      () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      },
+      { once: true }
+    );
+  }
+
+  let deferredInstallPrompt = null;
+  const installBar = document.getElementById('install-banner');
+  const installBtn = document.getElementById('install-btn');
+  const installDismiss = document.getElementById('install-dismiss');
+  if (installBar && installBtn && installDismiss && !isStandaloneDisplayMode()) {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      installBar.hidden = false;
+    });
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      installBar.hidden = true;
+    });
+    installDismiss.addEventListener('click', () => {
+      installBar.hidden = true;
+    });
+    installBtn.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) return;
+      try {
+        await deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+      } catch {
+        /* ignore */
+      }
+      deferredInstallPrompt = null;
+      installBar.hidden = true;
+    });
+  }
 
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lb-img');

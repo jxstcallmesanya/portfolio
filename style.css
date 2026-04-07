@@ -969,3 +969,135 @@ body.low-memory-mode .lightbox-watermark {
 body.low-memory-mode .lightbox-watermark {
     display: none !important;
 }
+
+/* View Transitions API — смена секций */
+@supports (view-transition-name: none) {
+    .content-section {
+        view-transition-name: portfolio-section;
+    }
+
+    ::view-transition-old(portfolio-section),
+    ::view-transition-new(portfolio-section) {
+        animation-duration: 0.38s;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    ::view-transition-old(portfolio-section) {
+        animation-name: vt-section-out;
+    }
+
+    ::view-transition-new(portfolio-section) {
+        animation-name: vt-section-in;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        ::view-transition-old(portfolio-section),
+        ::view-transition-new(portfolio-section) {
+            animation: none !important;
+        }
+    }
+}
+
+@keyframes vt-section-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes vt-section-in {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Баннер установки PWA (Chromium) */
+.install-banner {
+    position: fixed;
+    z-index: 5000;
+    left: 16px;
+    right: 16px;
+    bottom: 20px;
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    padding: 14px 16px;
+    background: rgba(12, 12, 12, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.install-banner[hidden] {
+    display: none !important;
+}
+
+.install-banner-text {
+    flex: 1 1 200px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #c4c4c4;
+}
+
+.install-banner-btn {
+    font: inherit;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    background: #c9a94f;
+    color: #000;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.install-banner-btn:hover,
+.install-banner-btn:focus-visible {
+    filter: brightness(1.08);
+}
+
+.install-banner-dismiss {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.install-banner-dismiss:hover,
+.install-banner-dismiss:focus-visible {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 520px) {
+    .install-banner {
+        left: 12px;
+        right: 12px;
+        padding-top: 36px;
+    }
+}

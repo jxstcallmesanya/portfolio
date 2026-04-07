@@ -1,16 +1,42 @@
 {
-  "name": "JXSTCALLMESANYA",
+  "id": "/",
+  "name": "JXSTCALLMESANYA — портфолио",
   "short_name": "JXSTCALLMESANYA",
   "description": "Автомобильный и репортажный фотограф в Москве и МО",
+  "lang": "ru",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
+  "categories": ["photography", "portfolio"],
   "icons": [
     {
       "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Галерея авто",
+      "short_name": "Авто",
+      "url": "/#auto",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Репортаж",
+      "short_name": "Люди",
+      "url": "/#people",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Съёмка",
+      "short_name": "Цены",
+      "url": "/shooting/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }

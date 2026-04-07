@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>Нет сети — JXSTCALLMESANYA</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #c8c8c8;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 28px 20px;
+      text-align: center;
+    }
+    .box { max-width: 360px; }
+    h1 {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #c9a94f;
+      margin: 0 0 20px;
+    }
+    p {
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0 0 28px;
+    }
+    button {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      color: #fff;
+      padding: 14px 28px;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    button:focus-visible {
+      outline: 2px solid #d9f420;
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>JXSTCALLMESANYA</h1>
+    <p>Сейчас нет подключения к сети. Часть страниц может открыться из кэша после восстановления связи.</p>
+    <button type="button" onclick="location.reload()">Повторить</button>
+  </div>
+</body>
+</html>
