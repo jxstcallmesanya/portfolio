@@ -1186,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document
     .querySelectorAll(
-      '.nav-btn, .gallery-thumb, .series-sheet-thumb, .hero-cta, .gallery-load-more, .floating-cta'
+      '.nav-btn, .gallery-thumb, .series-sheet-thumb, .hero-cta, .gallery-load-more'
     )
     .forEach((el) => {
       el.addEventListener('click', () => enableTapFx(el));
