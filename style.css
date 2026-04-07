@@ -187,6 +187,27 @@ nav ul {
     background: #D9F420;
 }
 
+nav a.nav-btn-link {
+    display: inline-block;
+    text-decoration: none;
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #8e8e8e;
+    background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 7px 10px;
+    cursor: pointer;
+    transition: color 0.25s, border-color 0.25s, background 0.25s, transform 0.2s;
+}
+nav a.nav-btn-link:hover,
+nav a.nav-btn-link:focus-visible {
+    color: #fff;
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+}
+
 .content-section { display: none; width: 100%; min-height: 100vh; }
 .content-section.active { display: block !important; }
 
@@ -528,6 +549,27 @@ body.low-memory-mode .lightbox-watermark {
     margin: 0;
     position: relative;
 }
+.gallery-caption {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: #9a9a9a;
+    line-height: 1.35;
+    max-width: 100%;
+}
+.gallery-empty {
+    grid-column: 1 / -1;
+    margin: 24px 0 40px;
+    padding: 28px 20px;
+    text-align: center;
+    color: #888;
+    font-size: 15px;
+    line-height: 1.55;
+    border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+}
 .gallery-count-badge {
     position: absolute;
     right: 8px;
@@ -566,6 +608,30 @@ body.low-memory-mode .lightbox-watermark {
 }
 .series-sheet-top {
     padding: 8px 0 20px;
+}
+.series-sheet-meta {
+    margin: 0 0 20px;
+    padding: 0 4px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.series-sheet-meta[hidden] {
+    display: none !important;
+}
+.series-sheet-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+    color: #fff;
+}
+.series-sheet-desc {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #b5b5b5;
+}
+.series-sheet-desc[hidden] {
+    display: none !important;
 }
 .series-sheet-back {
     font: inherit;

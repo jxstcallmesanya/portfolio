@@ -56,6 +56,11 @@ export default async function handler(req, res) {
     const section = body.section;
     const cover = body.cover;
     const items = body.items;
+    const title = typeof body.title === 'string' ? body.title : '';
+    const description = typeof body.description === 'string' ? body.description : '';
+    const meta = {};
+    if (title.trim()) meta.title = title.trim();
+    if (description.trim()) meta.description = description.trim();
 
     if (section !== 'auto' && section !== 'people') {
       res.statusCode = 400;
@@ -64,7 +69,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    await prependCompositeGalleryEntry(section, cover, items);
+    await prependCompositeGalleryEntry(section, cover, items, meta);
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

@@ -2,6 +2,18 @@
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/auto", "destination": "/auto/index.html" },
-    { "source": "/people", "destination": "/people/index.html" }
+    { "source": "/people", "destination": "/people/index.html" },
+    { "source": "/shooting", "destination": "/shooting/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/gallery.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=120, stale-while-revalidate=600"
+        }
+      ]
+    }
   ]
 }

@@ -13,7 +13,7 @@ body {
 }
 
 .wrap {
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto;
   padding: 48px 20px 80px;
 }
@@ -246,11 +246,12 @@ body {
 
 .gallery-manage-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding: 10px;
   background: #0a0a0a;
   border: 1px solid #1a1a1a;
+  cursor: grab;
 }
 
 .gallery-manage-thumb-wrap {
@@ -314,4 +315,93 @@ body {
 .btn-danger:hover:not(:disabled) {
   border-color: #f66 !important;
   color: #fbb !important;
+}
+
+.btn-danger-soft {
+  background: transparent !important;
+  border: 1px dashed #633 !important;
+}
+
+.manage-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.gallery-manage-row.is-dragging {
+  opacity: 0.55;
+  cursor: grabbing;
+}
+
+.gallery-manage-cb {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #d4af37;
+  cursor: pointer;
+}
+
+.gallery-manage-expand {
+  margin-top: 10px;
+  padding: 8px 0 0;
+  border-top: 1px solid #1f1f1f;
+}
+
+.gallery-manage-expand summary {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #777;
+  cursor: pointer;
+  list-style: none;
+}
+
+.gallery-manage-expand summary::-webkit-details-marker {
+  display: none;
+}
+
+.gallery-manage-expand .label.mini {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+}
+
+.input-compact {
+  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.input-textarea {
+  min-height: 56px;
+  resize: vertical;
+}
+
+.upload-progress-wrap {
+  margin: 14px 0 18px;
+}
+
+.upload-progress-track {
+  height: 6px;
+  background: #1a1a1a;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #2a2a2a;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #a08020, #d4af37);
+  border-radius: 999px;
+  transition: width 0.12s ease-out;
+}
+
+.upload-progress-label {
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
 }

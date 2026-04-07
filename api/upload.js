@@ -9,7 +9,18 @@ import {
 import { putImageInRepo, appendSingleToGallery } from '../lib/githubGallery.js';
 import { prepareUploadBuffer } from '../lib/imageWebp.js';
 
-const MAX_BYTES = 4 * 1024 * 1024;
+const DEFAULT_MAX_BYTES = 12 * 1024 * 1024;
+const HARD_CAP_BYTES = 15 * 1024 * 1024;
+
+function resolveMaxUploadBytes() {
+  const raw = process.env.MAX_UPLOAD_BYTES;
+  if (raw === undefined || raw === '') return DEFAULT_MAX_BYTES;
+  const n = Number(String(raw).trim());
+  if (!Number.isFinite(n) || n < 512 * 1024) return DEFAULT_MAX_BYTES;
+  return Math.min(Math.floor(n), HARD_CAP_BYTES);
+}
+
+const MAX_BYTES = resolveMaxUploadBytes();
 
 function hasValidImageSignature(buffer, mime) {
   if (!Buffer.isBuffer(buffer) || buffer.length < 12) return false;
@@ -65,7 +76,10 @@ function parseMultipart(req) {
       const chunks = [];
       stream.on('data', (d) => chunks.push(d));
       stream.on('limit', () => {
-        limitError = new Error('Файл больше 4 МБ (лимит Vercel Hobby). Сожмите фото.');
+        const mb = Math.round(MAX_BYTES / (1024 * 1024));
+        limitError = new Error(
+          `Файл больше ${mb} МБ (лимит MAX_UPLOAD_BYTES / платформы). Сожмите фото или уменьшите размер.`
+        );
       });
       stream.on('end', () => {
         fileBuffer = Buffer.concat(chunks);

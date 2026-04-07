@@ -157,7 +157,16 @@ function normalizeFlatSlide(sub) {
   if (typeof sub === 'string') {
     const fullSrc = normalizePath(sub);
     if (!fullSrc) return null;
-    return { fullSrc, thumbSrc: fullSrc, srcset: '', sizes: '', width: null, height: null };
+    return {
+      fullSrc,
+      thumbSrc: fullSrc,
+      srcset: '',
+      sizes: '',
+      width: null,
+      height: null,
+      title: '',
+      description: ''
+    };
   }
   if (!sub || typeof sub !== 'object') return null;
   const fullSrc = normalizePath(sub.full || sub.src || sub.image || sub.original);
@@ -167,7 +176,9 @@ function normalizeFlatSlide(sub) {
   const sizes = typeof sub.sizes === 'string' ? sub.sizes : '';
   const width = Number.isFinite(Number(sub.width)) ? Number(sub.width) : null;
   const height = Number.isFinite(Number(sub.height)) ? Number(sub.height) : null;
-  return { fullSrc, thumbSrc, srcset, sizes, width, height };
+  const title = typeof sub.title === 'string' ? sub.title.trim() : '';
+  const description = typeof sub.description === 'string' ? sub.description.trim() : '';
+  return { fullSrc, thumbSrc, srcset, sizes, width, height, title, description };
 }
 
 function wrapSingleSlide(slide) {
@@ -179,6 +190,8 @@ function wrapSingleSlide(slide) {
     sizes: slide.sizes,
     width: slide.width,
     height: slide.height,
+    title: slide.title || '',
+    description: slide.description || '',
     slides: [slide],
     seriesExtras: []
   };
@@ -202,8 +215,13 @@ function normalizeManifestEntry(item) {
       if (e) extras.push(e);
     });
     const slides = [coverSlide, ...extras];
+    const title = typeof item.title === 'string' ? item.title.trim() : '';
+    const description = typeof item.description === 'string' ? item.description.trim() : '';
     if (extras.length === 0) {
-      return wrapSingleSlide(coverSlide);
+      const single = wrapSingleSlide(coverSlide);
+      if (title) single.title = title;
+      if (description) single.description = description;
+      return single;
     }
     return {
       kind: 'series',
@@ -213,13 +231,21 @@ function normalizeManifestEntry(item) {
       sizes: coverSlide.sizes,
       width: coverSlide.width,
       height: coverSlide.height,
+      title,
+      description,
       slides,
       seriesExtras: extras
     };
   }
 
   const slide = normalizeFlatSlide(item);
-  return slide ? wrapSingleSlide(slide) : null;
+  if (!slide) return null;
+  const wrapped = wrapSingleSlide(slide);
+  const t = typeof item.title === 'string' ? item.title.trim() : '';
+  const d = typeof item.description === 'string' ? item.description.trim() : '';
+  if (t) wrapped.title = t;
+  if (d) wrapped.description = d;
+  return wrapped;
 }
 
 function normalizeManifestList(entries) {
@@ -500,7 +526,7 @@ async function loadGalleryManifest() {
   if (galleryManifestCache) return galleryManifestCache;
   try {
     const manifestUrl = new URL('gallery.json', window.location.href).href;
-    const res = await fetch(manifestUrl, { cache: 'no-cache' });
+    const res = await fetch(manifestUrl, { cache: 'default' });
     if (!res.ok) throw new Error('gallery.json not ok');
     galleryManifestCache = await res.json();
     return galleryManifestCache;
@@ -678,9 +704,28 @@ function trapLightboxFocus(e) {
   }
 }
 
+function removeSeriesSheetJsonLd() {
+  document.getElementById('dynamic-series-jsonld')?.remove();
+}
+
 function closeSeriesSheet() {
   const sheet = document.getElementById('series-sheet');
   if (!sheet || sheet.hidden) return;
+  removeSeriesSheetJsonLd();
+  const meta = document.getElementById('series-sheet-meta');
+  if (meta) {
+    meta.hidden = true;
+    const t = document.getElementById('series-sheet-title');
+    const d = document.getElementById('series-sheet-desc');
+    if (t) {
+      t.textContent = '';
+      t.hidden = false;
+    }
+    if (d) {
+      d.textContent = '';
+      d.hidden = false;
+    }
+  }
   const grid = document.getElementById('series-sheet-grid');
   if (grid) {
     grid.querySelectorAll('.series-sheet-thumb').forEach((img) => {
@@ -710,7 +755,44 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
   if (!sheet || !grid) return;
 
   lastSeriesSheetOpener = triggerEl || document.activeElement;
+  removeSeriesSheetJsonLd();
   grid.innerHTML = '';
+
+  const metaEl = document.getElementById('series-sheet-meta');
+  const titleEl = document.getElementById('series-sheet-title');
+  const descEl = document.getElementById('series-sheet-desc');
+  const seriesTitle = gridEntry.title || '';
+  const seriesDesc = gridEntry.description || '';
+  if (metaEl && titleEl && descEl) {
+    titleEl.textContent = seriesTitle;
+    descEl.textContent = seriesDesc;
+    const hasMeta = Boolean(seriesTitle || seriesDesc);
+    metaEl.hidden = !hasMeta;
+    titleEl.hidden = !seriesTitle;
+    descEl.hidden = !seriesDesc;
+  }
+
+  const absBase = new URL(window.location.href).origin;
+  const imageUrls = gridEntry.slides.map((s) => `${absBase}/${normalizePath(s.fullSrc)}`);
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name: seriesTitle || `Серия — ${galleryKey === 'auto' ? 'авто' : 'люди'}`,
+    description: seriesDesc || undefined,
+    numberOfItems: gridEntry.slides.length,
+    image: imageUrls
+  };
+  if (!seriesDesc) delete ld.description;
+  const ldScript = document.createElement('script');
+  ldScript.id = 'dynamic-series-jsonld';
+  ldScript.type = 'application/ld+json';
+  ldScript.textContent = JSON.stringify(ld);
+  document.head.appendChild(ldScript);
+
+  sheet.setAttribute(
+    'aria-label',
+    seriesTitle ? `Серия: ${seriesTitle}` : 'Снимки серии'
+  );
 
   gridEntry.slides.forEach((slide, j) => {
     const cell = document.createElement('div');
@@ -718,7 +800,9 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
 
     const img = document.createElement('img');
     img.className = 'series-sheet-thumb';
-    img.alt = altForGallery(galleryKey, j + 1);
+    img.alt = seriesTitle
+      ? `${seriesTitle}, кадр ${j + 1}`
+      : altForGallery(galleryKey, j + 1);
     img.decoding = 'async';
     img.loading = 'lazy';
     img.tabIndex = 0;
@@ -766,7 +850,7 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
 
   const img = document.createElement('img');
   img.className = 'gallery-thumb';
-  img.alt = altForGallery(galleryKey, index + 1);
+  img.alt = entry.title || altForGallery(galleryKey, index + 1);
   img.decoding = 'async';
   img.loading = 'lazy';
   img.tabIndex = 0;
@@ -814,6 +898,12 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
     badge.setAttribute('aria-hidden', 'true');
     badge.textContent = String(entry.slides.length);
     item.appendChild(badge);
+  }
+  if (entry.title) {
+    const cap = document.createElement('span');
+    cap.className = 'gallery-caption';
+    cap.textContent = entry.title;
+    item.appendChild(cap);
   }
   grid.appendChild(item);
 
@@ -881,6 +971,22 @@ function renderGalleryGrid(containerId, galleryKey, entries) {
   clearGalleryQueues();
   staggerFallbackMs = 0;
   grid.innerHTML = '';
+
+  if (!entries.length) {
+    const empty = document.createElement('p');
+    empty.className = 'gallery-empty';
+    empty.textContent =
+      'В этом разделе пока нет работ. Загляните позже — подборка обновляется.';
+    empty.setAttribute('role', 'status');
+    grid.appendChild(empty);
+    galleryEntries[galleryKey] = [];
+    const btn = document.getElementById(`${galleryKey}-load-more`);
+    if (btn) {
+      btn.hidden = true;
+      btn.dataset.renderedCount = '0';
+    }
+    return;
+  }
 
   galleryEntries[galleryKey] = entries;
 

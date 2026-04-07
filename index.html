@@ -76,6 +76,7 @@
         <nav aria-label="Основное меню">
             <ul>
                 <li><button type="button" class="nav-btn" data-nav-target="main">ГАЛЕРЕЯ</button></li>
+                <li><a class="nav-btn nav-btn-link" href="/shooting/">СЪЁМКА</a></li>
                 <li><button type="button" class="nav-btn" data-nav-target="about">ОБО МНЕ</button></li>
                 <li><button type="button" class="nav-btn" data-nav-target="cases">КЕЙСЫ</button></li>
                 <li><button type="button" class="nav-btn" data-nav-target="packages">ПАКЕТЫ</button></li>
@@ -257,6 +258,10 @@
         <div class="series-sheet-inner">
             <div class="series-sheet-top">
                 <button type="button" class="series-sheet-back" id="series-sheet-back" aria-label="Назад к сетке">← Назад</button>
+            </div>
+            <div id="series-sheet-meta" class="series-sheet-meta" hidden>
+                <h2 id="series-sheet-title" class="series-sheet-title"></h2>
+                <p id="series-sheet-desc" class="series-sheet-desc"></p>
             </div>
             <div id="series-sheet-grid" class="series-sheet-grid"></div>
         </div>

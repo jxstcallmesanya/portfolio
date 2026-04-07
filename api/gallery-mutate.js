@@ -4,7 +4,14 @@ import {
   verifyCsrfToken,
   isTrustedOrigin
 } from '../lib/auth.js';
-import { deleteGalleryEntryAtIndex, moveGalleryEntry } from '../lib/githubGallery.js';
+import {
+  deleteGalleryEntryAtIndex,
+  moveGalleryEntry,
+  reorderGallerySection,
+  deleteGalleryEntriesAtIndices,
+  clearGallerySection,
+  updateGalleryEntryMeta
+} from '../lib/githubGallery.js';
 
 function readJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -53,7 +60,17 @@ export default async function handler(req, res) {
 
   try {
     const body = await readJsonBody(req);
-    const { action, section, index, direction, deleteFiles } = body;
+    const {
+      action,
+      section,
+      index,
+      direction,
+      deleteFiles,
+      order,
+      indices,
+      title,
+      description
+    } = body;
 
     if (section !== 'auto' && section !== 'people') {
       res.statusCode = 400;
@@ -68,6 +85,18 @@ export default async function handler(req, res) {
       });
     } else if (action === 'move') {
       await moveGalleryEntry(section, index, direction);
+    } else if (action === 'reorder') {
+      await reorderGallerySection(section, order);
+    } else if (action === 'deleteMany') {
+      await deleteGalleryEntriesAtIndices(section, indices, {
+        deleteFiles: deleteFiles !== false
+      });
+    } else if (action === 'clearSection') {
+      await clearGallerySection(section, {
+        deleteFiles: deleteFiles !== false
+      });
+    } else if (action === 'updateMeta') {
+      await updateGalleryEntryMeta(section, index, { title, description });
     } else {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'application/json; charset=utf-8');

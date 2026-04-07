@@ -42,7 +42,7 @@
 
       <div class="card">
         <h3>Управление галереей</h3>
-        <p class="hint">Порядок сверху вниз = как на сайте (сверху — новее). Удаление убирает запись из <code>gallery.json</code> и файлы в репозитории.</p>
+        <p class="hint">Порядок сверху вниз = как на сайте (сверху — новее). Перетаскивайте строки за ручку ⋮⋮. Удаление убирает запись из <code>gallery.json</code> и файлы в репозитории.</p>
         <fieldset class="section-fieldset">
           <legend class="label">Раздел</legend>
           <div class="radio-row">
@@ -50,14 +50,18 @@
             <label class="radio-label"><input type="radio" name="manage-section" value="people" /> Люди</label>
           </div>
         </fieldset>
-        <button type="button" id="btn-refresh-gallery" class="btn btn-ghost btn-inline">Обновить список</button>
+        <div class="manage-toolbar">
+          <button type="button" id="btn-refresh-gallery" class="btn btn-ghost btn-inline">Обновить список</button>
+          <button type="button" id="btn-bulk-delete" class="btn btn-mini btn-danger" disabled>Удалить выбранные</button>
+          <button type="button" id="btn-clear-section" class="btn btn-mini btn-danger btn-danger-soft">Очистить раздел…</button>
+        </div>
         <div id="gallery-manage-list" class="gallery-manage-list"></div>
       </div>
 
       <div class="card">
         <h3>Добавить в галерею</h3>
         <p class="hint">
-          JPG, PNG, WebP, GIF · до ~4 МБ <strong>на каждый файл</strong>. <strong>JPEG и PNG при загрузке конвертируются в WebP</strong> (анимационный GIF сохраняется как GIF).
+          JPG, PNG, WebP, GIF · до ~12 МБ <strong>на файл</strong> (лимит <code>MAX_UPLOAD_BYTES</code> на Vercel). <strong>JPEG и PNG при загрузке конвертируются в WebP</strong> (анимационный GIF сохраняется как GIF).
         </p>
         <p class="hint">
           <strong>Одно фото:</strong> только обложка → «Сохранить». <strong>Серия:</strong> обложка + остальные кадры.
@@ -76,6 +80,19 @@
 
         <label class="label" for="more-files">Остальные фото серии (необязательно)</label>
         <input type="file" id="more-files" class="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
+
+        <label class="label" for="series-title">Подпись в галерее (кратко, необязательно)</label>
+        <input type="text" id="series-title" class="input" maxlength="200" placeholder="Например: ночной дрифт" autocomplete="off" />
+
+        <label class="label" for="series-desc">Описание для подборки и SEO (необязательно)</label>
+        <textarea id="series-desc" class="input input-textarea" rows="2" maxlength="2000" placeholder="1–2 предложения о серии"></textarea>
+
+        <div id="upload-progress-wrap" class="upload-progress-wrap" hidden>
+          <div class="upload-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="upload-progress-fill" class="upload-progress-fill"></div>
+          </div>
+          <p id="upload-progress-label" class="hint mini upload-progress-label"></p>
+        </div>
 
         <button type="button" id="btn-save-series" class="btn btn-primary">Сохранить и загрузить</button>
       </div>

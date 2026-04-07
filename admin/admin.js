@@ -13,6 +13,14 @@ function setMsg(el, text, kind) {
   if (kind) el.classList.add(kind);
 }
 
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function selectedSection() {
   const el = document.querySelector('input[name="gallery-section"]:checked');
   return el?.value || 'auto';
@@ -38,6 +46,14 @@ function entryLabel(entry) {
     return `Серия · ${1 + entry.items.length} кадров`;
   }
   return 'Одно фото';
+}
+
+function entryTitleDesc(entry) {
+  if (typeof entry === 'string') return { title: '', description: '' };
+  return {
+    title: typeof entry.title === 'string' ? entry.title : '',
+    description: typeof entry.description === 'string' ? entry.description : ''
+  };
 }
 
 async function apiSession() {
@@ -90,25 +106,64 @@ async function apiGalleryMutate(body) {
   return data;
 }
 
-async function apiUploadBlob(section, file) {
-  const fd = new FormData();
-  fd.append('section', section);
-  fd.append('skipGallery', '1');
-  fd.append('file', file);
-  const r = await fetch('/api/upload', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
-    body: fd
+function uploadBlobWithProgress(section, file, onRatio) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const fd = new FormData();
+    fd.append('section', section);
+    fd.append('skipGallery', '1');
+    fd.append('file', file);
+
+    xhr.open('POST', '/api/upload');
+    xhr.withCredentials = true;
+    if (csrfToken) xhr.setRequestHeader('x-csrf-token', csrfToken);
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable && typeof onRatio === 'function') {
+        onRatio(e.loaded / e.total);
+      }
+    });
+
+    xhr.onload = () => {
+      let data = {};
+      try {
+        data = JSON.parse(xhr.responseText || '{}');
+      } catch {
+        reject(new Error('Некорректный ответ сервера'));
+        return;
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && data.ok) {
+        resolve(data);
+        return;
+      }
+      reject(new Error(data.error || `Ошибка ${xhr.status}`));
+    };
+    xhr.onerror = () => reject(new Error('Сеть недоступна'));
+    xhr.send(fd);
   });
-  const data = await r.json().catch(() => ({}));
-  if (!r.ok) {
-    throw new Error(data.error || `Ошибка ${r.status}`);
-  }
-  return data;
 }
 
-async function apiCommitSeries(section, cover, items) {
+function setUploadProgress(visible, pct, labelText) {
+  const wrap = $('upload-progress-wrap');
+  const fill = $('upload-progress-fill');
+  const label = $('upload-progress-label');
+  const track = wrap?.querySelector('.upload-progress-track');
+  if (!wrap || !fill) return;
+  if (!visible) {
+    wrap.hidden = true;
+    if (track) {
+      track.removeAttribute('aria-valuenow');
+    }
+    return;
+  }
+  wrap.hidden = false;
+  const p = Math.max(0, Math.min(100, Math.round(pct)));
+  fill.style.width = `${p}%`;
+  if (track) track.setAttribute('aria-valuenow', String(p));
+  if (label) label.textContent = labelText || '';
+}
+
+async function apiCommitSeries(section, cover, items, title, description) {
   const r = await fetch('/api/gallery-commit-series', {
     method: 'POST',
     credentials: 'same-origin',
@@ -116,7 +171,7 @@ async function apiCommitSeries(section, cover, items) {
       'Content-Type': 'application/json; charset=utf-8',
       ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
     },
-    body: JSON.stringify({ section, cover, items })
+    body: JSON.stringify({ section, cover, items, title, description })
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
@@ -155,10 +210,7 @@ function renderStats(data) {
 
   const rows = (data.days || [])
     .slice(-14)
-    .map(
-      (d) =>
-        `<tr><td>${d.date}</td><td class="num">${d.count}</td></tr>`
-    )
+    .map((d) => `<tr><td>${d.date}</td><td class="num">${d.count}</td></tr>`)
     .join('');
   box.innerHTML = `<table class="stats-table"><thead><tr><th>Дата (МСК)</th><th>Визиты</th></tr></thead><tbody>${rows}</tbody></table><p class="hint mini">Показаны последние 14 дней из 30 загруженных.</p>`;
 }
@@ -172,6 +224,76 @@ async function loadStats() {
   }
 }
 
+function updateBulkDeleteState() {
+  const n = document.querySelectorAll('#gallery-manage-list .gallery-manage-cb:checked').length;
+  const btn = $('btn-bulk-delete');
+  if (btn) btn.disabled = n === 0;
+}
+
+async function persistReorder(list) {
+  const section = manageSection();
+  const rows = [...list.querySelectorAll('.gallery-manage-row')];
+  const order = rows.map((r) => Number(r.dataset.index));
+  const msgEl = $('dash-msg');
+  setMsg(msgEl, 'Сохранение порядка…');
+  try {
+    await apiGalleryMutate({ action: 'reorder', section, order });
+    setMsg(msgEl, 'Порядок сохранён. После деплоя Vercel изменения на сайте.', 'ok');
+    await loadGalleryData();
+  } catch (e) {
+    setMsg(msgEl, e.message || String(e), 'err');
+    await loadGalleryData();
+  }
+}
+
+function bindManageDnD(list) {
+  let dragged = null;
+
+  list.querySelectorAll('.gallery-manage-row').forEach((row) => {
+    row.setAttribute('draggable', 'true');
+
+    row.addEventListener('dragstart', (e) => {
+      if (e.target.closest('input, button, textarea, summary')) {
+        e.preventDefault();
+        return;
+      }
+      dragged = row;
+      row.classList.add('is-dragging');
+      try {
+        e.dataTransfer.setData('text/plain', row.dataset.index || '');
+        e.dataTransfer.effectAllowed = 'move';
+      } catch {
+        /* ignore */
+      }
+    });
+
+    row.addEventListener('dragend', () => {
+      row.classList.remove('is-dragging');
+      dragged = null;
+    });
+
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      try {
+        e.dataTransfer.dropEffect = 'move';
+      } catch {
+        /* ignore */
+      }
+    });
+
+    row.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      if (!dragged || dragged === row) return;
+      const parent = row.parentNode;
+      const rect = row.getBoundingClientRect();
+      const after = e.clientY - rect.top > rect.height / 2;
+      if (after) parent.insertBefore(dragged, row.nextSibling);
+      else parent.insertBefore(dragged, row);
+      await persistReorder(list);
+    });
+  });
+}
+
 function renderGalleryManage() {
   const section = manageSection();
   const list = $('gallery-manage-list');
@@ -179,6 +301,7 @@ function renderGalleryManage() {
   const entries = galleryCache[section] || [];
   if (!entries.length) {
     list.innerHTML = '<p class="hint">В этом разделе пока пусто.</p>';
+    updateBulkDeleteState();
     return;
   }
 
@@ -187,42 +310,74 @@ function renderGalleryManage() {
       const prev = previewPath(entry);
       const src = prev ? `/${prev.replace(/^\//, '')}` : '';
       const label = entryLabel(entry);
+      const { title, description } = entryTitleDesc(entry);
+      const t = escapeHtml(title);
+      const d = escapeHtml(description);
       return `
-        <div class="gallery-manage-row" data-index="${index}">
+        <div class="gallery-manage-row" data-index="${index}" data-section="${section}">
+          <input type="checkbox" class="gallery-manage-cb" data-index="${index}" aria-label="Выбрать элемент ${index + 1}" />
           <div class="gallery-manage-thumb-wrap">
             ${src ? `<img class="gallery-manage-thumb" src="${src}" alt="" loading="lazy" />` : '<div class="gallery-manage-ph"></div>'}
           </div>
           <div class="gallery-manage-meta">
             <span class="gallery-manage-label">#${index + 1} · ${label}</span>
-            <span class="gallery-manage-path">${prev || '—'}</span>
+            <span class="gallery-manage-path">${escapeHtml(prev || '—')}</span>
+            <details class="gallery-manage-expand">
+              <summary>Подпись и SEO</summary>
+              <label class="label mini">Заголовок</label>
+              <input type="text" class="input input-compact meta-title" value="${t}" maxlength="200" />
+              <label class="label mini">Описание</label>
+              <textarea class="input input-compact meta-desc" rows="2" maxlength="2000">${d}</textarea>
+              <button type="button" class="btn btn-mini btn-ghost" data-act="save-meta">Сохранить подпись</button>
+            </details>
           </div>
           <div class="gallery-manage-actions">
-            <button type="button" class="btn btn-mini btn-ghost" data-act="up" ${index === 0 ? 'disabled' : ''} aria-label="Выше">↑</button>
-            <button type="button" class="btn btn-mini btn-ghost" data-act="down" ${index === entries.length - 1 ? 'disabled' : ''} aria-label="Ниже">↓</button>
             <button type="button" class="btn btn-mini btn-danger" data-act="del" aria-label="Удалить">Удалить</button>
           </div>
         </div>`;
     })
     .join('');
 
+  bindManageDnD(list);
+
+  list.querySelectorAll('.gallery-manage-cb').forEach((cb) => {
+    cb.addEventListener('change', updateBulkDeleteState);
+  });
+
   list.querySelectorAll('button[data-act]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const row = btn.closest('.gallery-manage-row');
       const index = Number(row?.dataset.index);
+      const sec = row?.dataset.section || manageSection();
       if (Number.isNaN(index)) return;
       const act = btn.dataset.act;
       const msgEl = $('dash-msg');
+
+      if (act === 'save-meta') {
+        const titleIn = row?.querySelector('.meta-title');
+        const descIn = row?.querySelector('.meta-desc');
+        try {
+          setMsg(msgEl, 'Сохранение подписи…');
+          await apiGalleryMutate({
+            action: 'updateMeta',
+            section: sec,
+            index,
+            title: titleIn?.value ?? '',
+            description: descIn?.value ?? ''
+          });
+          setMsg(msgEl, 'Подпись сохранена. После деплоя Vercel изменения на сайте.', 'ok');
+          await loadGalleryData();
+        } catch (e) {
+          setMsg(msgEl, e.message || String(e), 'err');
+        }
+        return;
+      }
+
       try {
         if (act === 'del') {
-          if (!confirm(`Удалить элемент #${index + 1} из ${section}?`)) return;
+          if (!confirm(`Удалить элемент #${index + 1} из ${sec}?`)) return;
           setMsg(msgEl, 'Удаление…');
-          await apiGalleryMutate({ action: 'delete', section, index });
-        } else if (act === 'up') {
-          setMsg(msgEl, 'Сохранение порядка…');
-          await apiGalleryMutate({ action: 'move', section, index, direction: 'up' });
-        } else if (act === 'down') {
-          setMsg(msgEl, 'Сохранение порядка…');
-          await apiGalleryMutate({ action: 'move', section, index, direction: 'down' });
+          await apiGalleryMutate({ action: 'delete', section: sec, index });
         }
         setMsg(msgEl, 'Готово. После деплоя Vercel изменения на сайте.', 'ok');
         await loadGalleryData();
@@ -231,6 +386,8 @@ function renderGalleryManage() {
       }
     });
   });
+
+  updateBulkDeleteState();
 }
 
 async function loadGalleryData() {
@@ -251,6 +408,8 @@ async function saveSeriesFlow() {
   const moreInput = $('more-files');
   const msgEl = $('dash-msg');
   const btn = $('btn-save-series');
+  const titleEl = $('series-title');
+  const descEl = $('series-desc');
 
   const coverFile = coverInput.files?.[0];
   if (!coverFile) {
@@ -259,25 +418,42 @@ async function saveSeriesFlow() {
   }
 
   const moreFiles = Array.from(moreInput.files || []);
+  const totalFiles = 1 + moreFiles.length;
 
   btn.disabled = true;
-  setMsg(msgEl, 'Загрузка обложки…');
+  setUploadProgress(true, 0, 'Загрузка файлов…');
 
   try {
-    const coverRes = await apiUploadBlob(section, coverFile);
+    let doneFiles = 0;
+    const coverRes = await uploadBlobWithProgress(section, coverFile, (r) => {
+      const overall = ((doneFiles + r) / totalFiles) * 100;
+      setUploadProgress(
+        true,
+        overall,
+        `Файл 1 из ${totalFiles}: обложка (${coverFile.name})`
+      );
+    });
+    doneFiles += 1;
+    setUploadProgress(true, (doneFiles / totalFiles) * 100, `Обложка загружена`);
     const cover = { full: coverRes.path, thumb: coverRes.thumbPath };
 
     const items = [];
     for (let i = 0; i < moreFiles.length; i++) {
       const f = moreFiles[i];
-      setMsg(msgEl, `Загрузка ${i + 1} из ${moreFiles.length} (доп. фото): ${f.name}…`);
-      const res = await apiUploadBlob(section, f);
+      const fi = i + 2;
+      const res = await uploadBlobWithProgress(section, f, (r) => {
+        const overall = ((doneFiles + r) / totalFiles) * 100;
+        setUploadProgress(true, overall, `Файл ${fi} из ${totalFiles}: ${f.name}`);
+      });
       items.push({ full: res.path, thumb: res.thumbPath });
+      doneFiles += 1;
+      setUploadProgress(true, (doneFiles / totalFiles) * 100, `Готово ${fi} из ${totalFiles}`);
     }
 
-    setMsg(msgEl, 'Запись в gallery.json…');
-    await apiCommitSeries(section, cover, items);
+    setUploadProgress(true, 95, 'Запись в gallery.json…');
+    await apiCommitSeries(section, cover, items, titleEl?.value || '', descEl?.value || '');
 
+    setUploadProgress(true, 100, 'Готово');
     setMsg(
       msgEl,
       `Готово: ${items.length ? `серия из ${items.length + 1} фото` : 'одно фото'}. После деплоя Vercel (1–2 мин) обновится сайт.`,
@@ -285,11 +461,14 @@ async function saveSeriesFlow() {
     );
     coverInput.value = '';
     moreInput.value = '';
+    if (titleEl) titleEl.value = '';
+    if (descEl) descEl.value = '';
     await loadGalleryData();
   } catch (e) {
     setMsg(msgEl, e.message || String(e), 'err');
   } finally {
     btn.disabled = false;
+    setUploadProgress(false, 0, '');
   }
 }
 
@@ -350,5 +529,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     setMsg($('dash-msg'), 'Обновление…');
     await loadGalleryData();
     setMsg($('dash-msg'), 'Список обновлён', 'ok');
+  });
+
+  $('btn-bulk-delete')?.addEventListener('click', async () => {
+    const section = manageSection();
+    const selected = [
+      ...document.querySelectorAll('#gallery-manage-list .gallery-manage-cb:checked')
+    ].map((cb) => Number(cb.dataset.index));
+    if (!selected.length) return;
+    if (!confirm(`Удалить ${selected.length} элемент(ов) из ${section}?`)) return;
+    const msgEl = $('dash-msg');
+    setMsg(msgEl, 'Удаление…');
+    try {
+      await apiGalleryMutate({ action: 'deleteMany', section, indices: selected });
+      setMsg(msgEl, 'Удалено. После деплоя Vercel изменения на сайте.', 'ok');
+      await loadGalleryData();
+    } catch (e) {
+      setMsg(msgEl, e.message || String(e), 'err');
+    }
+  });
+
+  $('btn-clear-section')?.addEventListener('click', async () => {
+    const section = manageSection();
+    if (
+      !confirm(
+        `Очистить весь раздел «${section === 'auto' ? 'Авто' : 'Люди'}»? Все записи и файлы изображений будут удалены из репозитория.`
+      )
+    ) {
+      return;
+    }
+    const msgEl = $('dash-msg');
+    setMsg(msgEl, 'Очистка раздела…');
+    try {
+      await apiGalleryMutate({ action: 'clearSection', section });
+      setMsg(msgEl, 'Раздел очищен. После деплоя Vercel изменения на сайте.', 'ok');
+      await loadGalleryData();
+    } catch (e) {
+      setMsg(msgEl, e.message || String(e), 'err');
+    }
   });
 });
