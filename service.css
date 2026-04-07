@@ -37,21 +37,22 @@ a { color: inherit; }
   letter-spacing: 0.16em;
   font-size: 11px;
   padding: 10px 13px;
-  border: 1px solid #353535;
+  border: 1px solid #d9f420;
   display: inline-block;
 }
 .top-cta,
 .cta,
 .btn {
-  background: #c7a44a;
-  border-color: #c7a44a;
-  color: #fff;
+  background: #d9f420;
+  border-color: #d9f420;
+  color: #111;
 }
 .top-cta:hover,
 .cta:hover,
 .btn:hover {
-  background: #d8b65e;
-  border-color: #d8b65e;
+  background: #ecff7a;
+  border-color: #ecff7a;
+  color: #111;
 }
 
 .page,
@@ -72,6 +73,9 @@ h1 {
   font-size: clamp(30px, 5vw, 58px);
   line-height: 1.05;
   text-transform: uppercase;
+}
+.kicker + .lead {
+  margin-top: 18px;
 }
 .lead {
   margin-top: 14px;
