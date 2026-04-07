@@ -74,9 +74,6 @@ h1 {
   line-height: 1.05;
   text-transform: uppercase;
 }
-.kicker + .lead {
-  margin-top: 18px;
-}
 .lead {
   margin-top: 14px;
   max-width: 760px;
