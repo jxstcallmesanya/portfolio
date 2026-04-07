@@ -877,35 +877,49 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
   document.getElementById('series-sheet-back')?.focus();
 }
 
+/**
+ * В сетке галереи на мобильных подставляем полный файл вместо ~640px-превью —
+ * на Retina клетки смотрят заметно резче. На iOS / safe=1 остаётся превью (память).
+ */
+function gridThumbLoadEntry(entry) {
+  if (!entry || !entry.fullSrc) return entry;
+  if (!entry.thumbSrc || entry.thumbSrc === entry.fullSrc) return entry;
+  if (isVeryLowMemoryMode()) return entry;
+  if (!isMemoryConstrainedDevice()) return entry;
+  return { ...entry, thumbSrc: entry.fullSrc };
+}
+
 function appendGalleryThumb(grid, galleryKey, entry, index) {
   const item = document.createElement('div');
   item.className = 'gallery-item';
 
+  const displayEntry = gridThumbLoadEntry(entry);
+
   const img = document.createElement('img');
   img.className = 'gallery-thumb';
-  img.alt = entry.title || altForGallery(galleryKey, index + 1);
+  img.alt = displayEntry.title || altForGallery(galleryKey, index + 1);
   img.decoding = 'async';
   img.loading = 'lazy';
   img.tabIndex = 0;
 
   img.dataset.gallery = galleryKey;
   img.dataset.galleryIndex = String(index);
-  img.dataset.fullSrc = entry.fullSrc;
-  img.dataset.thumbSrc = entry.thumbSrc || entry.fullSrc;
-  img.dataset.srcset = entry.srcset || '';
-  img.dataset.sizes = entry.sizes || '';
+  img.dataset.fullSrc = displayEntry.fullSrc;
+  img.dataset.thumbSrc = displayEntry.thumbSrc || displayEntry.fullSrc;
+  img.dataset.srcset = displayEntry.srcset || '';
+  img.dataset.sizes = displayEntry.sizes || '';
   img.dataset.imageReady = '0';
   img.dataset.loadQueued = '0';
   img.dataset.usedFullFallback = '0';
   img.classList.remove('thumb-error');
   img.src = IMG_PLACEHOLDER;
 
-  if (entry.width && entry.height) {
-    img.width = entry.width;
-    img.height = entry.height;
+  if (displayEntry.width && displayEntry.height) {
+    img.width = displayEntry.width;
+    img.height = displayEntry.height;
   }
 
-  const isSeries = entry.kind === 'series' && entry.seriesExtras.length > 0;
+  const isSeries = displayEntry.kind === 'series' && displayEntry.seriesExtras.length > 0;
 
   const openFromThumb = () => {
     if (img.dataset.imageReady !== '1') return;
