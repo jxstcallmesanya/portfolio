@@ -502,12 +502,6 @@ body.low-memory-mode #lb-img {
     max-width: min(96%, 1400px);
     max-height: 84vh;
 }
-body.low-memory-mode .lightbox-watermark {
-    font-size: 10px;
-    right: 12px;
-    bottom: 12px;
-}
-
 .gallery-load-more {
     margin: 8px auto 20px;
     display: block;
@@ -773,31 +767,13 @@ body.low-memory-mode .lightbox-watermark {
     -webkit-user-select: none;
     -webkit-touch-callout: none;
 }
-.lightbox-watermark {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    z-index: 2003;
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.75);
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-    background: linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06));
-    border: 1px solid rgba(255,255,255,0.33);
-    border-radius: 999px;
-    padding: 6px 10px;
-    backdrop-filter: blur(8px) saturate(130%);
-    -webkit-backdrop-filter: blur(8px) saturate(130%);
-}
 .gallery-thumb,
 .series-sheet-thumb,
 .split-side,
-.about-image-side img {
+.about-image-side img,
+#lb-img {
     -webkit-touch-callout: none;
+    -webkit-user-drag: none;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -961,10 +937,7 @@ body.low-memory-mode .lightbox-watermark {
     .lightbox-next { right: 12px; }
 }
 
-/* После git pull с main: без водяного знака и без «liquid glass» в лайтбоксе */
-.lightbox-watermark {
-    display: none !important;
-}
+/* После git pull с main: без «liquid glass» в лайтбоксе */
 .lightbox-stage {
     background: transparent !important;
     border: none !important;
@@ -978,9 +951,6 @@ body.low-memory-mode .lightbox-watermark {
     background: rgba(0, 0, 0, 0.55) !important;
     border: 1px solid rgba(255, 255, 255, 0.22) !important;
     box-shadow: none !important;
-}
-body.low-memory-mode .lightbox-watermark {
-    display: none !important;
 }
 
 /* View Transitions API — смена секций */

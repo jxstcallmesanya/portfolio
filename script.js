@@ -833,6 +833,7 @@ function openSeriesSheet(galleryKey, gridEntry, triggerEl) {
 
     const img = document.createElement('img');
     img.className = 'series-sheet-thumb';
+    img.draggable = false;
     img.alt = seriesTitle
       ? `${seriesTitle}, кадр ${j + 1}`
       : altForGallery(galleryKey, j + 1);
@@ -897,6 +898,7 @@ function appendGalleryThumb(grid, galleryKey, entry, index) {
 
   const img = document.createElement('img');
   img.className = 'gallery-thumb';
+  img.draggable = false;
   img.alt = displayEntry.title || altForGallery(galleryKey, index + 1);
   img.decoding = 'async';
   img.loading = 'lazy';
@@ -1414,6 +1416,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (
       e.target.closest('.gallery-thumb') ||
       e.target.closest('.series-sheet-thumb') ||
+      e.target.closest('.split-side') ||
+      e.target.closest('.about-image-side') ||
       e.target.closest('#lightbox')
     ) {
       e.preventDefault();
@@ -1424,6 +1428,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (
       e.target.closest('.gallery-thumb') ||
       e.target.closest('.series-sheet-thumb') ||
+      e.target.closest('.split-side') ||
+      e.target.closest('.about-image-side') ||
       e.target.closest('#lightbox')
     ) {
       e.preventDefault();
