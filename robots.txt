@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin
 
-Sitemap: https://portfolio-jxstcallmesanya.vercel.app/sitemap.xml
+Sitemap: https://aurora-yachts.com/sitemap.xml
