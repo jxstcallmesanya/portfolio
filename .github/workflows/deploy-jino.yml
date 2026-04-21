@@ -33,3 +33,4 @@ jobs:
             **/vercel.json
             **/lib/**
             **/scripts/**
+            **/api/config.php
