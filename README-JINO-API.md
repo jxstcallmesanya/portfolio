@@ -54,3 +54,15 @@
 
 - Старые `api/*.js` файлы больше не используются на Jino.
 - URL API остаются прежними (`/api/login`, `/api/upload`, ...), поэтому фронтенд менять не нужно.
+
+## 6) Автодеплой из GitHub на Jino
+
+В репозитории добавлен workflow: `.github/workflows/deploy-jino.yml`.
+
+Чтобы правки после `git push` автоматически улетали на сайт, в GitHub репозитории добавьте Secrets:
+
+- `JINO_FTP_HOST`
+- `JINO_FTP_USER`
+- `JINO_FTP_PASSWORD`
+
+После этого каждый push в `main` будет загружать сайт в `/domains/jxstcallmesanya.site/`.

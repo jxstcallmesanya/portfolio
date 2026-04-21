@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const section = manageSection();
     if (
       !confirm(
-        `Очистить весь раздел «${section === 'auto' ? 'Авто' : 'Люди'}»? Все записи и файлы изображений будут удалены из репозитория.`
+        `Очистить весь раздел «${section === 'auto' ? 'Авто' : 'Люди'}»? Все записи и файлы изображений будут удалены с хостинга.`
       )
     ) {
       return;

@@ -1,0 +1,35 @@
+name: Deploy to Jino
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.JINO_FTP_HOST }}
+          username: ${{ secrets.JINO_FTP_USER }}
+          password: ${{ secrets.JINO_FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: /domains/jxstcallmesanya.site/
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/.cursor/**
+            **/.vscode/**
+            **/README*.md
+            **/package-lock.json
+            **/package.json
+            **/vercel.json
+            **/lib/**
+            **/scripts/**
