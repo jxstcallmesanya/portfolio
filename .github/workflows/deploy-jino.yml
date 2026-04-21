@@ -18,8 +18,8 @@ jobs:
           server: ${{ secrets.JINO_FTP_HOST }}
           username: ${{ secrets.JINO_FTP_USER }}
           password: ${{ secrets.JINO_FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
+          protocol: sftp
+          port: 2222
           server-dir: /domains/jxstcallmesanya.site/
           exclude: |
             **/.git*
