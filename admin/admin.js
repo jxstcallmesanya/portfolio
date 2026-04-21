@@ -238,7 +238,7 @@ async function persistReorder(list) {
   setMsg(msgEl, 'Сохранение порядка…');
   try {
     await apiGalleryMutate({ action: 'reorder', section, order });
-    setMsg(msgEl, 'Порядок сохранён. После деплоя Vercel изменения на сайте.', 'ok');
+    setMsg(msgEl, 'Порядок сохранён. Изменения уже применены на сайте.', 'ok');
     await loadGalleryData();
   } catch (e) {
     setMsg(msgEl, e.message || String(e), 'err');
@@ -365,7 +365,7 @@ function renderGalleryManage() {
             title: titleIn?.value ?? '',
             description: descIn?.value ?? ''
           });
-          setMsg(msgEl, 'Подпись сохранена. После деплоя Vercel изменения на сайте.', 'ok');
+          setMsg(msgEl, 'Подпись сохранена. Изменения уже применены на сайте.', 'ok');
           await loadGalleryData();
         } catch (e) {
           setMsg(msgEl, e.message || String(e), 'err');
@@ -379,7 +379,7 @@ function renderGalleryManage() {
           setMsg(msgEl, 'Удаление…');
           await apiGalleryMutate({ action: 'delete', section: sec, index });
         }
-        setMsg(msgEl, 'Готово. После деплоя Vercel изменения на сайте.', 'ok');
+        setMsg(msgEl, 'Готово. Изменения уже применены на сайте.', 'ok');
         await loadGalleryData();
       } catch (e) {
         setMsg(msgEl, e.message || String(e), 'err');
@@ -456,7 +456,7 @@ async function saveSeriesFlow() {
     setUploadProgress(true, 100, 'Готово');
     setMsg(
       msgEl,
-      `Готово: ${items.length ? `серия из ${items.length + 1} фото` : 'одно фото'}. После деплоя Vercel (1–2 мин) обновится сайт.`,
+      `Готово: ${items.length ? `серия из ${items.length + 1} фото` : 'одно фото'}. Сайт обновлён.`,
       'ok'
     );
     coverInput.value = '';
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       showLogin();
     }
   } catch {
-    setMsg(boot, 'Не удалось связаться с API. Убедитесь, что проект задеплоен на Vercel с папкой /api.', 'err');
+    setMsg(boot, 'Не удалось связаться с API. Проверьте, что PHP-эндпоинты /api работают на хостинге.', 'err');
     showLogin();
   }
 
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setMsg(msgEl, 'Удаление…');
     try {
       await apiGalleryMutate({ action: 'deleteMany', section, indices: selected });
-      setMsg(msgEl, 'Удалено. После деплоя Vercel изменения на сайте.', 'ok');
+      setMsg(msgEl, 'Удалено. Изменения уже применены на сайте.', 'ok');
       await loadGalleryData();
     } catch (e) {
       setMsg(msgEl, e.message || String(e), 'err');
@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setMsg(msgEl, 'Очистка раздела…');
     try {
       await apiGalleryMutate({ action: 'clearSection', section });
-      setMsg(msgEl, 'Раздел очищен. После деплоя Vercel изменения на сайте.', 'ok');
+      setMsg(msgEl, 'Раздел очищен. Изменения уже применены на сайте.', 'ok');
       await loadGalleryData();
     } catch (e) {
       setMsg(msgEl, e.message || String(e), 'err');

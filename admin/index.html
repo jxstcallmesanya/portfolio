@@ -16,7 +16,7 @@
 
     <section id="panel-login" class="card" hidden>
       <h2>Вход</h2>
-      <p class="hint">Пароль задаётся в переменных окружения Vercel (<code>ADMIN_PASSWORD</code>).</p>
+      <p class="hint">Пароль задаётся в файле <code>api/config.php</code> (ключ <code>admin_password</code>).</p>
       <form id="form-login" class="form">
         <label class="label">Пароль</label>
         <input type="password" id="login-password" class="input" autocomplete="current-password" required />
@@ -34,7 +34,7 @@
       <div class="card">
         <h3>Посещения (МСК, в день)</h3>
         <p class="hint" id="stats-hint">
-          Счётчик работает после подключения <strong>Vercel KV</strong> в проекте и переменных <code>KV_REST_API_URL</code>, <code>KV_REST_API_TOKEN</code>.
+          Счётчик хранится локально в <code>api/data/stats.json</code>.
           Уникальных «посетителей» нет — считаются просмотры главной (один раз за сессию браузера).
         </p>
         <div id="stats-box" class="stats-box"></div>
@@ -61,7 +61,7 @@
       <div class="card">
         <h3>Добавить в галерею</h3>
         <p class="hint">
-          JPG, PNG, WebP, GIF · до ~12 МБ <strong>на файл</strong> (лимит <code>MAX_UPLOAD_BYTES</code> на Vercel). <strong>JPEG и PNG при загрузке конвертируются в WebP</strong> (анимационный GIF сохраняется как GIF).
+          JPG, PNG, WebP, GIF · размер зависит от лимита PHP на хостинге. Превью создаются на сервере в <code>img/thumbs/*</code>.
         </p>
         <p class="hint">
           <strong>Одно фото:</strong> только обложка → «Сохранить». <strong>Серия:</strong> обложка + остальные кадры.

@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# Clean URLs for section pages.
+RewriteRule ^admin/?$ /admin/index.html [L]
+RewriteRule ^auto/?$ /auto/index.html [L]
+RewriteRule ^people/?$ /people/index.html [L]
+RewriteRule ^shooting/?$ /shooting/index.html [L]
+RewriteRule ^api/([A-Za-z0-9_-]+)/?$ /api/$1.php [L,QSA]
+
+# Cache policy equivalent to vercel.json for gallery data.
+<IfModule mod_headers.c>
+  <Files "gallery.json">
+    Header set Cache-Control "public, max-age=120, stale-while-revalidate=600"
+  </Files>
+</IfModule>
