@@ -9,7 +9,7 @@
 - `.htaccess` (в корне сайта)
 - `admin/admin.js`
 - `api/_bootstrap.php`
-- `api/config.php`
+- `api/config.php` (создайте из `api/config.example.php`)
 - `api/login.php`
 - `api/session.php`
 - `api/logout.php`
@@ -29,6 +29,8 @@
 ```
 
 на ваш реальный пароль для входа в `/admin/`.
+
+Файл `api/config.php` добавлен в `.gitignore` и не должен попадать в Git.
 
 ## 3) Права на запись
 

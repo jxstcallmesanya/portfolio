@@ -6,9 +6,14 @@ function api_config(): array {
     if ($cfg !== null) return $cfg;
     $path = __DIR__ . '/config.php';
     if (!is_file($path)) {
+        $examplePath = __DIR__ . '/config.example.php';
+        if (is_file($examplePath)) {
+            $cfg = require $examplePath;
+            return is_array($cfg) ? $cfg : [];
+        }
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['ok' => false, 'error' => 'Missing api/config.php']);
+        echo json_encode(['ok' => false, 'error' => 'Missing api/config.php (copy api/config.example.php)']);
         exit;
     }
     $cfg = require $path;
