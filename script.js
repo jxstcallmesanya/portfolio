@@ -568,6 +568,51 @@ async function loadGalleryManifest() {
   }
 }
 
+function applySiteContent(content) {
+  if (!content || typeof content !== 'object') return;
+
+  const setText = (id, value, allowHtml = false) => {
+    const el = document.getElementById(id);
+    if (!el || typeof value !== 'string') return;
+    if (allowHtml) el.innerHTML = value;
+    else el.textContent = value;
+  };
+
+  const setHref = (id, value) => {
+    const el = document.getElementById(id);
+    if (!el || typeof value !== 'string' || !value.trim()) return;
+    el.setAttribute('href', value.trim());
+  };
+
+  setText('content-hero-kicker', content.heroKicker);
+  setText('content-hero-text', content.heroText);
+  setText('content-hero-cta', content.heroCtaText);
+  setHref('content-hero-cta', content.heroCtaUrl);
+
+  setText('content-about-tag', content.aboutTag);
+  setText('content-about-title', content.aboutTitleHtml, true);
+  setText('content-about-specs', content.aboutSpecs);
+  setText('content-about-bio', content.aboutBio);
+  setText('content-about-item-1', content.aboutItem1);
+  setText('content-about-item-2', content.aboutItem2);
+
+  setText('content-contact-title', content.contactTitle);
+  setHref('content-contact-telegram', content.contactTelegramUrl);
+  setHref('content-contact-vk', content.contactVkUrl);
+  setHref('content-contact-email', content.contactEmailUrl);
+}
+
+async function loadAndApplySiteContent() {
+  try {
+    const res = await fetch('site-content.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    applySiteContent(data);
+  } catch {
+    /* keep default hardcoded copy */
+  }
+}
+
 function clearGalleryQueues() {
   galleryLoadWaitQueue.length = 0;
   galleryLoadInflight = 0;
@@ -1103,6 +1148,7 @@ async function routeByHash(source) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  void loadAndApplySiteContent();
   try {
     if (!sessionStorage.getItem('pf_visit')) {
       sessionStorage.setItem('pf_visit', '1');

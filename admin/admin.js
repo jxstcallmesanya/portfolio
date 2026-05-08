@@ -1,6 +1,24 @@
 const $ = (id) => document.getElementById(id);
 let csrfToken = '';
 let galleryCache = { auto: [], people: [] };
+let siteContentCache = null;
+
+const SITE_CONTENT_FIELDS = [
+  ['heroKicker', 'content-hero-kicker-input'],
+  ['heroText', 'content-hero-text-input'],
+  ['heroCtaText', 'content-hero-cta-text-input'],
+  ['heroCtaUrl', 'content-hero-cta-url-input'],
+  ['aboutTag', 'content-about-tag-input'],
+  ['aboutTitleHtml', 'content-about-title-input'],
+  ['aboutSpecs', 'content-about-specs-input'],
+  ['aboutBio', 'content-about-bio-input'],
+  ['aboutItem1', 'content-about-item1-input'],
+  ['aboutItem2', 'content-about-item2-input'],
+  ['contactTitle', 'content-contact-title-input'],
+  ['contactTelegramUrl', 'content-contact-telegram-input'],
+  ['contactVkUrl', 'content-contact-vk-input'],
+  ['contactEmailUrl', 'content-contact-email-input']
+];
 
 function getCookie(name) {
   const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
@@ -87,6 +105,28 @@ async function apiGallery() {
 async function apiStats() {
   const r = await fetch('/api/stats', { credentials: 'same-origin' });
   return r.json();
+}
+
+async function apiSiteContent() {
+  const r = await fetch('/api/site-content', { credentials: 'same-origin' });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || `Ошибка ${r.status}`);
+  return data;
+}
+
+async function apiSiteContentSave(content) {
+  const r = await fetch('/api/site-content', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+    },
+    body: JSON.stringify({ content })
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || `Ошибка ${r.status}`);
+  return data;
 }
 
 async function apiGalleryMutate(body) {
@@ -221,6 +261,51 @@ async function loadStats() {
     renderStats(s);
   } catch {
     $('stats-box').innerHTML = '<p class="hint err">Не удалось загрузить статистику</p>';
+  }
+}
+
+function fillSiteContentForm(content) {
+  SITE_CONTENT_FIELDS.forEach(([key, id]) => {
+    const el = $(id);
+    if (!el) return;
+    el.value = typeof content?.[key] === 'string' ? content[key] : '';
+  });
+}
+
+function readSiteContentForm() {
+  const content = {};
+  SITE_CONTENT_FIELDS.forEach(([key, id]) => {
+    const el = $(id);
+    content[key] = (el?.value || '').trim();
+  });
+  return content;
+}
+
+async function loadSiteContentData() {
+  const msgEl = $('dash-msg');
+  try {
+    const data = await apiSiteContent();
+    siteContentCache = data.content || {};
+    fillSiteContentForm(siteContentCache);
+  } catch (e) {
+    setMsg(msgEl, `Не удалось загрузить поля сайта: ${e.message || e}`, 'err');
+  }
+}
+
+async function saveSiteContentData() {
+  const msgEl = $('dash-msg');
+  const btn = $('btn-content-save');
+  try {
+    if (btn) btn.disabled = true;
+    setMsg(msgEl, 'Сохранение полей сайта…');
+    const payload = readSiteContentForm();
+    await apiSiteContentSave(payload);
+    siteContentCache = payload;
+    setMsg(msgEl, 'Поля сайта сохранены. Обновите страницу сайта, чтобы увидеть изменения.', 'ok');
+  } catch (e) {
+    setMsg(msgEl, `Ошибка сохранения полей сайта: ${e.message || e}`, 'err');
+  } finally {
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -482,6 +567,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       showDash();
       await loadStats();
       await loadGalleryData();
+      await loadSiteContentData();
     } else {
       showLogin();
     }
@@ -504,6 +590,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showDash();
         await loadStats();
         await loadGalleryData();
+        await loadSiteContentData();
       } else {
         setMsg(msg, data.error || 'Ошибка входа', 'err');
       }
@@ -520,6 +607,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   $('btn-save-series').addEventListener('click', () => saveSeriesFlow());
+  $('btn-content-reload')?.addEventListener('click', async () => {
+    setMsg($('dash-msg'), 'Загрузка полей сайта…');
+    await loadSiteContentData();
+    setMsg($('dash-msg'), 'Поля сайта обновлены', 'ok');
+  });
+  $('btn-content-save')?.addEventListener('click', async () => {
+    await saveSiteContentData();
+  });
 
   document.querySelectorAll('input[name="manage-section"]').forEach((r) => {
     r.addEventListener('change', () => renderGalleryManage());

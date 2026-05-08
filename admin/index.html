@@ -97,6 +97,58 @@
         <button type="button" id="btn-save-series" class="btn btn-primary">Сохранить и загрузить</button>
       </div>
 
+      <div class="card">
+        <h3>Редактор полей сайта</h3>
+        <p class="hint">Меняет ключевые тексты/ссылки на главной без ручной правки файлов.</p>
+
+        <label class="label" for="content-hero-kicker-input">Hero · верхняя строка</label>
+        <input type="text" id="content-hero-kicker-input" class="input" maxlength="200" />
+
+        <label class="label" for="content-hero-text-input">Hero · описание</label>
+        <textarea id="content-hero-text-input" class="input input-textarea" rows="2" maxlength="500"></textarea>
+
+        <label class="label" for="content-hero-cta-text-input">Hero · текст кнопки</label>
+        <input type="text" id="content-hero-cta-text-input" class="input" maxlength="120" />
+
+        <label class="label" for="content-hero-cta-url-input">Hero · ссылка кнопки</label>
+        <input type="text" id="content-hero-cta-url-input" class="input" maxlength="500" />
+
+        <label class="label" for="content-about-tag-input">Обо мне · тег</label>
+        <input type="text" id="content-about-tag-input" class="input" maxlength="160" />
+
+        <label class="label" for="content-about-title-input">Обо мне · заголовок (HTML, можно &lt;br&gt;)</label>
+        <input type="text" id="content-about-title-input" class="input" maxlength="200" />
+
+        <label class="label" for="content-about-specs-input">Обо мне · техника</label>
+        <input type="text" id="content-about-specs-input" class="input" maxlength="200" />
+
+        <label class="label" for="content-about-bio-input">Обо мне · описание</label>
+        <textarea id="content-about-bio-input" class="input input-textarea" rows="3" maxlength="800"></textarea>
+
+        <label class="label" for="content-about-item1-input">Обо мне · пункт 1</label>
+        <input type="text" id="content-about-item1-input" class="input" maxlength="240" />
+
+        <label class="label" for="content-about-item2-input">Обо мне · пункт 2</label>
+        <input type="text" id="content-about-item2-input" class="input" maxlength="240" />
+
+        <label class="label" for="content-contact-title-input">Контакты · заголовок</label>
+        <input type="text" id="content-contact-title-input" class="input" maxlength="140" />
+
+        <label class="label" for="content-contact-telegram-input">Контакты · Telegram URL</label>
+        <input type="text" id="content-contact-telegram-input" class="input" maxlength="500" />
+
+        <label class="label" for="content-contact-vk-input">Контакты · VK URL</label>
+        <input type="text" id="content-contact-vk-input" class="input" maxlength="500" />
+
+        <label class="label" for="content-contact-email-input">Контакты · Email URL (mailto:...)</label>
+        <input type="text" id="content-contact-email-input" class="input" maxlength="500" />
+
+        <div class="manage-toolbar">
+          <button type="button" id="btn-content-reload" class="btn btn-ghost btn-inline">Перезагрузить поля</button>
+          <button type="button" id="btn-content-save" class="btn btn-primary">Сохранить поля сайта</button>
+        </div>
+      </div>
+
       <p id="dash-msg" class="msg" role="status"></p>
     </section>
 
