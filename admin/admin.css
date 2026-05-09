@@ -70,6 +70,33 @@ body {
   font-weight: 400;
 }
 
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  border: 1px solid #2a2a2a;
+  background: #090909;
+  color: #8f8f8f;
+  padding: 10px 12px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tab-btn.is-active {
+  color: #fff;
+  border-color: #d4af37;
+}
+
+.tab-panel[hidden] {
+  display: none !important;
+}
+
 .hint {
   font-size: 12px;
   color: #777;
@@ -404,4 +431,93 @@ body {
 .upload-progress-label {
   margin-top: 8px !important;
   margin-bottom: 0 !important;
+}
+
+.mini-site-editor {
+  border: 1px solid #1f1f1f;
+  background: #060606;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mini-kicker,
+.mini-hero-text,
+.mini-title,
+.mini-specs,
+.mini-bio,
+.mini-item,
+.mini-contact-title,
+.mini-cta {
+  border: 1px dashed transparent;
+  padding: 6px 8px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.mini-kicker:focus,
+.mini-hero-text:focus,
+.mini-title:focus,
+.mini-specs:focus,
+.mini-bio:focus,
+.mini-item:focus,
+.mini-contact-title:focus,
+.mini-cta:focus {
+  outline: none;
+  border-color: #d4af37;
+  background: #101010;
+}
+
+.mini-kicker {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #d4af37;
+}
+
+.mini-hero-text {
+  color: #d5d5d5;
+  line-height: 1.45;
+}
+
+.mini-cta {
+  display: inline-block;
+  width: fit-content;
+  min-width: 150px;
+  border: 1px solid #d4af37;
+  background: #d4af37;
+  color: #111;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 10px;
+}
+
+.mini-divider {
+  border-top: 1px solid #1e1e1e;
+  margin: 4px 0;
+}
+
+.mini-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.mini-title,
+.mini-contact-title {
+  font-size: 18px;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.mini-specs {
+  font-size: 12px;
+  color: #9c9c9c;
+}
+
+.mini-bio,
+.mini-item {
+  color: #bcbcbc;
 }

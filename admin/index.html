@@ -31,6 +31,17 @@
         <button type="button" id="btn-logout" class="btn btn-ghost">Выйти</button>
       </div>
 
+      <div class="tabs" role="tablist" aria-label="Разделы админки">
+        <button type="button" id="tab-main-btn" class="tab-btn is-active" role="tab" aria-selected="true" aria-controls="tab-main">
+          Основное
+        </button>
+        <button type="button" id="tab-visual-btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-visual">
+          Мини-редактор сайта
+        </button>
+      </div>
+
+      <section id="tab-main" class="tab-panel">
+
       <div class="card">
         <h3>Посещения (МСК, в день)</h3>
         <p class="hint" id="stats-hint">
@@ -148,6 +159,39 @@
           <button type="button" id="btn-content-save" class="btn btn-primary">Сохранить поля сайта</button>
         </div>
       </div>
+
+      </section>
+
+      <section id="tab-visual" class="tab-panel" hidden>
+        <div class="card">
+          <h3>Мини-редактор текста сайта</h3>
+          <p class="hint">Кликни по нужному блоку текста и редактируй прямо на макете. Картинки и сложные элементы скрыты специально.</p>
+
+          <div class="mini-site-editor" id="mini-site-editor">
+            <p class="mini-kicker" data-content-key="heroKicker" contenteditable="true"></p>
+            <p class="mini-hero-text" data-content-key="heroText" contenteditable="true"></p>
+            <button type="button" class="mini-cta" data-content-key="heroCtaText" contenteditable="true"></button>
+
+            <div class="mini-divider"></div>
+
+            <p class="mini-label">Обо мне</p>
+            <h4 class="mini-title" data-content-key="aboutTitleHtml" contenteditable="true"></h4>
+            <p class="mini-specs" data-content-key="aboutSpecs" contenteditable="true"></p>
+            <p class="mini-bio" data-content-key="aboutBio" contenteditable="true"></p>
+            <p class="mini-item" data-content-key="aboutItem1" contenteditable="true"></p>
+            <p class="mini-item" data-content-key="aboutItem2" contenteditable="true"></p>
+
+            <div class="mini-divider"></div>
+
+            <h4 class="mini-contact-title" data-content-key="contactTitle" contenteditable="true"></h4>
+          </div>
+
+          <div class="manage-toolbar">
+            <button type="button" id="btn-visual-reload" class="btn btn-ghost btn-inline">Перезагрузить мини-редактор</button>
+            <button type="button" id="btn-visual-save" class="btn btn-primary">Обновить текст</button>
+          </div>
+        </div>
+      </section>
 
       <p id="dash-msg" class="msg" role="status"></p>
     </section>

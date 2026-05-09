@@ -19,6 +19,17 @@ const SITE_CONTENT_FIELDS = [
   ['contactVkUrl', 'content-contact-vk-input'],
   ['contactEmailUrl', 'content-contact-email-input']
 ];
+const VISUAL_TEXT_KEYS = [
+  'heroKicker',
+  'heroText',
+  'heroCtaText',
+  'aboutTitleHtml',
+  'aboutSpecs',
+  'aboutBio',
+  'aboutItem1',
+  'aboutItem2',
+  'contactTitle'
+];
 
 function getCookie(name) {
   const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
@@ -272,6 +283,46 @@ function fillSiteContentForm(content) {
   });
 }
 
+function setTab(active) {
+  const mainBtn = $('tab-main-btn');
+  const visualBtn = $('tab-visual-btn');
+  const mainPanel = $('tab-main');
+  const visualPanel = $('tab-visual');
+  const showVisual = active === 'visual';
+  if (mainBtn) {
+    mainBtn.classList.toggle('is-active', !showVisual);
+    mainBtn.setAttribute('aria-selected', String(!showVisual));
+  }
+  if (visualBtn) {
+    visualBtn.classList.toggle('is-active', showVisual);
+    visualBtn.setAttribute('aria-selected', String(showVisual));
+  }
+  if (mainPanel) mainPanel.hidden = showVisual;
+  if (visualPanel) visualPanel.hidden = !showVisual;
+}
+
+function contentToPlainText(key, value) {
+  if (typeof value !== 'string') return '';
+  if (key === 'aboutTitleHtml') {
+    return value
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/?[^>]+>/g, '')
+      .trim();
+  }
+  return value;
+}
+
+function fillVisualEditor(content) {
+  const nodes = document.querySelectorAll('[data-content-key]');
+  nodes.forEach((node) => {
+    const key = node.getAttribute('data-content-key');
+    if (!key) return;
+    const raw = contentToPlainText(key, content?.[key] ?? '');
+    if (node.tagName === 'BUTTON') node.textContent = raw || 'Кнопка';
+    else node.textContent = raw;
+  });
+}
+
 function readSiteContentForm() {
   const content = {};
   SITE_CONTENT_FIELDS.forEach(([key, id]) => {
@@ -287,9 +338,25 @@ async function loadSiteContentData() {
     const data = await apiSiteContent();
     siteContentCache = data.content || {};
     fillSiteContentForm(siteContentCache);
+    fillVisualEditor(siteContentCache);
   } catch (e) {
     setMsg(msgEl, `Не удалось загрузить поля сайта: ${e.message || e}`, 'err');
   }
+}
+
+function readVisualEditorContent() {
+  const next = { ...(siteContentCache || {}) };
+  document.querySelectorAll('[data-content-key]').forEach((node) => {
+    const key = node.getAttribute('data-content-key');
+    if (!key || !VISUAL_TEXT_KEYS.includes(key)) return;
+    const text = (node.textContent || '').trim();
+    if (key === 'aboutTitleHtml') {
+      next[key] = escapeHtml(text).replace(/\r?\n/g, '<br>');
+      return;
+    }
+    next[key] = text;
+  });
+  return next;
 }
 
 async function saveSiteContentData() {
@@ -304,6 +371,25 @@ async function saveSiteContentData() {
     setMsg(msgEl, 'Поля сайта сохранены. Обновите страницу сайта, чтобы увидеть изменения.', 'ok');
   } catch (e) {
     setMsg(msgEl, `Ошибка сохранения полей сайта: ${e.message || e}`, 'err');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function saveVisualEditorData() {
+  const msgEl = $('dash-msg');
+  const btn = $('btn-visual-save');
+  try {
+    if (btn) btn.disabled = true;
+    setMsg(msgEl, 'Обновление текста…');
+    const payload = readVisualEditorContent();
+    await apiSiteContentSave(payload);
+    siteContentCache = payload;
+    fillSiteContentForm(siteContentCache);
+    fillVisualEditor(siteContentCache);
+    setMsg(msgEl, 'Текст обновлён. Обновите страницу сайта, чтобы увидеть изменения.', 'ok');
+  } catch (e) {
+    setMsg(msgEl, `Ошибка обновления текста: ${e.message || e}`, 'err');
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -607,6 +693,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   $('btn-save-series').addEventListener('click', () => saveSeriesFlow());
+  $('tab-main-btn')?.addEventListener('click', () => setTab('main'));
+  $('tab-visual-btn')?.addEventListener('click', () => setTab('visual'));
   $('btn-content-reload')?.addEventListener('click', async () => {
     setMsg($('dash-msg'), 'Загрузка полей сайта…');
     await loadSiteContentData();
@@ -614,6 +702,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $('btn-content-save')?.addEventListener('click', async () => {
     await saveSiteContentData();
+  });
+  $('btn-visual-reload')?.addEventListener('click', async () => {
+    setMsg($('dash-msg'), 'Загрузка мини-редактора…');
+    await loadSiteContentData();
+    setMsg($('dash-msg'), 'Мини-редактор обновлён', 'ok');
+  });
+  $('btn-visual-save')?.addEventListener('click', async () => {
+    await saveVisualEditorData();
   });
 
   document.querySelectorAll('input[name="manage-section"]').forEach((r) => {
