@@ -40,6 +40,9 @@ let galleryLoadInflight = 0;
 const galleryLoadWaitQueue = [];
 const galleryRendered = { auto: false, people: false };
 const galleryEntries = { auto: [], people: [] };
+const galleryPhotoEntries = { auto: [], people: [] };
+const galleryVideoEntries = { auto: [], people: [] };
+const galleryMediaMode = { auto: 'photo', people: 'photo' };
 const unloadDebounceTimers = new WeakMap();
 
 let lastFocusedThumb = null;
@@ -292,6 +295,31 @@ function normalizeManifestList(entries) {
     if (entry) normalized.push(entry);
   });
   return normalized;
+}
+
+function normalizeVideoEntry(item) {
+  if (typeof item === 'string') {
+    const src = normalizePath(item);
+    if (!src) return null;
+    return { src, title: '', description: '', poster: '' };
+  }
+  if (!item || typeof item !== 'object') return null;
+  const src = normalizePath(item.src || item.full || item.video);
+  if (!src) return null;
+  const poster = normalizePath(item.poster || '');
+  const title = typeof item.title === 'string' ? item.title.trim() : '';
+  const description = typeof item.description === 'string' ? item.description.trim() : '';
+  return { src, poster, title, description };
+}
+
+function normalizeVideoList(entries) {
+  if (!Array.isArray(entries)) return [];
+  const out = [];
+  entries.forEach((item) => {
+    const v = normalizeVideoEntry(item);
+    if (v) out.push(v);
+  });
+  return out;
 }
 
 function entryFromDataset(img) {
@@ -1102,34 +1130,113 @@ function renderGalleryGrid(containerId, galleryKey, entries) {
   updateLoadMoreVisibility(galleryKey, initialCount, entries.length);
 }
 
+function renderVideoGrid(containerId, galleryKey, entries) {
+  const grid = document.getElementById(containerId);
+  if (!grid) return;
+  clearGalleryQueues();
+  grid.innerHTML = '';
+  const btn = document.getElementById(`${galleryKey}-load-more`);
+  if (btn) {
+    btn.hidden = true;
+    btn.dataset.renderedCount = '0';
+  }
+  galleryEntries[galleryKey] = [];
+  if (!entries.length) {
+    const empty = document.createElement('p');
+    empty.className = 'gallery-empty';
+    empty.textContent = 'В этом разделе пока нет видео. Загляните позже.';
+    empty.setAttribute('role', 'status');
+    grid.appendChild(empty);
+    return;
+  }
+  entries.forEach((entry) => {
+    const card = document.createElement('article');
+    card.className = 'gallery-video-card';
+    const video = document.createElement('video');
+    video.controls = true;
+    video.preload = 'metadata';
+    video.playsInline = true;
+    video.src = `/${entry.src}`;
+    if (entry.poster) video.poster = `/${entry.poster}`;
+    card.appendChild(video);
+    if (entry.title) {
+      const t = document.createElement('p');
+      t.className = 'gallery-video-title';
+      t.textContent = entry.title;
+      card.appendChild(t);
+    }
+    if (entry.description) {
+      const d = document.createElement('p');
+      d.className = 'gallery-video-desc';
+      d.textContent = entry.description;
+      card.appendChild(d);
+    }
+    grid.appendChild(card);
+  });
+}
+
+function updateMediaSwitch(sectionId) {
+  document.querySelectorAll(`[data-gallery-media^="${sectionId}-"]`).forEach((btn) => {
+    const mode = btn.dataset.galleryMedia?.endsWith('-video') ? 'video' : 'photo';
+    const active = galleryMediaMode[sectionId] === mode;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+}
+
+function renderSectionMedia(sectionId) {
+  const containerId = `${sectionId}-grid`;
+  if (galleryMediaMode[sectionId] === 'video') {
+    renderVideoGrid(containerId, sectionId, galleryVideoEntries[sectionId] || []);
+    return;
+  }
+  renderGalleryGrid(containerId, sectionId, galleryPhotoEntries[sectionId] || []);
+}
+
 async function runAutoGallery(forceReload = false, options = {}) {
   showSection('auto', options);
-  if (galleryRendered.auto && !forceReload) return;
+  if (galleryRendered.auto && !forceReload) {
+    renderSectionMedia('auto');
+    updateMediaSwitch('auto');
+    return;
+  }
 
   try {
     const m = await loadGalleryManifest();
-    const entries = normalizeManifestList(m?.auto);
-    renderGalleryGrid('auto-grid', 'auto', entries);
+    galleryPhotoEntries.auto = normalizeManifestList(m?.auto);
+    galleryVideoEntries.auto = normalizeVideoList(m?.autoVideos);
+    renderSectionMedia('auto');
+    updateMediaSwitch('auto');
     galleryRendered.auto = true;
   } catch {
-    const fallback = normalizeManifestList([]);
-    renderGalleryGrid('auto-grid', 'auto', fallback);
+    galleryPhotoEntries.auto = normalizeManifestList([]);
+    galleryVideoEntries.auto = normalizeVideoList([]);
+    renderSectionMedia('auto');
+    updateMediaSwitch('auto');
     galleryRendered.auto = true;
   }
 }
 
 async function runPeopleGallery(forceReload = false, options = {}) {
   showSection('people', options);
-  if (galleryRendered.people && !forceReload) return;
+  if (galleryRendered.people && !forceReload) {
+    renderSectionMedia('people');
+    updateMediaSwitch('people');
+    return;
+  }
 
   try {
     const m = await loadGalleryManifest();
-    const entries = normalizeManifestList(m?.people);
-    renderGalleryGrid('people-grid', 'people', entries);
+    galleryPhotoEntries.people = normalizeManifestList(m?.people);
+    galleryVideoEntries.people = normalizeVideoList(m?.peopleVideos);
+    renderSectionMedia('people');
+    updateMediaSwitch('people');
     galleryRendered.people = true;
   } catch {
-    const fallback = normalizeManifestList([]);
-    renderGalleryGrid('people-grid', 'people', fallback);
+    galleryPhotoEntries.people = normalizeManifestList([]);
+    galleryVideoEntries.people = normalizeVideoList([]);
+    renderSectionMedia('people');
+    updateMediaSwitch('people');
     galleryRendered.people = true;
   }
 }
@@ -1229,6 +1336,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!gallery) return;
       navigateToSection(gallery);
       trackEvent('gallery_open', gallery);
+    });
+  });
+
+  document.querySelectorAll('[data-gallery-media]').forEach((el) => {
+    el.addEventListener('click', () => {
+      const raw = el.dataset.galleryMedia || '';
+      const [sectionId, mode] = raw.split('-');
+      if ((sectionId !== 'auto' && sectionId !== 'people') || (mode !== 'photo' && mode !== 'video')) return;
+      galleryMediaMode[sectionId] = mode;
+      updateMediaSwitch(sectionId);
+      renderSectionMedia(sectionId);
     });
   });
 

@@ -97,13 +97,15 @@ function api_gallery_path(): string {
 function api_read_gallery(): array {
     $path = api_gallery_path();
     if (!is_file($path)) {
-        return ['auto' => [], 'people' => []];
+        return ['auto' => [], 'people' => [], 'autoVideos' => [], 'peopleVideos' => []];
     }
     $raw = file_get_contents($path);
     $json = json_decode((string) $raw, true);
-    if (!is_array($json)) return ['auto' => [], 'people' => []];
+    if (!is_array($json)) return ['auto' => [], 'people' => [], 'autoVideos' => [], 'peopleVideos' => []];
     $json['auto'] = array_values(is_array($json['auto'] ?? null) ? $json['auto'] : []);
     $json['people'] = array_values(is_array($json['people'] ?? null) ? $json['people'] : []);
+    $json['autoVideos'] = array_values(is_array($json['autoVideos'] ?? null) ? $json['autoVideos'] : []);
+    $json['peopleVideos'] = array_values(is_array($json['peopleVideos'] ?? null) ? $json['peopleVideos'] : []);
     return $json;
 }
 
@@ -158,6 +160,8 @@ function api_entry_files($entry): array {
     } elseif (is_array($entry)) {
         if (!empty($entry['full'])) $paths[] = (string) $entry['full'];
         if (!empty($entry['thumb'])) $paths[] = (string) $entry['thumb'];
+        if (!empty($entry['src'])) $paths[] = (string) $entry['src'];
+        if (!empty($entry['poster'])) $paths[] = (string) $entry['poster'];
     } elseif (is_string($entry) && $entry !== '') {
         $paths[] = $entry;
     }

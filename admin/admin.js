@@ -82,6 +82,11 @@ function manageSection() {
   return el?.value || 'auto';
 }
 
+function selectedVideoSection() {
+  const el = document.querySelector('input[name="video-section"]:checked');
+  return el?.value || 'auto';
+}
+
 function previewPath(entry) {
   if (typeof entry === 'string') return entry;
   if (!entry || typeof entry !== 'object') return '';
@@ -199,6 +204,36 @@ async function apiGalleryMutate(body) {
     throw new Error(data.error || `Ошибка ${r.status}`);
   }
   return data;
+}
+
+function uploadVideoWithProgress(section, file) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const fd = new FormData();
+    fd.append('section', section);
+    fd.append('file', file);
+    fd.append('title', $('video-title')?.value || '');
+    fd.append('description', $('video-desc')?.value || '');
+    xhr.open('POST', '/api/upload-video');
+    xhr.withCredentials = true;
+    if (csrfToken) xhr.setRequestHeader('x-csrf-token', csrfToken);
+    xhr.onload = () => {
+      let data = {};
+      try {
+        data = JSON.parse(xhr.responseText || '{}');
+      } catch {
+        reject(new Error('Некорректный ответ сервера'));
+        return;
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && data.ok) {
+        resolve(data);
+        return;
+      }
+      reject(new Error(data.error || `Ошибка ${xhr.status}`));
+    };
+    xhr.onerror = () => reject(new Error('Сеть недоступна'));
+    xhr.send(fd);
+  });
 }
 
 function uploadBlobWithProgress(section, file, onRatio) {
@@ -778,6 +813,31 @@ async function saveSeriesFlow() {
   }
 }
 
+async function saveVideoFlow() {
+  const section = selectedVideoSection();
+  const fileInput = $('video-file');
+  const msgEl = $('dash-msg');
+  const btn = $('btn-save-video');
+  const file = fileInput?.files?.[0];
+  if (!file) {
+    setMsg(msgEl, 'Выберите видеофайл', 'err');
+    return;
+  }
+  try {
+    if (btn) btn.disabled = true;
+    setMsg(msgEl, 'Загрузка видео…');
+    await uploadVideoWithProgress(section, file);
+    setMsg(msgEl, 'Видео загружено и добавлено в раздел.', 'ok');
+    if (fileInput) fileInput.value = '';
+    if ($('video-title')) $('video-title').value = '';
+    if ($('video-desc')) $('video-desc').value = '';
+  } catch (e) {
+    setMsg(msgEl, e.message || String(e), 'err');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const boot = $('boot-msg');
   try {
@@ -842,6 +902,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   $('btn-save-series').addEventListener('click', () => saveSeriesFlow());
+  $('btn-save-video')?.addEventListener('click', () => saveVideoFlow());
   $('tab-main-btn')?.addEventListener('click', () => setTab('main'));
   $('tab-visual-btn')?.addEventListener('click', () => setTab('visual'));
   $('btn-content-reload')?.addEventListener('click', async () => {

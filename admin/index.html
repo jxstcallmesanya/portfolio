@@ -109,6 +109,30 @@
       </div>
 
       <div class="card">
+        <h3>Добавить видео</h3>
+        <p class="hint">Видео добавляются отдельно в раздел Авто или Люди и отображаются во вкладке «Видео» на сайте.</p>
+
+        <fieldset class="section-fieldset">
+          <legend class="label">Раздел</legend>
+          <div class="radio-row">
+            <label class="radio-label"><input type="radio" name="video-section" value="auto" checked /> Авто</label>
+            <label class="radio-label"><input type="radio" name="video-section" value="people" /> Люди</label>
+          </div>
+        </fieldset>
+
+        <label class="label" for="video-file">Видео файл</label>
+        <input type="file" id="video-file" class="file" accept="video/mp4,video/webm,video/quicktime" />
+
+        <label class="label" for="video-title">Подпись (необязательно)</label>
+        <input type="text" id="video-title" class="input" maxlength="200" placeholder="Например: BMW rolling shots" autocomplete="off" />
+
+        <label class="label" for="video-desc">Описание (необязательно)</label>
+        <textarea id="video-desc" class="input input-textarea" rows="2" maxlength="2000" placeholder="Короткое описание видео"></textarea>
+
+        <button type="button" id="btn-save-video" class="btn btn-primary">Загрузить видео</button>
+      </div>
+
+      <div class="card">
         <h3>Редактор полей сайта</h3>
         <p class="hint">Меняет ключевые тексты/ссылки на главной без ручной правки файлов.</p>
 
