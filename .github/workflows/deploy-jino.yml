@@ -22,34 +22,35 @@ jobs:
           JINO_FTP_PASSWORD: ${{ secrets.JINO_FTP_PASSWORD }}
         run: |
           set -euo pipefail
-          ATTEMPTS_PER_MODE=2
+          ATTEMPTS_PER_PROFILE=2
           RETRY_DELAY=8
 
           run_mirror() {
             local mode="$1"
             local port="$2"
+            local passive="$3"
 
             if [ "$mode" = "ftp" ]; then
-              local scheme="ftp"
-              local ssl_force="false"
-              local ssl_protect="false"
+              scheme="ftp"
+              ssl_force="false"
+              ssl_protect="false"
             else
-              local scheme="ftps"
-              local ssl_force="true"
-              local ssl_protect="true"
+              scheme="ftps"
+              ssl_force="true"
+              ssl_protect="true"
             fi
 
-            lftp -e "
+            lftp -u "$JINO_FTP_USER","$JINO_FTP_PASSWORD" "${scheme}://${JINO_FTP_HOST}:${port}" -e "
               set cmd:fail-exit true;
               set net:max-retries 1;
               set net:timeout 25;
               set net:reconnect-interval-base 5;
               set net:reconnect-interval-max 20;
-              set ftp:passive-mode true;
+              set ftp:passive-mode ${passive};
+              set ftp:prefer-epsv false;
               set ftp:ssl-force ${ssl_force};
               set ftp:ssl-protect-data ${ssl_protect};
               set ssl:verify-certificate false;
-              open -u ${JINO_FTP_USER},${JINO_FTP_PASSWORD} ${scheme}://${JINO_FTP_HOST}:${port};
               mirror -R --parallel=2 --only-newer \
                 --exclude-glob .git* \
                 --exclude-glob .github/* \
@@ -74,25 +75,29 @@ jobs:
           }
 
           MODES=("ftps:21" "ftps:990" "ftp:21")
+          PASSIVE_PROFILES=("true" "false")
 
           for target in "${MODES[@]}"; do
             mode="${target%%:*}"
             port="${target##*:}"
-            echo "Trying deploy mode: ${mode} on port ${port}"
+            echo "Trying deploy mode: ${mode} on port ${port}..."
 
-            for attempt in $(seq 1 "$ATTEMPTS_PER_MODE"); do
-              echo "Attempt ${attempt}/${ATTEMPTS_PER_MODE} for ${mode}:${port}"
-              if run_mirror "$mode" "$port"; then
-                echo "Deploy succeeded via ${mode}:${port}"
-                exit 0
-              fi
+            for passive in "${PASSIVE_PROFILES[@]}"; do
+              echo "Connection profile: passive=${passive}"
+              for attempt in $(seq 1 "$ATTEMPTS_PER_PROFILE"); do
+                echo "Attempt ${attempt}/${ATTEMPTS_PER_PROFILE} for ${mode}:${port}, passive=${passive}"
+                if run_mirror "$mode" "$port" "$passive"; then
+                  echo "Deploy succeeded via ${mode}:${port}, passive=${passive}"
+                  exit 0
+                fi
 
-              if [ "$attempt" -lt "$ATTEMPTS_PER_MODE" ]; then
-                echo "Retrying ${mode}:${port} in ${RETRY_DELAY}s..."
-                sleep "$RETRY_DELAY"
-              fi
+                if [ "$attempt" -lt "$ATTEMPTS_PER_PROFILE" ]; then
+                  echo "Retrying in ${RETRY_DELAY}s..."
+                  sleep "$RETRY_DELAY"
+                fi
+              done
             done
           done
 
-          echo "All deploy modes failed (FTPS:21, FTPS:990, FTP:21)."
+          echo "All deploy modes/profiles failed (FTPS:21, FTPS:990, FTP:21; passive true/false)."
           exit 1
