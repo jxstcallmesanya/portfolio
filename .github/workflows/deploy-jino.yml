@@ -34,3 +34,8 @@ jobs:
             **/lib/**
             **/scripts/**
             **/api/config.php
+            **/gallery.json
+            **/img/auto/**
+            **/img/people/**
+            **/img/thumbs/**
+            **/img/videos/**
