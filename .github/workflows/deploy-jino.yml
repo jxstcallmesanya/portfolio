@@ -12,100 +12,60 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Upload files via FTPS (primary)
-        id: deploy_attempt_1
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.JINO_FTP_HOST }}
-          username: ${{ secrets.JINO_FTP_USER }}
-          password: ${{ secrets.JINO_FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          server-dir: /domains/jxstcallmesanya.site/
-          exclude: |
-            **/.git*
-            **/.github/**
-            **/node_modules/**
-            **/.cursor/**
-            **/.vscode/**
-            **/README*.md
-            **/package-lock.json
-            **/package.json
-            **/vercel.json
-            **/lib/**
-            **/scripts/**
-            **/api/config.php
-            **/gallery.json
-            **/img/auto/**
-            **/img/people/**
-            **/img/thumbs/**
-            **/img/videos/**
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
 
-      - name: Upload files via FTPS (retry 2)
-        id: deploy_attempt_2
-        if: steps.deploy_attempt_1.outcome == 'failure'
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.JINO_FTP_HOST }}
-          username: ${{ secrets.JINO_FTP_USER }}
-          password: ${{ secrets.JINO_FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          server-dir: /domains/jxstcallmesanya.site/
-          exclude: |
-            **/.git*
-            **/.github/**
-            **/node_modules/**
-            **/.cursor/**
-            **/.vscode/**
-            **/README*.md
-            **/package-lock.json
-            **/package.json
-            **/vercel.json
-            **/lib/**
-            **/scripts/**
-            **/api/config.php
-            **/gallery.json
-            **/img/auto/**
-            **/img/people/**
-            **/img/thumbs/**
-            **/img/videos/**
-
-      - name: Upload files via FTPS (retry 3)
-        id: deploy_attempt_3
-        if: steps.deploy_attempt_1.outcome == 'failure' && steps.deploy_attempt_2.outcome == 'failure'
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.JINO_FTP_HOST }}
-          username: ${{ secrets.JINO_FTP_USER }}
-          password: ${{ secrets.JINO_FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          server-dir: /domains/jxstcallmesanya.site/
-          exclude: |
-            **/.git*
-            **/.github/**
-            **/node_modules/**
-            **/.cursor/**
-            **/.vscode/**
-            **/README*.md
-            **/package-lock.json
-            **/package.json
-            **/vercel.json
-            **/lib/**
-            **/scripts/**
-            **/api/config.php
-            **/gallery.json
-            **/img/auto/**
-            **/img/people/**
-            **/img/thumbs/**
-            **/img/videos/**
-
-      - name: Fail if all deploy attempts failed
-        if: steps.deploy_attempt_1.outcome == 'failure' && steps.deploy_attempt_2.outcome == 'failure' && steps.deploy_attempt_3.outcome == 'failure'
+      - name: Upload files via lftp FTPS with retries
+        env:
+          JINO_FTP_HOST: ${{ secrets.JINO_FTP_HOST }}
+          JINO_FTP_USER: ${{ secrets.JINO_FTP_USER }}
+          JINO_FTP_PASSWORD: ${{ secrets.JINO_FTP_PASSWORD }}
         run: |
-          echo "FTPS deploy timed out on all 3 attempts."
+          set -euo pipefail
+          ATTEMPTS=3
+          DELAY=10
+
+          for attempt in $(seq 1 "$ATTEMPTS"); do
+            echo "FTPS deploy attempt ${attempt}/${ATTEMPTS}"
+            if lftp -e "
+              set net:max-retries 1;
+              set net:timeout 20;
+              set net:reconnect-interval-base 5;
+              set net:reconnect-interval-max 20;
+              set ftp:ssl-force true;
+              set ftp:ssl-protect-data true;
+              set ssl:verify-certificate false;
+              open -u ${JINO_FTP_USER},${JINO_FTP_PASSWORD} ftps://${JINO_FTP_HOST}:21;
+              mirror -R --parallel=2 --only-newer \
+                --exclude-glob .git* \
+                --exclude-glob .github/* \
+                --exclude-glob node_modules/* \
+                --exclude-glob .cursor/* \
+                --exclude-glob .vscode/* \
+                --exclude-glob README*.md \
+                --exclude-glob package-lock.json \
+                --exclude-glob package.json \
+                --exclude-glob vercel.json \
+                --exclude-glob lib/* \
+                --exclude-glob scripts/* \
+                --exclude-glob api/config.php \
+                --exclude-glob gallery.json \
+                --exclude-glob img/auto/* \
+                --exclude-glob img/people/* \
+                --exclude-glob img/thumbs/* \
+                --exclude-glob img/videos/* \
+                . /domains/jxstcallmesanya.site/;
+              bye
+            "; then
+              echo "Deploy success on attempt ${attempt}"
+              exit 0
+            fi
+
+            if [ "$attempt" -lt "$ATTEMPTS" ]; then
+              echo "Attempt ${attempt} failed, retrying in ${DELAY}s..."
+              sleep "$DELAY"
+            fi
+          done
+
+          echo "All FTPS deploy attempts failed."
           exit 1
