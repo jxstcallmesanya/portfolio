@@ -28,7 +28,22 @@ const VISUAL_TEXT_KEYS = [
   'aboutBio',
   'aboutItem1',
   'aboutItem2',
-  'contactTitle'
+  'contactTitle',
+  'autoTitle',
+  'autoLead',
+  'autoCtaTitle',
+  'autoCtaText',
+  'autoCtaButton',
+  'peopleTitle',
+  'peopleLead',
+  'peopleCtaTitle',
+  'peopleCtaText',
+  'peopleCtaButton',
+  'shootingTitle',
+  'shootingLead',
+  'shootingCtaTitle',
+  'shootingCtaText',
+  'shootingCtaButton'
 ];
 
 function getCookie(name) {

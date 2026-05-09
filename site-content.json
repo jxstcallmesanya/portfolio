@@ -12,5 +12,20 @@
   "contactTitle": "Связаться",
   "contactTelegramUrl": "https://t.me/designer212",
   "contactVkUrl": "https://vk.com/jxstcallmesanya",
-  "contactEmailUrl": "mailto:work@mail.ru"
+  "contactEmailUrl": "mailto:work@mail.ru",
+  "autoTitle": "Автомобильная фотосъёмка в Йошкар-Оле, Казани и Чебоксарах",
+  "autoLead": "Снимаю авто для личных коллекций, продажи и брендов. В кадре — характер машины, фактура и визуальная целостность под соцсети, маркетплейсы и каталоги.",
+  "autoCtaTitle": "Обсудить съёмку",
+  "autoCtaText": "Напишите в Telegram — отвечу по стоимости и слотам.",
+  "autoCtaButton": "Написать в Telegram",
+  "peopleTitle": "Репортажная съёмка мероприятий, событий и backstage",
+  "peopleLead": "Фиксирую эмоции и атмосферу без лишней постановки: от корпоративных событий до городских мероприятий и камерных встреч.",
+  "peopleCtaTitle": "Нужна репортажная съёмка?",
+  "peopleCtaText": "Напишите в Telegram, чтобы обсудить формат, дату и задачи.",
+  "peopleCtaButton": "Написать в Telegram",
+  "shootingTitle": "Съёмка",
+  "shootingLead": "Автомобильная и репортажная фотосъёмка — от личных проектов до брендов. Ниже — ориентиры по пакетам; точная стоимость зависит от задачи, локации и сроков.",
+  "shootingCtaTitle": "Обсудить съёмку",
+  "shootingCtaText": "Напишите в Telegram — отвечу по цене и свободным датам.",
+  "shootingCtaButton": "Написать в Telegram"
 }

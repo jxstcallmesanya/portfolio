@@ -30,11 +30,22 @@ if ($method === 'POST') {
     $allowedKeys = [
         'heroKicker', 'heroText', 'heroCtaText', 'heroCtaUrl',
         'aboutTag', 'aboutTitleHtml', 'aboutSpecs', 'aboutBio', 'aboutItem1', 'aboutItem2',
-        'contactTitle', 'contactTelegramUrl', 'contactVkUrl', 'contactEmailUrl'
+        'contactTitle', 'contactTelegramUrl', 'contactVkUrl', 'contactEmailUrl',
+        'autoTitle', 'autoLead', 'autoCtaTitle', 'autoCtaText', 'autoCtaButton',
+        'peopleTitle', 'peopleLead', 'peopleCtaTitle', 'peopleCtaText', 'peopleCtaButton',
+        'shootingTitle', 'shootingLead', 'shootingCtaTitle', 'shootingCtaText', 'shootingCtaButton'
     ];
+    $existing = [];
+    if (is_file($path)) {
+        $existingRaw = file_get_contents($path);
+        $existingJson = json_decode((string) $existingRaw, true);
+        if (is_array($existingJson)) {
+            $existing = $existingJson;
+        }
+    }
     $clean = [];
     foreach ($allowedKeys as $key) {
-        $val = $content[$key] ?? '';
+        $val = array_key_exists($key, $content) ? $content[$key] : ($existing[$key] ?? '');
         $clean[$key] = trim((string) $val);
     }
 

@@ -37,8 +37,8 @@
   <main class="page">
     <a class="back-link" href="/#auto">← Вернуться в портфолио</a>
     <p class="kicker">Услуга</p>
-    <h1>Автомобильная фотосъёмка в Йошкар-Оле, Казани и Чебоксарах</h1>
-    <p class="lead">
+    <h1 id="auto-content-title">Автомобильная фотосъёмка в Йошкар-Оле, Казани и Чебоксарах</h1>
+    <p class="lead" id="auto-content-lead">
       Снимаю авто для личных коллекций, продажи и брендов. В кадре — характер машины,
       фактура и визуальная целостность под соцсети, маркетплейсы и каталоги.
     </p>
@@ -93,10 +93,31 @@
     </section>
 
     <section class="cta-box">
-      <h2>Обсудить съёмку</h2>
-      <p>Напишите в Telegram — отвечу по стоимости и слотам.</p>
-      <a class="cta" href="https://t.me/designer212" target="_blank" rel="noopener noreferrer">Написать в Telegram</a>
+      <h2 id="auto-content-cta-title">Обсудить съёмку</h2>
+      <p id="auto-content-cta-text">Напишите в Telegram — отвечу по стоимости и слотам.</p>
+      <a class="cta" href="https://t.me/designer212" target="_blank" rel="noopener noreferrer" id="auto-content-cta-button">Написать в Telegram</a>
     </section>
   </main>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/site-content.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const c = await res.json();
+        const setText = (id, key) => {
+          const el = document.getElementById(id);
+          if (!el || typeof c[key] !== 'string') return;
+          el.textContent = c[key];
+        };
+        setText('auto-content-title', 'autoTitle');
+        setText('auto-content-lead', 'autoLead');
+        setText('auto-content-cta-title', 'autoCtaTitle');
+        setText('auto-content-cta-text', 'autoCtaText');
+        setText('auto-content-cta-button', 'autoCtaButton');
+      } catch {
+        /* keep default copy */
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -43,8 +43,8 @@
   <main class="service-main">
     <section class="hero">
       <p class="kicker">Репортажный фотограф · Йошкар-Ола, Казань, Чебоксары</p>
-      <h1>Репортажная съёмка мероприятий, событий и backstage</h1>
-      <p class="lead">Фиксирую эмоции и атмосферу без лишней постановки: от корпоративных событий до городских мероприятий и камерных встреч.</p>
+      <h1 id="people-content-title">Репортажная съёмка мероприятий, событий и backstage</h1>
+      <p class="lead" id="people-content-lead">Фиксирую эмоции и атмосферу без лишней постановки: от корпоративных событий до городских мероприятий и камерных встреч.</p>
     </section>
 
     <section>
@@ -83,10 +83,31 @@
     </section>
 
     <section class="cta-section">
-      <h2>Нужна репортажная съёмка?</h2>
-      <p>Напишите в Telegram, чтобы обсудить формат, дату и задачи.</p>
-      <a href="https://t.me/designer212" target="_blank" rel="noopener noreferrer" class="btn">Написать в Telegram</a>
+      <h2 id="people-content-cta-title">Нужна репортажная съёмка?</h2>
+      <p id="people-content-cta-text">Напишите в Telegram, чтобы обсудить формат, дату и задачи.</p>
+      <a href="https://t.me/designer212" target="_blank" rel="noopener noreferrer" class="btn" id="people-content-cta-button">Написать в Telegram</a>
     </section>
   </main>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/site-content.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const c = await res.json();
+        const setText = (id, key) => {
+          const el = document.getElementById(id);
+          if (!el || typeof c[key] !== 'string') return;
+          el.textContent = c[key];
+        };
+        setText('people-content-title', 'peopleTitle');
+        setText('people-content-lead', 'peopleLead');
+        setText('people-content-cta-title', 'peopleCtaTitle');
+        setText('people-content-cta-text', 'peopleCtaText');
+        setText('people-content-cta-button', 'peopleCtaButton');
+      } catch {
+        /* keep default copy */
+      }
+    })();
+  </script>
 </body>
 </html>

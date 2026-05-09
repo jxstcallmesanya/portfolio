@@ -41,8 +41,8 @@
   <main class="page">
     <a class="back-link" href="/">← Вернуться в портфолио</a>
     <p class="kicker">Услуги</p>
-    <h1>Съёмка</h1>
-    <p class="lead">
+    <h1 id="shooting-content-title">Съёмка</h1>
+    <p class="lead" id="shooting-content-lead">
       Автомобильная и репортажная фотосъёмка — от личных проектов до брендов.
       Ниже — ориентиры по пакетам; точная стоимость зависит от задачи, локации и сроков.
     </p>
@@ -101,10 +101,31 @@
     </section>
 
     <section class="cta-box">
-      <h2>Обсудить съёмку</h2>
-      <p>Напишите в Telegram — отвечу по цене и свободным датам.</p>
-      <a class="cta" href="https://t.me/designer212" target="_blank" rel="noopener noreferrer">Написать в Telegram</a>
+      <h2 id="shooting-content-cta-title">Обсудить съёмку</h2>
+      <p id="shooting-content-cta-text">Напишите в Telegram — отвечу по цене и свободным датам.</p>
+      <a class="cta" href="https://t.me/designer212" target="_blank" rel="noopener noreferrer" id="shooting-content-cta-button">Написать в Telegram</a>
     </section>
   </main>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/site-content.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const c = await res.json();
+        const setText = (id, key) => {
+          const el = document.getElementById(id);
+          if (!el || typeof c[key] !== 'string') return;
+          el.textContent = c[key];
+        };
+        setText('shooting-content-title', 'shootingTitle');
+        setText('shooting-content-lead', 'shootingLead');
+        setText('shooting-content-cta-title', 'shootingCtaTitle');
+        setText('shooting-content-cta-text', 'shootingCtaText');
+        setText('shooting-content-cta-button', 'shootingCtaButton');
+      } catch {
+        /* keep default copy */
+      }
+    })();
+  </script>
 </body>
 </html>

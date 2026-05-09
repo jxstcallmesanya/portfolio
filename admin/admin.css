@@ -13,7 +13,7 @@ body {
 }
 
 .wrap {
-  max-width: 640px;
+  max-width: 980px;
   margin: 0 auto;
   padding: 48px 20px 80px;
 }
@@ -520,4 +520,10 @@ body {
 .mini-bio,
 .mini-item {
   color: #bcbcbc;
+}
+
+@media (max-width: 720px) {
+  .wrap {
+    max-width: 640px;
+  }
 }
