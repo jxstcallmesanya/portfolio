@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 let csrfToken = '';
 let galleryCache = { auto: [], people: [] };
 let siteContentCache = null;
+let textOverridesCache = { home: {}, auto: {}, people: {}, shooting: {} };
 
 const SITE_CONTENT_FIELDS = [
   ['heroKicker', 'content-hero-kicker-input'],
@@ -45,6 +46,12 @@ const VISUAL_TEXT_KEYS = [
   'shootingCtaText',
   'shootingCtaButton'
 ];
+const FULL_EDITOR_PAGE_URL = {
+  home: '/',
+  auto: '/auto/',
+  people: '/people/',
+  shooting: '/shooting/'
+};
 
 function getCookie(name) {
   const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
@@ -149,6 +156,28 @@ async function apiSiteContentSave(content) {
       ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
     },
     body: JSON.stringify({ content })
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || `Ошибка ${r.status}`);
+  return data;
+}
+
+async function apiTextOverrides() {
+  const r = await fetch('/api/site-text-overrides', { credentials: 'same-origin' });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || `Ошибка ${r.status}`);
+  return data;
+}
+
+async function apiTextOverridesSave(overrides) {
+  const r = await fetch('/api/site-text-overrides', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+    },
+    body: JSON.stringify({ overrides })
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(data.error || `Ошибка ${r.status}`);
@@ -356,6 +385,97 @@ async function loadSiteContentData() {
     fillVisualEditor(siteContentCache);
   } catch (e) {
     setMsg(msgEl, `Не удалось загрузить поля сайта: ${e.message || e}`, 'err');
+  }
+}
+
+function buildCssSelector(el, root) {
+  if (!(el instanceof Element)) return '';
+  if (el.id) return `#${CSS.escape(el.id)}`;
+  const parts = [];
+  let node = el;
+  while (node && node !== root && node.nodeType === 1) {
+    const tag = node.tagName.toLowerCase();
+    let idx = 1;
+    let sib = node;
+    while ((sib = sib.previousElementSibling)) {
+      if (sib.tagName === node.tagName) idx++;
+    }
+    parts.unshift(`${tag}:nth-of-type(${idx})`);
+    node = node.parentElement;
+  }
+  return parts.join(' > ');
+}
+
+function pruneForFullEditor(root) {
+  root.querySelectorAll('img,picture,video,source,svg,script,style,link,noscript,iframe').forEach((n) => n.remove());
+}
+
+function markEditableNodes(root, pageKey) {
+  const map = textOverridesCache[pageKey] || {};
+  const nodes = root.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,summary,a,button,label,span');
+  nodes.forEach((el) => {
+    const text = (el.textContent || '').trim();
+    if (!text) return;
+    const selector = buildCssSelector(el, root);
+    if (!selector) return;
+    el.classList.add('full-editable');
+    el.setAttribute('contenteditable', 'true');
+    el.dataset.selector = selector;
+    if (typeof map[selector] === 'string') {
+      el.textContent = map[selector];
+    }
+  });
+}
+
+async function loadFullEditorPage() {
+  const pageKey = $('full-editor-page')?.value || 'home';
+  const stage = $('full-editor-stage');
+  const msgEl = $('dash-msg');
+  if (!stage) return;
+  const url = FULL_EDITOR_PAGE_URL[pageKey] || '/';
+  try {
+    stage.innerHTML = '<p class="full-editor-empty">Загрузка страницы…</p>';
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const root = doc.querySelector('main') || doc.body;
+    if (!root) throw new Error('Не найдена область текста');
+    const clone = root.cloneNode(true);
+    pruneForFullEditor(clone);
+    markEditableNodes(clone, pageKey);
+    stage.innerHTML = '';
+    stage.appendChild(clone);
+    setMsg(msgEl, 'Страница загружена в полный редактор', 'ok');
+  } catch (e) {
+    stage.innerHTML = '<p class="full-editor-empty">Не удалось загрузить страницу для редактирования.</p>';
+    setMsg(msgEl, `Ошибка загрузки страницы: ${e.message || e}`, 'err');
+  }
+}
+
+async function saveFullEditorPage() {
+  const pageKey = $('full-editor-page')?.value || 'home';
+  const stage = $('full-editor-stage');
+  const msgEl = $('dash-msg');
+  const btn = $('btn-full-editor-save');
+  if (!stage) return;
+  try {
+    if (btn) btn.disabled = true;
+    const pageMap = {};
+    stage.querySelectorAll('.full-editable[data-selector]').forEach((el) => {
+      const selector = el.dataset.selector || '';
+      if (!selector) return;
+      pageMap[selector] = (el.textContent || '').trim();
+    });
+    textOverridesCache[pageKey] = pageMap;
+    setMsg(msgEl, 'Сохранение текста страницы…');
+    await apiTextOverridesSave(textOverridesCache);
+    setMsg(msgEl, 'Текст страницы сохранён. Обновите страницу сайта.', 'ok');
+  } catch (e) {
+    setMsg(msgEl, `Ошибка сохранения текста страницы: ${e.message || e}`, 'err');
+  } finally {
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -669,6 +789,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       await loadStats();
       await loadGalleryData();
       await loadSiteContentData();
+      try {
+        const overrides = await apiTextOverrides();
+        textOverridesCache = overrides.overrides || textOverridesCache;
+      } catch {
+        /* keep empty overrides */
+      }
+      await loadFullEditorPage();
     } else {
       showLogin();
     }
@@ -692,6 +819,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadStats();
         await loadGalleryData();
         await loadSiteContentData();
+        try {
+          const overrides = await apiTextOverrides();
+          textOverridesCache = overrides.overrides || textOverridesCache;
+        } catch {
+          /* keep empty overrides */
+        }
+        await loadFullEditorPage();
       } else {
         setMsg(msg, data.error || 'Ошибка входа', 'err');
       }
@@ -725,6 +859,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $('btn-visual-save')?.addEventListener('click', async () => {
     await saveVisualEditorData();
+  });
+  $('full-editor-page')?.addEventListener('change', async () => {
+    await loadFullEditorPage();
+  });
+  $('btn-full-editor-load')?.addEventListener('click', async () => {
+    await loadFullEditorPage();
+  });
+  $('btn-full-editor-save')?.addEventListener('click', async () => {
+    await saveFullEditorPage();
   });
 
   document.querySelectorAll('input[name="manage-section"]').forEach((r) => {

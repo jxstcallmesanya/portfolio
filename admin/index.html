@@ -218,6 +218,26 @@
             <button type="button" id="btn-visual-save" class="btn btn-primary">Обновить текст</button>
           </div>
         </div>
+
+        <div class="card">
+          <h3>Полный редактор текста</h3>
+          <p class="hint">Можно редактировать любой текст страницы, включая прайсы. Выберите страницу, кликните по тексту в превью и нажмите сохранить.</p>
+
+          <label class="label" for="full-editor-page">Страница</label>
+          <select id="full-editor-page" class="input">
+            <option value="home">Главная</option>
+            <option value="auto">Auto</option>
+            <option value="people">People</option>
+            <option value="shooting">Shooting</option>
+          </select>
+
+          <div id="full-editor-stage" class="full-editor-stage"></div>
+
+          <div class="manage-toolbar">
+            <button type="button" id="btn-full-editor-load" class="btn btn-ghost btn-inline">Загрузить страницу</button>
+            <button type="button" id="btn-full-editor-save" class="btn btn-primary">Сохранить весь текст страницы</button>
+          </div>
+        </div>
       </section>
 
       <p id="dash-msg" class="msg" role="status"></p>

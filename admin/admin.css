@@ -522,6 +522,33 @@ body {
   color: #bcbcbc;
 }
 
+.full-editor-stage {
+  margin-top: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #1f1f1f;
+  background: #060606;
+  padding: 12px;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.full-editor-empty {
+  color: #777;
+  font-size: 13px;
+}
+
+.full-editable {
+  border: 1px dashed transparent;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+}
+
+.full-editable:focus {
+  outline: none;
+  border-color: #d4af37;
+  background: #101010;
+}
+
 @media (max-width: 720px) {
   .wrap {
     max-width: 640px;
