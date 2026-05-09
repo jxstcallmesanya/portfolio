@@ -12,7 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Upload files via FTP
+      - name: Upload files via FTPS (primary)
+        id: deploy_ftps
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.JINO_FTP_HOST }}
@@ -34,3 +36,61 @@ jobs:
             **/lib/**
             **/scripts/**
             **/api/config.php
+
+      - name: Upload files via SFTP (fallback)
+        id: deploy_sftp
+        if: steps.deploy_ftps.outcome == 'failure'
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.JINO_FTP_HOST }}
+          username: ${{ secrets.JINO_FTP_USER }}
+          password: ${{ secrets.JINO_FTP_PASSWORD }}
+          protocol: sftp
+          port: 2222
+          server-dir: /domains/jxstcallmesanya.site/
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/.cursor/**
+            **/.vscode/**
+            **/README*.md
+            **/package-lock.json
+            **/package.json
+            **/vercel.json
+            **/lib/**
+            **/scripts/**
+            **/api/config.php
+
+      - name: Upload files via FTP (fallback)
+        id: deploy_ftp
+        if: steps.deploy_ftps.outcome == 'failure' && steps.deploy_sftp.outcome == 'failure'
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.JINO_FTP_HOST }}
+          username: ${{ secrets.JINO_FTP_USER }}
+          password: ${{ secrets.JINO_FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: /domains/jxstcallmesanya.site/
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/.cursor/**
+            **/.vscode/**
+            **/README*.md
+            **/package-lock.json
+            **/package.json
+            **/vercel.json
+            **/lib/**
+            **/scripts/**
+            **/api/config.php
+
+      - name: Fail if all deploy methods failed
+        if: steps.deploy_ftps.outcome == 'failure' && steps.deploy_sftp.outcome == 'failure' && steps.deploy_ftp.outcome == 'failure'
+        run: |
+          echo "FTPS, SFTP and FTP all failed. Check Jino host/user/password and protocol support."
+          exit 1
