@@ -5,16 +5,51 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-# Один активный деплой на ветку: новый пуш отменяет зависший/старый run (не два lftp одновременно).
+# Один деплой: новый пуш отменяет предыдущий (GitHub concurrency).
 concurrency:
-  group: jino-deploy-${{ github.workflow }}-${{ github.ref }}
+  group: jino-deploy-main
   cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: write
 
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 22
     steps:
+      # Когда раннер уже выдан этому run, сразу гасим другие in_progress/queued того же workflow на main —
+      # иначе зависший lftp держит очередь, а новый run вечно Pending.
+      - name: Cancel other Deploy to Jino runs on main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const currentId = context.runId;
+            const branch = (context.ref || '').replace('refs/heads/', '');
+            if (branch !== 'main') return;
+            for (const status of ['queued', 'in_progress']) {
+              const res = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: 'deploy-jino.yml',
+                status,
+                per_page: 30,
+              });
+              for (const run of res.data.workflow_runs) {
+                if (run.id === currentId) continue;
+                if (run.head_branch !== 'main') continue;
+                await github.rest.actions.cancelWorkflowRun({
+                  owner,
+                  repo,
+                  run_id: run.id,
+                });
+                core.info(`Cancelled run ${run.id} (${status})`);
+              }
+            }
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -28,7 +63,7 @@ jobs:
           JINO_FTP_PASSWORD: ${{ secrets.JINO_FTP_PASSWORD }}
         run: |
           set -euo pipefail
-          ATTEMPTS_PER_PROFILE=2
+          ATTEMPTS_PER_PROFILE=1
           RETRY_DELAY=8
           # Сначала обычный FTP (часто стабильнее из GitHub к shared-хостингу), затем FTPS.
           MODES=("ftp:21" "ftps:21" "ftps:990")
@@ -49,7 +84,8 @@ jobs:
               ssl_protect="true"
             fi
 
-            lftp -u "$JINO_FTP_USER","$JINO_FTP_PASSWORD" "${scheme}://${JINO_FTP_HOST}:${port}" -e "
+            # Жёсткий лимит на один вызов lftp, чтобы run не висел часами при мёртвом FTP.
+            if timeout 300 lftp -u "$JINO_FTP_USER","$JINO_FTP_PASSWORD" "${scheme}://${JINO_FTP_HOST}:${port}" -e "
               set cmd:fail-exit true;
               set net:max-retries 1;
               set net:timeout 25;
@@ -81,7 +117,12 @@ jobs:
                 --exclude-glob '*.zip' \
                 . /domains/jxstcallmesanya.site/;
               bye
-            "
+            "; then
+              return 0
+            else
+              echo "lftp failed or hit 300s timeout for ${mode}:${port} passive=${passive}"
+              return 1
+            fi
           }
 
           for target in "${MODES[@]}"; do
