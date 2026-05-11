@@ -69,6 +69,7 @@ jobs:
                 --exclude-glob img/people/* \
                 --exclude-glob img/thumbs/* \
                 --exclude-glob img/videos/* \
+                --exclude-glob '*.zip' \
                 . /domains/jxstcallmesanya.site/;
               bye
             "
