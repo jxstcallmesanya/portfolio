@@ -5,9 +5,15 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+# Один активный деплой на ветку: новый пуш отменяет зависший/старый run (не два lftp одновременно).
+concurrency:
+  group: jino-deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,6 +30,9 @@ jobs:
           set -euo pipefail
           ATTEMPTS_PER_PROFILE=2
           RETRY_DELAY=8
+          # Сначала обычный FTP (часто стабильнее из GitHub к shared-хостингу), затем FTPS.
+          MODES=("ftp:21" "ftps:21" "ftps:990")
+          PASSIVE_PROFILES=("true" "false")
 
           run_mirror() {
             local mode="$1"
@@ -51,7 +60,7 @@ jobs:
               set ftp:ssl-force ${ssl_force};
               set ftp:ssl-protect-data ${ssl_protect};
               set ssl:verify-certificate false;
-              mirror -R --parallel=2 --only-newer \
+              mirror -R --parallel=1 --only-newer \
                 --exclude-glob .git* \
                 --exclude-glob .github/* \
                 --exclude-glob node_modules/* \
@@ -75,9 +84,6 @@ jobs:
             "
           }
 
-          MODES=("ftps:21" "ftps:990" "ftp:21")
-          PASSIVE_PROFILES=("true" "false")
-
           for target in "${MODES[@]}"; do
             mode="${target%%:*}"
             port="${target##*:}"
@@ -100,5 +106,5 @@ jobs:
             done
           done
 
-          echo "All deploy modes/profiles failed (FTPS:21, FTPS:990, FTP:21; passive true/false)."
+          echo "All deploy modes/profiles failed (FTP:21, FTPS:21, FTPS:990; passive true/false)."
           exit 1
