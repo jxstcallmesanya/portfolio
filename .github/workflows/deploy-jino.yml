@@ -17,10 +17,10 @@ permissions:
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 30
     steps:
       # Когда раннер уже выдан этому run, сразу гасим другие in_progress/queued того же workflow на main —
-      # иначе зависший lftp держит очередь, а новый run вечно Pending.
+      # иначе зависший деплой держит очередь, а новый run вечно Pending.
       - name: Cancel other Deploy to Jino runs on main
         uses: actions/github-script@v7
         with:
@@ -53,99 +53,82 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install lftp
-        run: sudo apt-get update && sudo apt-get install -y lftp
+      - name: Install rclone
+        run: sudo apt-get update && sudo apt-get install -y rclone
 
-      - name: Upload files via lftp FTPS with retries
+      # rclone использует другой FTP-стек, чем lftp; на части хостингов проходит там, где lftp ловит max-retries.
+      # Важно: rclone copy (не sync), чтобы не удалять на сервере файлы вне репозитория (gallery.json, img/...).
+      - name: Upload to Jino via rclone (FTP / FTPS profiles)
         env:
           JINO_FTP_HOST: ${{ secrets.JINO_FTP_HOST }}
           JINO_FTP_USER: ${{ secrets.JINO_FTP_USER }}
           JINO_FTP_PASSWORD: ${{ secrets.JINO_FTP_PASSWORD }}
         run: |
           set -euo pipefail
-          ATTEMPTS_PER_PROFILE=1
-          RETRY_DELAY=8
-          # Сначала обычный FTP (часто стабильнее из GitHub к shared-хостингу), затем FTPS.
-          MODES=("ftp:21" "ftps:21" "ftps:990")
-          PASSIVE_PROFILES=("true" "false")
+          RC=/tmp/rclone-jino.conf
+          REMOTE_PATH="/domains/jxstcallmesanya.site"
+          OBF=$(rclone obscure "$JINO_FTP_PASSWORD")
 
-          run_mirror() {
-            local mode="$1"
-            local port="$2"
-            local passive="$3"
+          EX=(
+            "--exclude=.git/**"
+            "--exclude=.github/**"
+            "--exclude=node_modules/**"
+            "--exclude=.cursor/**"
+            "--exclude=.vscode/**"
+            "--exclude=README*.md"
+            "--exclude=package-lock.json"
+            "--exclude=package.json"
+            "--exclude=vercel.json"
+            "--exclude=lib/**"
+            "--exclude=scripts/**"
+            "--exclude=api/config.php"
+            "--exclude=gallery.json"
+            "--exclude=img/auto/**"
+            "--exclude=img/people/**"
+            "--exclude=img/thumbs/**"
+            "--exclude=img/videos/**"
+            "--exclude=*.zip"
+          )
 
-            if [ "$mode" = "ftp" ]; then
-              scheme="ftp"
-              ssl_force="false"
-              ssl_protect="false"
-            else
-              scheme="ftps"
-              ssl_force="true"
-              ssl_protect="true"
-            fi
+          try_profile() {
+            echo "---- rclone profile: $* ----"
+            rm -f "$RC"
+            rclone config create jino ftp \
+              host "$JINO_FTP_HOST" \
+              user "$JINO_FTP_USER" \
+              pass "$OBF" \
+              "$@" \
+              --config "$RC" --non-interactive
 
-            # Жёсткий лимит на один вызов lftp, чтобы run не висел часами при мёртвом FTP.
-            if timeout 300 lftp -u "$JINO_FTP_USER","$JINO_FTP_PASSWORD" "${scheme}://${JINO_FTP_HOST}:${port}" -e "
-              set cmd:fail-exit true;
-              set net:max-retries 1;
-              set net:timeout 25;
-              set net:reconnect-interval-base 5;
-              set net:reconnect-interval-max 20;
-              set ftp:passive-mode ${passive};
-              set ftp:prefer-epsv false;
-              set ftp:ssl-force ${ssl_force};
-              set ftp:ssl-protect-data ${ssl_protect};
-              set ssl:verify-certificate false;
-              mirror -R --parallel=1 --only-newer \
-                --exclude-glob .git* \
-                --exclude-glob .github/* \
-                --exclude-glob node_modules/* \
-                --exclude-glob .cursor/* \
-                --exclude-glob .vscode/* \
-                --exclude-glob README*.md \
-                --exclude-glob package-lock.json \
-                --exclude-glob package.json \
-                --exclude-glob vercel.json \
-                --exclude-glob lib/* \
-                --exclude-glob scripts/* \
-                --exclude-glob api/config.php \
-                --exclude-glob gallery.json \
-                --exclude-glob img/auto/* \
-                --exclude-glob img/people/* \
-                --exclude-glob img/thumbs/* \
-                --exclude-glob img/videos/* \
-                --exclude-glob '*.zip' \
-                . /domains/jxstcallmesanya.site/;
-              bye
-            "; then
-              return 0
-            else
-              echo "lftp failed or hit 300s timeout for ${mode}:${port} passive=${passive}"
-              return 1
-            fi
+            rclone copy . "jino:${REMOTE_PATH}" \
+              --config "$RC" \
+              "${EX[@]}" \
+              --transfers 6 \
+              --checkers 8 \
+              --retries 5 \
+              --low-level-retries 3 \
+              --contimeout 90s \
+              --timeout 180s \
+              --stats 45s
           }
 
-          for target in "${MODES[@]}"; do
-            mode="${target%%:*}"
-            port="${target##*:}"
-            echo "Trying deploy mode: ${mode} on port ${port}..."
+          set +e
+          try_profile port 21 tls false explicit_tls false disable_epsv true
+          ok=$?
+          if [ "$ok" -eq 0 ]; then echo "OK: plain FTP :21 (EPSV off)"; exit 0; fi
 
-            for passive in "${PASSIVE_PROFILES[@]}"; do
-              echo "Connection profile: passive=${passive}"
-              for attempt in $(seq 1 "$ATTEMPTS_PER_PROFILE"); do
-                echo "Attempt ${attempt}/${ATTEMPTS_PER_PROFILE} for ${mode}:${port}, passive=${passive}"
-                if run_mirror "$mode" "$port" "$passive"; then
-                  echo "Deploy succeeded via ${mode}:${port}, passive=${passive}"
-                  exit 0
-                fi
+          try_profile port 21 tls false explicit_tls true disable_epsv true no_check_certificate true
+          ok=$?
+          if [ "$ok" -eq 0 ]; then echo "OK: explicit FTPS :21"; exit 0; fi
 
-                if [ "$attempt" -lt "$ATTEMPTS_PER_PROFILE" ]; then
-                  echo "Retrying in ${RETRY_DELAY}s..."
-                  sleep "$RETRY_DELAY"
-                fi
-              done
-            done
-          done
+          try_profile port 990 tls true explicit_tls false disable_epsv true no_check_certificate true
+          ok=$?
+          if [ "$ok" -eq 0 ]; then echo "OK: implicit FTPS :990"; exit 0; fi
 
-          echo "All deploy modes/profiles failed (FTP:21, FTPS:21, FTPS:990; passive true/false)."
+          try_profile port 21 tls false explicit_tls false disable_epsv false
+          ok=$?
+          if [ "$ok" -eq 0 ]; then echo "OK: plain FTP :21 (EPSV on)"; exit 0; fi
+
+          set -e
+          echo "All rclone FTP profiles failed. Проверь JINO_FTP_* в Secrets и параметры FTP в панели Джино (хост, порт, FTPS)."
           exit 1
